@@ -1,16 +1,17 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const navItems = [
 
   { href: "/", label: "Bar" },
-  { href: "/contact", label: "Contact" },
-  { href: "/user", label:   <img
+  { href: "/user", label: <Image
     src="/images/menu.svg"
     alt="menu"
     width={40}
     height={40}
   /> },
+ 
   
 ];
 
@@ -25,7 +26,7 @@ const NavBar: React.FC = () => {
         }}>
             <div className="inline-flex items-center gap-2">
 <Link href="/">
-  <img
+  <Image
     className="inline-flex items-center w-[60px] md:w-[100px] h-auto"
     src="/images/logo.png"
     alt="Anamol Karki Logo"
