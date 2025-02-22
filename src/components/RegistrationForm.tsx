@@ -30,8 +30,13 @@ export default function RegistrationForm() {
       const result = await registerUser(formData);
       setMessage("Registration successful!");
       console.log("Registration result:", result);
-    } catch (error: any) {
-      setMessage(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setMessage(error.message);
+      } else {
+        setMessage("An unexpected error occurred");
+      }
+      
     } finally {
       setLoading(false);
     }
