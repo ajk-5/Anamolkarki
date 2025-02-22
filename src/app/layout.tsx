@@ -25,7 +25,7 @@ export default function RootLayout({
 
   <body className={`${geistSans.variable} ${geistMono.variable}`}>
   <NavBar/>
-    <div>{children}</div>
+    <div className=" mt-15 ">{children}</div>
 
   </body>
 </html>

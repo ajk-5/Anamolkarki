@@ -19,8 +19,8 @@ export default {
           'tiny': '0.75rem',
           'small': '0.875rem',
           'base': '1rem',
-          'large': '1.125rem',
-          'xl': '1.25rem',
+          'large': '1.225rem',
+          'xl': '1.55rem',
         },
         screens: {
           'sm': '640px',

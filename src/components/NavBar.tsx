@@ -30,6 +30,8 @@ const NavBar: React.FC = () => {
     className="inline-flex items-center w-[60px] md:w-[100px] h-auto"
     src="/images/logo.png"
     alt="Anamol Karki Logo"
+    width={60}
+    height={100}
    
   />
   <h1 className="text-[2rem] font-semibold text-gold  hidden md:inline">ANAMOL JANG KARKI</h1>
