@@ -8,7 +8,7 @@ export interface UserRegistrationData {
     dob: string;
   }
 
-let baseUrl = "https://localhost:7122";
+const baseUrl = "https://localhost:7122";
   
   export async function registerUser(data: UserRegistrationData) {
     try {
@@ -48,7 +48,7 @@ let baseUrl = "https://localhost:7122";
       });
   
 
-      let resdata = await response;
+      const resdata = await response;
 
       return resdata;
     } catch (error) {
