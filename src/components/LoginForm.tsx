@@ -35,8 +35,13 @@ export default function LoginForm() {
       } else {
         throw new Error(`Error ${response.status}: ${resData.message || "Unknown error"}`);
       }
-    } catch (error: any) {
-      setMessage(error.message);
+    } catch (error: unknown) { // Remplace 'any' par 'unknown'
+      // Vérification de type pour s'assurer que c'est une instance de Error
+      if (error instanceof Error) {
+        setMessage(error.message);
+      } else {
+        setMessage("An unexpected error occurred");
+      }
     } finally {
       setLoading(false);
     }
