@@ -8,7 +8,7 @@ export interface UserRegistrationData {
     dob: string;
   }
 
-var baseUrl = "https://localhost:7122";
+let baseUrl = "https://localhost:7122";
   
   export async function registerUser(data: UserRegistrationData) {
     try {
@@ -35,7 +35,7 @@ var baseUrl = "https://localhost:7122";
     password: string;
   }
   
-  export async function loginUser(data: UserLoginData): Promise<any> {
+  export async function loginUser(data: UserLoginData): Promise<Response> {
     try {
       const response = await fetch(`${baseUrl}/api/UserAuth/login`, {
         method: "POST",
@@ -48,7 +48,7 @@ var baseUrl = "https://localhost:7122";
       });
   
 
-      var resdata = await response;
+      let resdata = await response;
 
       return resdata;
     } catch (error) {
