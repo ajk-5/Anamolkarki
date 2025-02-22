@@ -2,7 +2,7 @@ import LoginForm from "@/components/LoginForm";
 import RegistrationForm from "@/components/RegistrationForm";
 import type { Metadata } from "next";
 export const metadata: Metadata = {
-  title: "logbfsbvbsds in",
+  title: "log in",
   description: "my pbbcvbvcbvce",
 };
 

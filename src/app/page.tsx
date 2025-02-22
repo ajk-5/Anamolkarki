@@ -1,15 +1,11 @@
 "use client"; // Page entièrement Client Component
 
-import type { Metadata } from "next";
+
 import Image from "next/image";
 import { MotionDiv } from "@/components/MotionDiv";
 import { useEffect, useState } from "react";
 
-// Métadonnées pour SEO
-const metadata: Metadata = {
-  title: "Anamol Jang Karki - Portfolio",
-  description: "Portfolio d'Anamol Jang Karki, développeur web/fullstack.",
-};
+
 
 // Données reformulées
 const intro = {
