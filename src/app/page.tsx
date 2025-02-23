@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { MotionDiv } from "@/components/MotionDiv";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
-// Define types for data structures
+// Define types for data structures (unchanged)
 interface Intro {
   name: string;
   title: string;
@@ -48,12 +48,12 @@ interface ParticlePosition {
   y: string;
 }
 
-// Data with TypeScript types
+// Data with TypeScript types (unchanged)
 const intro: Intro = {
   name: "ANAMOL JANG KARKI",
-  title: "DÉVELOPPEUR WEB/FULLSTACK",
+  title: "Développeur Fullstack Web / Mobile",
   objective: "À LA RECHERCHE D’ALTERNANCE BAC+3 (4 JOURS EN ENTREPRISE | 1 JOUR À L’ÉCOLE)",
-  description: "J’ai une passion pour le développement logiciel et je suis compétent dans la création d’applications à l’aide de langages tels que C#, PHP, JavaScript, Node.js, Python, React.js, Next.js, ASP.NET, TypeScript, HTML, CSS, BASH, WPF et Mermaid. J’ai une solide maîtrise des bases de données comme MySQL et PostgreSQL, et je suis capable de concevoir des Web APIs avec ASP.NET pour intégrer efficacement mes projets. Par ailleurs, je m’intéresse fortement au pentesting et au bug bounty, où j’aime identifier des vulnérabilités et renforcer la sécurité des systèmes. Grâce à ces compétences, je développe des interfaces modernes et performantes tout en relevant avec enthousiasme des défis techniques.",
+  description: "J’ai une passion pour le développement logiciel et je suis compétent dans la création d’applications à l’aide de langages tels que C#, PHP, JavaScript, Node.js, Python, React.js, React Native, Next.js, ASP.NET, TypeScript, HTML, CSS, BASH, WPF et Mermaid.\n\nJ’ai une solide maîtrise des bases de données comme MySQL et PostgreSQL, et je suis capable de concevoir des Web APIs avec ASP.NET pour intégrer efficacement mes projets. Je m’intéresse également au développement mobile et à la création de jeux vidéo, où j’explore des technologies comme Unity (C#) et Kotlin pour les applications Android. Mon objectif est de concevoir des applications interactives et immersives, que ce soit pour le web, le mobile ou le gaming.\n\nPar ailleurs, je m’intéresse fortement au pentesting et au bug bounty, où j’aime identifier des vulnérabilités et renforcer la sécurité des systèmes.\n\nGrâce à ces compétences, je développe des interfaces modernes et performantes tout en relevant avec enthousiasme des défis techniques.",
 };
 
 const projects: Project[] = [
@@ -86,9 +86,14 @@ const skills: Skills = {
 
 export default function Home() {
   const [particlePositions, setParticlePositions] = useState<ParticlePosition[]>([]);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false); // State to toggle sidebar visibility
+  const introRef = useRef<HTMLDivElement>(null);
+  const projectsRef = useRef<HTMLDivElement>(null);
+  const experiencesRef = useRef<HTMLDivElement>(null);
+  const educationRef = useRef<HTMLDivElement>(null);
+  const skillsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Generate particle positions only on the client
     const positions = Array.from({ length: 50 }, () => ({
       x: `${Math.random() * 100}vw`,
       y: `${Math.random() * 100}vh`,
@@ -96,300 +101,328 @@ export default function Home() {
     setParticlePositions(positions);
   }, []);
 
+  const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible);
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white overflow-hidden relative">
-      {/* Background Grid */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none bg-[linear-gradient(90deg,rgba(198,162,104,0.05)_1px,transparent_1px),linear-gradient(180deg,rgba(198,162,104,0.05)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+      {/* Arrow Button */}
+      <button
+        onClick={toggleSidebar}
+        className="fixed top-1/2 left-4 transform -translate-y-1/2 z-30 bg-gold/20 text-gold p-2 rounded-full hover:bg-gold/40 transition-all duration-300"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#c6a268"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={`transition-transform duration-300 ${isSidebarVisible ? "rotate-180" : ""}`}
+        >
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </button>
 
-      {/* Golden Particles */}
-      <div className="absolute inset-0 pointer-events-none max-w-[100vw] h-full">
-        {particlePositions.length > 0 && particlePositions.map((pos, i) => (
-          <MotionDiv
-            key={i}
-            className="absolute w-1.5 h-1.5 bg-gold rounded-full shadow-[0_0_6px_rgba(198,162,104,0.4)]"
-            initial={{ x: pos.x, y: pos.y, scale: 0 }}
-            animate={{
-              x: [null, `${Math.random() * 100}vw`],
-              y: [null, `${Math.random() * 100}vh`],
-              scale: [0, 1.2, 0],
-              opacity: [0, 0.9, 0],
-              transition: { duration: Math.random() * 6 + 3, repeat: Infinity, ease: "easeInOut" },
-            }}
-          />
-        ))}
+      {/* Sidebar */}
+      <div
+        className={`fixed top-16 left-0 w-48 h-full bg-black/80 border-r border-gold/20 z-20 flex flex-col items-center py-6 transition-transform duration-300 ${
+          isSidebarVisible ? "translate-x-0" : "-translate-x-48"
+        }`}
+      >
+        <MotionDiv
+          className="text-xl font-bold text-gold mb-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          Portfolio
+        </MotionDiv>
+        <nav className="space-y-4 text-sm">
+          <button onClick={() => scrollToSection(introRef)} className="text-gold hover:text-gold/70 transition-colors flex items-center">
+            <span className="mr-2">🏠</span> Intro
+          </button>
+          <button onClick={() => scrollToSection(projectsRef)} className="text-gold hover:text-gold/70 transition-colors flex items-center">
+            <span className="mr-2">📑</span> Projets
+          </button>
+          <button onClick={() => scrollToSection(experiencesRef)} className="text-gold hover:text-gold/70 transition-colors flex items-center">
+            <span className="mr-2">💼</span> Expériences
+          </button>
+          <button onClick={() => scrollToSection(educationRef)} className="text-gold hover:text-gold/70 transition-colors flex items-center">
+            <span className="mr-2">🎓</span> Éducation
+          </button>
+          <button onClick={() => scrollToSection(skillsRef)} className="text-gold hover:text-gold/70 transition-colors flex items-center">
+            <span className="mr-2">🛠️</span> Compétences
+          </button>
+        </nav>
       </div>
-      <div className="absolute inset-0 pointer-events-none max-w-[100vw] h-full">
-        {particlePositions.length > 0 && particlePositions.map((pos, i) => (
+
+      {/* Main Content */}
+      <div className="relative">
+        {/* Background Grid */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none bg-[linear-gradient(90deg,rgba(198,162,104,0.05)_1px,transparent_1px),linear-gradient(180deg,rgba(198,162,104,0.05)_1px,transparent_1px)] bg-[size:30px_30px]"></div>
+
+        {/* Golden Particles */}
+        <div className="absolute inset-0 pointer-events-none max-w-[100vw] h-full">
+          {particlePositions.map((pos, i) => (
+            <MotionDiv
+              key={i}
+              className="absolute w-1 h-1 bg-gold rounded-full shadow-[0_0_4px_rgba(198,162,104,0.3)]"
+              initial={{ x: pos.x, y: pos.y, scale: 0 }}
+              animate={{
+                x: [null, `${Math.random() * 100}vw`],
+                y: [null, `${Math.random() * 100}vh`],
+                scale: [0, 1, 0],
+                opacity: [0, 0.8, 0],
+                transition: { duration: Math.random() * 5 + 2, repeat: Infinity, ease: "easeInOut" },
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Header */}
+        <div ref={introRef} className="flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
+          <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-4xl gap-6">
+            <MotionDiv
+              className="text-center max-w-2xl"
+              initial={{ opacity: 0, scale: 0.2, y: -150 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 1.8, ease: "easeOut", type: "spring", stiffness: 70 }}
+            >
+              <h1 className="mt-8 text-3xl sm:text-3xl md:text-3xl lg:text-4xl 2xl:text-4xl font-extrabold tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-gold to-[#a88c4f] drop-shadow-[0_0_8px_rgba(198,162,104,0.4)] animate-pulse md:hidden">
+                {intro.name}
+              </h1>
+              <MotionDiv
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl 2xl:text-5xl font-bold text-gold/80 mt-4"
+                initial={{ opacity: 0, y: 80 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1.2, delay: 0.4, ease: "easeOut" }}
+              >
+                {intro.title}
+              </MotionDiv>
+              <p className="text-xs sm:text-sm md:text-base lg:text-lg 2xl:text-lg italic mt-3 max-w-2xl mx-auto text-gray-300">{intro.objective}</p>
+              <p className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base mt-3 max-w-3xl mx-auto text-gray-400">{intro.description}</p>
+            </MotionDiv>
+            <MotionDiv
+              className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-64 lg:h-64 2xl:w-48 2xl:h-48 rounded-full border-[6px] border-gold/40 shadow-[0_0_12px_rgba(198,162,104,0.4)]"
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 2, delay: 0.8, ease: "easeOut" }}
+              whileHover={{ scale: 1.05 }}
+            >
+              <Image
+                src="/images/me.jpg"
+                alt="Anamol Jang Karki"
+                width={584}
+                height={584}
+                className="object-cover rounded-full w-full h-full"
+                priority
+              />
+            </MotionDiv>
+          </div>
+        </div>
+
+        {/* Projects */}
+        <section ref={projectsRef} className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
           <MotionDiv
-            key={i}
-            className="absolute w-1.5 h-1.5 bg-red rounded-full shadow-[0_0_6px_rgba(198,162,104,0.4)]"
-            initial={{ x: pos.x, y: pos.y, scale: 0 }}
-            animate={{
-              x: [null, `${Math.random() * 100}vw`],
-              y: [null, `${Math.random() * 100}vh`],
-              scale: [0, 1.2, 0],
-              opacity: [0, 0.9, 0],
-              transition: { duration: Math.random() * 6 + 3, repeat: Infinity, ease: "easeInOut" },
-            }}
-          />
-        ))}
-      </div>
-      {/* Header */}
-      <div className="relative flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 md:px-12 lg:px-24 2xl:max-w-[1920px] 2xl:mx-auto z-10">
-        <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-5xl gap-8">
-          <MotionDiv
-            className="text-center max-w-3xl"
-            initial={{ opacity: 0, scale: 0.2, y: -200 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 2, ease: "easeOut", type: "spring", stiffness: 80 }}
+            className="text-xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-6xl font-extrabold text-center mb-8 text-gold uppercase tracking-wide drop-shadow-[0_0_8px_rgba(198,162,104,0.4)] transform perspective-1000 translate-z-10"
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.2, type: "spring", stiffness: 50 }}
           >
-<h1 
-  className=" mt-10 text-4xl sm:text-4xl md:text-4xl lg:text-[3rem] 2xl:text-[3rem] font-extrabold tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-gold to-[#a88c4f] drop-shadow-[0_0_10px_rgba(198,162,104,0.5)] animate-pulse md:hidden"
->
-  {intro.name}
-</h1>
-            <MotionDiv
-              className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl 2xl:text-6xl font-bold text-gold/80 mt-6"
-              initial={{ opacity: 0, y: 100 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
-            >
-              {intro.title}
-            </MotionDiv>
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl 2xl:text-2xl italic mt-4 max-w-3xl mx-auto text-gray-300">{intro.objective}</p>
-            <p className="text-xs sm:text-sm md:text-base lg:text-lg 2xl:text-xl mt-4 max-w-4xl mx-auto text-gray-400">{intro.description}</p>
+            PROJETS
           </MotionDiv>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 lg:gap-10 max-w-full">
+            {projects.map((project, index) => (
+              <MotionDiv
+                key={index}
+                className="bg-black/70 p-4 rounded-xl shadow-[0_0_12px_rgba(198,162,104,0.2)] hover:shadow-[0_0_20px_rgba(198,162,104,0.4)] transition-all duration-500 overflow-hidden border border-gold/10"
+                initial={{ opacity: 0, y: 150 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1.5, delay: index * 0.3, ease: "easeOut" }}
+                whileHover={{ scale: 1.05, y: -8 }}
+              >
+                <h3 className="text-base sm:text-lg md:text-xl lg:text-lg 2xl:text-lg font-bold text-gold mb-3 uppercase tracking-tight">
+                  {project.title}
+                </h3>
+                <p className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base italic text-gray-300">{project.role} | {project.period}</p>
+                <p className="mt-3 text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-gray-400">{project.description}</p>
+              </MotionDiv>
+            ))}
+          </div>
+        </section>
+
+        {/* Experiences */}
+        <section ref={experiencesRef} className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
           <MotionDiv
-  className="w-40 h-40 sm:w-48 sm:h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 2xl:w-56 2xl:h-56 rounded-full border-[8px] border-gold/40 shadow-[0_0_15px_rgba(198,162,104,0.5)]"
-  initial={{ opacity: 0, scale: 0 }}
-  animate={{ opacity: 1, scale: 1 }}
-  transition={{ duration: 2.5, delay: 1, ease: "easeOut" }}
-  whileHover={{ scale: 1.05 }}
->
-  <Image
-    src="/images/me.jpg"
-    alt="Anamol Jang Karki"
-    width={584}
-    height={584}
-    className="object-cover rounded-full w-full h-full"
-    priority
-  />
-</MotionDiv>
-        </div>
+            className="text-xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-6xl font-extrabold text-center mb-8 text-gold uppercase tracking-wide drop-shadow-[0_0_8px_rgba(198,162,104,0.4)] transform perspective-1000 translate-z-10"
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.2, type: "spring", stiffness: 50 }}
+          >
+            EXPÉRIENCES
+          </MotionDiv>
+          <div className="space-y-4 sm:space-y-6 md:space-y-8 lg:space-y-10 max-w-4xl mx-auto">
+            {experiences.map((exp, index) => (
+              <MotionDiv
+                key={index}
+                className="bg-black/70 p-4 rounded-xl shadow-[0_0_12px_rgba(198,162,104,0.2)] hover:shadow-[0_0_20px_rgba(198,162,104,0.4)] transition-all duration-500 border border-gold/10"
+                initial={{ opacity: 0, x: index % 2 === 0 ? -200 : 200 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1.5, delay: index * 0.4, ease: "easeOut" }}
+                whileHover={{ scale: 1.05, y: -8 }}
+              >
+                <h3 className="text-base sm:text-lg md:text-xl lg:text-3xl 2xl:text-4xl font-bold text-gold mb-3 uppercase tracking-tight">
+                  {exp.title}
+                </h3>
+                <p className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base italic text-gray-300">{exp.location} {exp.period}</p>
+                <p className="mt-3 text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-gray-400">{exp.description}</p>
+              </MotionDiv>
+            ))}
+          </div>
+        </section>
+
+        {/* Education */}
+        <section ref={educationRef} className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
+          <MotionDiv
+            className="text-xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-6xl font-extrabold text-center mb-8 text-gold uppercase tracking-wide drop-shadow-[0_0_8px_rgba(198,162,104,0.4)] transform perspective-1000 translate-z-10"
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.2, type: "spring", stiffness: 50 }}
+          >
+            ÉDUCATION
+          </MotionDiv>
+          <div className="space-y-4 sm:space-y-6 md:space-y-8 lg:space-y-10 max-w-4xl mx-auto">
+            {education.map((edu, index) => (
+              <MotionDiv
+                key={index}
+                className="bg-black/70 p-4 rounded-xl shadow-[0_0_12px_rgba(198,162,104,0.2)] hover:shadow-[0_0_20px_rgba(198,162,104,0.4)] transition-all duration-500 border border-gold/10"
+                initial={{ opacity: 0, x: index % 2 === 0 ? -200 : 200 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1.5, delay: index * 0.4, ease: "easeOut" }}
+                whileHover={{ scale: 1.05, y: -8 }}
+              >
+                <h3 className="text-base sm:text-lg md:text-xl lg:text-3xl 2xl:text-4xl font-bold text-gold mb-3 uppercase tracking-tight">
+                  {edu.title}
+                </h3>
+                <p className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base italic text-gray-300">{edu.institution} {edu.period}</p>
+                <p className="mt-3 text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-gray-400">{edu.description}</p>
+              </MotionDiv>
+            ))}
+          </div>
+        </section>
+
+        {/* Skills */}
+        <section ref={skillsRef} className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
+          <MotionDiv
+            className="text-xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-6xl font-extrabold text-center mb-8 text-gold uppercase tracking-wide drop-shadow-[0_0_8px_rgba(198,162,104,0.4)] transform perspective-1000 translate-z-10"
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.2, type: "spring", stiffness: 50 }}
+          >
+            COMPÉTENCES
+          </MotionDiv>
+          <div className="space-y-8 lg:space-y-10 2xl:space-y-12">
+            <div>
+              <h4 className="text-base sm:text-lg md:text-xl lg:text-3xl 2xl:text-4xl font-bold text-gold mb-6 text-center uppercase">
+                SOFT SKILLS
+              </h4>
+              <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 max-w-4xl mx-auto">
+                {skills.soft.map((skill, index) => (
+                  <MotionDiv
+                    key={skill.name}
+                    className="flex items-center px-3 py-1 bg-gold/20 rounded-full text-gold text-sm sm:text-base md:text-lg lg:text-xl shadow-[0_0_6px_rgba(198,162,104,0.3)] hover:bg-gold/40 transition-all duration-300"
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 1.2, delay: index * 0.2, ease: "easeOut" }}
+                    whileHover={{ scale: 1.15, y: -4 }}
+                  >
+                    <span className="mr-2" dangerouslySetInnerHTML={{ __html: skill.icon }} />
+                    {skill.name}
+                  </MotionDiv>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="text-base sm:text-lg md:text-xl lg:text-3xl 2xl:text-4xl font-bold text-gold mb-6 text-center uppercase">
+                OUTILS
+              </h4>
+              <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 max-w-4xl mx-auto">
+                {skills.tools.map((tool, index) => (
+                  <MotionDiv
+                    key={tool}
+                    className="px-3 py-1 bg-gold/20 rounded-full text-gold text-sm sm:text-base md:text-lg lg:text-xl shadow-[0_0_6px_rgba(198,162,104,0.3)] hover:bg-gold/40 transition-all duration-300"
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 1.2, delay: index * 0.2, ease: "easeOut" }}
+                    whileHover={{ scale: 1.15, y: -4 }}
+                  >
+                    {tool}
+                  </MotionDiv>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="py-12 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto text-center z-10">
+          <MotionDiv
+            initial={{ opacity: 0, y: 150, scale: 0.5 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 1.5, type: "spring", stiffness: 60 }}
+          >
+            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl 2xl:text-4xl mb-6 text-gold uppercase">
+              RETROUVEZ-MOI SUR
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4 md:gap-6 lg:gap-8">
+              <MotionDiv className="flex items-center text-sm sm:text-base md:text-lg lg:text-xl 2xl:text-2xl text-gold" whileHover={{ scale: 1.15, y: -4, color: "#a88c4f" }} transition={{ duration: 0.4 }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c6a268" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" /></svg>
+                <a href="https://www.linkedin.com/in/anamoljang/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              </MotionDiv>
+              <MotionDiv className="flex items-center text-sm sm:text-base md:text-lg lg:text-xl 2xl:text-2xl text-gold" whileHover={{ scale: 1.15, y: -4, color: "#a88c4f" }} transition={{ duration: 0.4 }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c6a268" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" /></svg>
+                <a href="https://github.com/ajk-5" target="_blank" rel="noopener noreferrer">GitHub</a>
+              </MotionDiv>
+              <MotionDiv className="flex items-center text-sm sm:text-base md:text-lg lg:text-xl 2xl:text-2xl text-gold" whileHover={{ scale: 1.15, y: -4, color: "#a88c4f" }} transition={{ duration: 0.4 }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c6a268" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
+                <a href="mailto:anamoljang@gmail.com">anamoljang@gmail.com</a>
+              </MotionDiv>
+            </div>
+          </MotionDiv>
+        </footer>
+
+        {/* Global Styles */}
+        <style jsx global>{`
+          @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(2px, 2px); }
+            100% { transform: translate(0); }
+          }
+          @keyframes pulse {
+            0% { text-shadow: 0 0 6px rgba(198, 162, 104, 0.3); }
+            50% { text-shadow: 0 0 12px rgba(198, 162, 104, 0.6); }
+            100% { text-shadow: 0 0 6px rgba(198, 162, 104, 0.3); }
+          }
+          .animate-glitch { animation: glitch 0.3s infinite steps(1); }
+          .animate-pulse { animation: pulse 2s infinite; }
+          .perspective-1000 { perspective: 1000px; }
+          .translate-z-10 { transform: translateZ(10px); }
+        `}</style>
       </div>
-
-      {/* Projects */}
-      <section className="relative py-20 px-4 sm:px-6 md:px-12 lg:px-24 2xl:max-w-[1920px] 2xl:mx-auto z-10">
-        <MotionDiv
-          className="text-2xl sm:text-5xl md:text-6xl lg:text-8xl 2xl:text-[6rem] font-extrabold text-center mb-12 text-gold uppercase tracking-wide drop-shadow-[0_0_10px_rgba(198,162,104,0.5)] transform perspective-1000 translate-z-10"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.5, type: "spring", stiffness: 60 }}
-        >
-          PROJETS
-        </MotionDiv>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 sm:gap-8 md:gap-10 lg:gap-12 max-w-full">
-          {projects.map((project, index) => (
-            <MotionDiv
-              key={index}
-              className="relative bg-black/70 p-6 rounded-2xl shadow-[0_0_15px_rgba(198,162,104,0.2)] hover:shadow-[0_0_25px_rgba(198,162,104,0.5)] transition-all duration-700 overflow-hidden border border-gold/10 transform perspective-1000 translate-z-10"
-              initial={{ opacity: 0, y: 200 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.8, delay: index * 0.4, ease: "easeOut" }}
-              whileHover={{ scale: 1.1, y: -10, translateZ: 20 }}
-            >
-              <div className="absolute inset-0 bg-gold/ animate-[glitch_2s_infinite] pointer-events-none"></div>
-              <h3 className="text-lg sm:text-xl md:text-2xl lg:text-xl 2xl:text-xl font-bold text-gold mb-4 uppercase tracking-tight">
-                {project.title}
-              </h3>
-              <p className="text-xs sm:text-sm md:text-base lg:text-lg 2xl:text-xl italic text-gray-300">{project.role} | {project.period}</p>
-              <p className="mt-4 text-xs sm:text-sm md:text-base lg:text-lg 2xl:text-xl text-gray-400">{project.description}</p>
-            </MotionDiv>
-          ))}
-        </div>
-      </section>
-
-      {/* Experiences */}
-      <section className="relative py-20 px-4 sm:px-6 md:px-12 lg:px-24 2xl:max-w-[1920px] 2xl:mx-auto z-10">
-        <MotionDiv
-          className="text-2xl sm:text-5xl md:text-6xl lg:text-8xl 2xl:text-[6rem] font-extrabold text-center mb-12 text-gold uppercase tracking-wide drop-shadow-[0_0_10px_rgba(198,162,104,0.5)] transform perspective-1000 translate-z-10"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.5, type: "spring", stiffness: 60 }}
-        >
-          EXPÉRIENCES
-        </MotionDiv>
-        <div className="space-y-6 sm:space-y-8 md:space-y-10 lg:space-y-12 max-w-5xl mx-auto">
-          {experiences.map((exp, index) => (
-            <MotionDiv
-              key={index}
-              className="bg-black/70 p-6 rounded-2xl shadow-[0_0_15px_rgba(198,162,104,0.2)] hover:shadow-[0_0_25px_rgba(198,162,104,0.5)] transition-all duration-700 border border-gold/10 transform perspective-1000 translate-z-10"
-              initial={{ opacity: 0, x: index % 2 === 0 ? -300 : 300 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 2, delay: index * 0.5, ease: "easeOut" }}
-              whileHover={{ scale: 1.05, y: -10, translateZ: 20 }}
-            >
-              <h3 className="text-lg sm:text-xl md:text-2xl lg:text-4xl 2xl:text-5xl font-bold text-gold mb-4 uppercase tracking-tight">
-                {exp.title}
-              </h3>
-              <p className="text-xs sm:text-sm md:text-base lg:text-lg 2xl:text-xl italic text-gray-300">{exp.location} {exp.period}</p>
-              <p className="mt-4 text-xs sm:text-sm md:text-base lg:text-lg 2xl:text-xl text-gray-400">{exp.description}</p>
-            </MotionDiv>
-          ))}
-        </div>
-      </section>
-
-      {/* Education */}
-      <section className="relative py-20 px-4 sm:px-6 md:px-12 lg:px-24 2xl:max-w-[1920px] 2xl:mx-auto z-10">
-        <MotionDiv
-          className="text-2xl sm:text-5xl md:text-6xl lg:text-8xl 2xl:text-[6rem] font-extrabold text-center mb-12 text-gold uppercase tracking-wide drop-shadow-[0_0_10px_rgba(198,162,104,0.5)] transform perspective-1000 translate-z-10"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.5, type: "spring", stiffness: 60 }}
-        >
-          ÉDUCATION
-        </MotionDiv>
-        <div className="space-y-6 sm:space-y-8 md:space-y-10 lg:space-y-12 max-w-5xl mx-auto">
-          {education.map((edu, index) => (
-            <MotionDiv
-              key={index}
-              className="bg-black/70 p-6 rounded-2xl shadow-[0_0_15px_rgba(198,162,104,0.2)] hover:shadow-[0_0_25px_rgba(198,162,104,0.5)] transition-all duration-700 border border-gold/10 transform perspective-1000 translate-z-10"
-              initial={{ opacity: 0, x: index % 2 === 0 ? -300 : 300 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 2, delay: index * 0.5, ease: "easeOut" }}
-              whileHover={{ scale: 1.05, y: -10, translateZ: 20 }}
-            >
-              <h3 className="text-lg sm:text-xl md:text-2xl lg:text-4xl 2xl:text-5xl font-bold text-gold mb-4 uppercase tracking-tight">
-                {edu.title}
-              </h3>
-              <p className="text-xs sm:text-sm md:text-base lg:text-lg 2xl:text-xl italic text-gray-300">{edu.institution} {edu.period}</p>
-              <p className="mt-4 text-xs sm:text-sm md:text-base lg:text-lg 2xl:text-xl text-gray-400">{edu.description}</p>
-            </MotionDiv>
-          ))}
-        </div>
-      </section>
-
-      {/* Skills */}
-      <section className="relative py-20 px-4 sm:px-6 md:px-12 lg:px-24 2xl:max-w-[1920px] 2xl:mx-auto z-10">
-        <MotionDiv
-          className="text-2xl sm:text-5xl md:text-6xl lg:text-8xl 2xl:text-[6rem] font-extrabold text-center mb-12 text-gold uppercase tracking-wide drop-shadow-[0_0_10px_rgba(198,162,104,0.5)] transform perspective-1000 translate-z-10"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.5, type: "spring", stiffness: 60 }}
-        >
-          COMPÉTENCES
-        </MotionDiv>
-        <div className="space-y-10 lg:space-y-12 2xl:space-y-16">
-          <div>
-            <h4 className="text-lg sm:text-xl md:text-2xl lg:text-4xl 2xl:text-5xl font-bold text-gold mb-8 text-center uppercase">
-              SOFT SKILLS
-            </h4>
-            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-10 max-w-5xl mx-auto">
-              {skills.soft.map((skill, index) => (
-                <MotionDiv
-                  key={skill.name}
-                  className="flex items-center px-4 py-2 bg-gold/20 rounded-full text-gold text-base sm:text-lg md:text-xl lg:text-2xl shadow-[0_0_8px_rgba(198,162,104,0.3)] hover:bg-gold/40 transition-all duration-300 transform perspective-1000 translate-z-10"
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 1.5, delay: index * 0.2, ease: "easeOut" }}
-                  whileHover={{ scale: 1.2, y: -5, translateZ: 20 }}
-                >
-                  <span className="mr-2" dangerouslySetInnerHTML={{ __html: skill.icon }} />
-                  {skill.name}
-                </MotionDiv>
-              ))}
-            </div>
-          </div>
-          <div>
-            <h4 className="text-lg sm:text-xl md:text-2xl lg:text-4xl 2xl:text-5xl font-bold text-gold mb-8 text-center uppercase">
-              OUTILS
-            </h4>
-            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-10 max-w-5xl mx-auto">
-              {skills.tools.map((tool, index) => (
-                <MotionDiv
-                  key={tool}
-                  className="px-4 py-2 bg-gold/20 rounded-full text-gold text-base sm:text-lg md:text-xl lg:text-2xl shadow-[0_0_8px_rgba(198,162,104,0.3)] hover:bg-gold/40 transition-all duration-300 transform perspective-1000 translate-z-10"
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 1.5, delay: index * 0.2, ease: "easeOut" }}
-                  whileHover={{ scale: 1.2, y: -5, translateZ: 20 }}
-                >
-                  {tool}
-                </MotionDiv>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="relative py-16 px-4 sm:px-6 md:px-12 lg:px-24 2xl:max-w-[1920px] 2xl:mx-auto text-center z-10">
-        <MotionDiv
-          initial={{ opacity: 0, y: 200, scale: 0.5 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 2, type: "spring", stiffness: 70 }}
-        >
-          <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl 2xl:text-5xl mb-8 text-gold uppercase">
-            RETROUVEZ-MOI SUR
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-6 md:gap-8 lg:gap-10">
-            <MotionDiv
-              className="flex items-center text-base sm:text-lg md:text-xl lg:text-2xl 2xl:text-3xl text-gold"
-              whileHover={{ scale: 1.2, y: -5, color: "#a88c4f" }}
-              transition={{ duration: 0.5 }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c6a268" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                <rect x="2" y="9" width="4" height="12" />
-                <circle cx="4" cy="4" r="2" />
-              </svg>
-              <a href="https://www.linkedin.com/in/anamoljang/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-            </MotionDiv>
-            <MotionDiv
-              className="flex items-center text-base sm:text-lg md:text-xl lg:text-2xl 2xl:text-3xl text-gold"
-              whileHover={{ scale: 1.2, y: -5, color: "#a88c4f" }}
-              transition={{ duration: 0.5 }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c6a268" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
-              </svg>
-              <a href="https://github.com/ajk-5" target="_blank" rel="noopener noreferrer">GitHub</a>
-            </MotionDiv>
-            <MotionDiv
-              className="flex items-center text-base sm:text-lg md:text-xl lg:text-2xl 2xl:text-3xl text-gold"
-              whileHover={{ scale: 1.2, y: -5, color: "#a88c4f" }}
-              transition={{ duration: 0.5 }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c6a268" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                <polyline points="22,6 12,13 2,6" />
-              </svg>
-              <a href="mailto:anamoljang@gmail.com">anamoljang@gmail.com</a>
-            </MotionDiv>
-          </div>
-        </MotionDiv>
-      </footer>
-
-      {/* Global Styles */}
-      <style jsx global>{`
-        @keyframes glitch {
-          0% { transform: translate(0); }
-          20% { transform: translate(-2px, 2px); }
-          40% { transform: translate(2px, -2px); }
-          60% { transform: translate(-2px, -2px); }
-          80% { transform: translate(2px, 2px); }
-          100% { transform: translate(0); }
-        }
-        @keyframes pulse {
-          0% { text-shadow: 0 0 8px rgba(198, 162, 104, 0.4); }
-          50% { text-shadow: 0 0 15px rgba(198, 162, 104, 0.7); }
-          100% { text-shadow: 0 0 8px rgba(198, 162, 104, 0.4); }
-        }
-        .animate-glitch { animation: glitch 0.3s infinite steps(1); }
-        .animate-pulse { animation: pulse 2s infinite; }
-        .perspective-1000 { perspective: 1000px; }
-        .translate-z-10 { transform: translateZ(10px); }
-      `}</style>
     </div>
   );
 }

@@ -27,14 +27,14 @@ const NavBar: React.FC = () => {
             <div className="inline-flex items-center gap-2">
 <Link href="/">
   <Image
-    className="inline-flex items-center w-[60px] md:w-[100px] h-auto"
+    className="inline-flex items-center w-[80px] md:w-[100px] h-auto"
     src="/images/logo.png"
     alt="Anamol Karki Logo"
-    width={60}
+    width={80}
     height={100}
    
   />
-  <h1 className="text-[2rem] font-semibold text-gold  hidden md:inline">ANAMOL JANG KARKI</h1>
+  <h1 className="text-[2.5rem] font-semibold text-gold  hidden md:inline">ANAMOL JANG KARKI</h1>
 </Link>
 
 </div>
