@@ -14,13 +14,13 @@ export default {
         gold: "#c6a268",
         
       },
-    }, 
+   
         fontSize: {
           'tiny': '0.75rem',
           'small': '0.875rem',
           'base': '1rem',
-          'large': '1.225rem',
-          'xl': '1.55rem',
+          'large': '1.125rem',
+          'xl': '1.25rem',
         },
         screens: {
           'sm': '640px',
@@ -29,7 +29,7 @@ export default {
           'xl': '1280px',
           '2xl': '1536px',
         },
-      
+      }, 
   },
   plugins: [],
 } satisfies Config;
