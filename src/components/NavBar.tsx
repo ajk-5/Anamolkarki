@@ -3,10 +3,10 @@ import Link from "next/link";
 import Image from "next/image";
 
 const navItems = [
-
-  { href: "/", label: "Bar" },
+  { href: "/", label: "Informatique" },
+  { href: "/Bar", label: "Bar" },
   { href: "/user", label: <Image
-    src="/images/menu.svg"
+    src="/images/user.svg"
     alt="menu"
     width={40}
     height={40}
