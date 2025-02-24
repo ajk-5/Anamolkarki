@@ -111,14 +111,14 @@ const experiences: Experience[] = [
   { role: "Serveur", establishment: "Les Empotés", type: "Traiteur", location: "92000 - Nanterre", period: "09/2023", contract: "Extra" },
   { role: "Barman", establishment: "Quartier Vavin", type: "Café - restaurant", location: "75006 - Paris", period: "09/2023", contract: "Extra" },
   { role: "Barman", establishment: "Villa Mikuna", type: "Brasserie chic", location: "75009 - Paris", period: "09/2023", contract: "Extra" },
-  { role: "Barman", establishment: "Café du Trocadéro", type: "Café - restaurant", location: "75016 - Paris", period: "06/2023 - 09/2023", contract: "CDA" },
+  { role: "Barman", establishment: "Café du Trocadéro", type: "Café - restaurant", location: "75016 - Paris", period: "06/2023 - 09/2023", contract: "CDi" },
   { role: "Barman", establishment: "Summer Act", type: "Bar", location: "75011 - Paris", period: "03/2023 -", contract: "CDA" },
   { role: "Barman", establishment: "Café Carrousel", type: "Café - restaurant", location: "75001 - Paris", period: "03/2023 -", contract: "CDA" },
   { role: "Barman", establishment: "Bazturo", type: "Bar-restaurant", location: "75006 - Paris", period: "03/2023 -", contract: "CDA" },
   { role: "Barman", establishment: "Le Biscornu", type: "Bar-club", location: "75002 - Paris", period: "03/2023 -", contract: "CDA" },
   { role: "Barman", establishment: "Le Verre Siffleur", type: "Autres", location: "75014 - Paris", period: "03/2023 -", contract: "CDA" },
-  { role: "Barman", establishment: "Salamnamaste", type: "Restaurant chic", location: "94000 - Créteil", period: "03/2023 -", contract: "CDA" },
-  { role: "Barman", establishment: "Jardin du Prince", type: "Restaurant asiatique", location: "94000 - Créteil", period: "03/2023 -", contract: "CDA" },
+  { role: "Barman", establishment: "Salamnamaste", type: "Restaurant chic", location: "94000 - Créteil", period: "03/2022 -", contract: "CDA" },
+  { role: "Barman", establishment: "Jardin du Prince", type: "Restaurant ", location: "94000 - Créteil", period: "03/2021 -", contract: "CDA" },
 ];
 
 export default function BarCV() {
