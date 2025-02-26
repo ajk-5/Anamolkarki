@@ -92,6 +92,7 @@ export default function Home() {
   const experiencesRef = useRef<HTMLDivElement>(null);
   const educationRef = useRef<HTMLDivElement>(null);
   const skillsRef = useRef<HTMLDivElement>(null);
+  const contactRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const positions = Array.from({ length: 50 }, () => ({
@@ -163,6 +164,9 @@ export default function Home() {
           </button>
           <button onClick={() => scrollToSection(skillsRef)} className="text-gold hover:text-gold/70 transition-colors flex items-center">
             <span className="mr-2">🛠️</span> Compétences
+          </button>
+          <button onClick={() => scrollToSection(contactRef)} className="text-gold hover:text-gold/70 transition-colors flex items-center">
+            <span className="mr-2">🛠️</span> Contact
           </button>
         </nav>
       </div>
@@ -377,7 +381,8 @@ export default function Home() {
 
         {/* Footer */}
         <footer className="py-12 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto text-center z-10">
-          <MotionDiv
+         
+        <section ref={contactRef}> <MotionDiv
             initial={{ opacity: 0, y: 150, scale: 0.5 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 1.5, type: "spring", stiffness: 60 }}
@@ -400,6 +405,7 @@ export default function Home() {
               </MotionDiv>
             </div>
           </MotionDiv>
+          </section>
         </footer>
 
         {/* Global Styles */}
