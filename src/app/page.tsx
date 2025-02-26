@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { MotionDiv } from "@/components/MotionDiv";
 import { useEffect, useState, useRef } from "react";
+import { motion } from "framer-motion";
 
 // Define types for data structures (unchanged)
 interface Intro {
@@ -36,6 +37,7 @@ interface Education {
 interface Skill {
   name: string;
   icon: string;
+  description:string;
 }
 
 interface Skills {
@@ -75,11 +77,36 @@ const education: Education[] = [
 
 const skills: Skills = {
   soft: [
-    { name: "RÉSOLUTION DE PROBLÈMES", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c6a268" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/><path d="M12 14l4-4"/><path d="M12 14l-4-4"/></svg>' },
-    { name: "COMMUNICATION", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c6a268" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>' },
-    { name: "ADAPTABILITÉ", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c6a268" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M9 9l6 6"/><path d="M15 9l-6 6"/></svg>' },
-    { name: "TRAVAIL D’ÉQUIPE", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c6a268" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' },
-    { name: "GESTION DU TEMPS", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c6a268" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' },
+    {
+      name: "RÉSOLUTION DE PROBLÈMES",
+      icon: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='#c6a268' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z'/><path d='M12 14l4-4'/><path d='M12 14l-4-4'/></svg>",
+      description:
+        "J’aime résoudre des problèmes et trouver des solutions efficaces. J’ai un bon raisonnement logique et une forte capacité d’analyse. Les défis me motivent, et je prends plaisir à surmonter des obstacles, que ce soit en mathématiques, en programmation ou dans la vie quotidienne."
+    },
+    {
+      name: "COMMUNICATION",
+      icon: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='#c6a268' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z'/></svg>",
+      description:
+        "Je peux communiquer ecrit/orale dans plusieurs langues : français, anglais, népalais et hindi. Je comprends aussi bien l’ourdou et je commence à apprendre l’espagnol. Je suis une personne souriante et ouverte, ce qui me permet de bien interagir avec les autres."
+    },
+    {
+      name: "ADAPTABILITÉ",
+      icon: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='#c6a268' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 4h16v16H4z'/><path d='M9 9l6 6'/><path d='M15 9l-6 6'/></svg>",
+      description:
+        "Je m’adapte facilement aux nouvelles situations et environnements. En arrivant en France en 2020, pendant le confinement et sans parler français, j’ai réussi à m’intégrer et à apprendre la langue. Mon expérience en tant qu’auto-entrepreneur m’a aussi appris à travailler dans des contextes variés et à gérer l’inconnu."
+    },
+    {
+      name: "TRAVAIL D’ÉQUIPE",
+      icon: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='#c6a268' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M23 21v-2a4 4 0 0 0-3-3.87'/><path d='M16 3.13a4 4 0 0 1 0 7.75'/></svg>",
+      description:
+        "J’ai travaillé sur plusieurs projets en équipe et je connais bien les méthodes Agiles et Scrum. Je sais collaborer efficacement, écouter les autres et organiser le travail pour atteindre un objectif commun."
+    },
+    {
+      name: "GESTION DU TEMPS",
+      icon: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='#c6a268' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='10'/><polyline points='12 6 12 12 16 14'/></svg>",
+      description:
+        "Je sais bien gérer mon temps et équilibrer ma vie scolaire et professionnelle. Grâce à mon organisation et ma discipline, j’ai pu avancer dans mes études tout en ayant des expériences professionnelles enrichissantes."
+    }
   ],
   tools: ["PHOTOSHOP", "SUITES COLLABORATIVES", "FIGMA/CANVA", "JIRA/TRELLO", "GITHUB/GITLAB", "DOCKER",],
 };
@@ -87,6 +114,7 @@ const skills: Skills = {
 export default function Home() {
   const [particlePositions, setParticlePositions] = useState<ParticlePosition[]>([]);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false); // State to toggle sidebar visibility
+  const [selectedSkill, setSelectedSkill] = useState<number | null>(null);
   const introRef = useRef<HTMLDivElement>(null);
   const projectsRef = useRef<HTMLDivElement>(null);
   const experiencesRef = useRef<HTMLDivElement>(null);
@@ -166,7 +194,7 @@ export default function Home() {
             <span className="mr-2">🛠️</span> Compétences
           </button>
           <button onClick={() => scrollToSection(contactRef)} className="text-gold hover:text-gold/70 transition-colors flex items-center">
-            <span className="mr-2">🛠️</span> Contact
+            <span className="mr-2">📞</span> Contact
           </button>
         </nav>
       </div>
@@ -328,35 +356,41 @@ export default function Home() {
 
         {/* Skills */}
         <section ref={skillsRef} className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
-          <MotionDiv
-            className="text-xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-6xl font-extrabold text-center mb-8 text-gold uppercase tracking-wide drop-shadow-[0_0_8px_rgba(198,162,104,0.4)] transform perspective-1000 translate-z-10"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, type: "spring", stiffness: 50 }}
+     <div className="space-y-8 lg:space-y-10 2xl:space-y-12">
+  <h4 className="text-lg md:text-xl lg:text-3xl font-bold text-gold mb-6 text-center uppercase">
+    SOFT SKILLS
+  </h4>
+  <div className="flex flex-wrap justify-center gap-4 md:gap-6 lg:gap-8 max-w-4xl mx-auto">
+    {skills.soft.map((skill, index) => (
+      <motion.div
+        key={index}
+        className={`relative flex flex-col items-center p-4 w-64 md:w-80 rounded-xl shadow-md cursor-pointer transition-all duration-300 ${
+          selectedSkill === index ? "bg-gold/40" : "bg-gold/20"
+        }`}
+        onClick={() => setSelectedSkill(selectedSkill === index ? null : index)}
+        initial={{ scale: 1 }}
+        whileHover={{ scale: 1.05 }}
+      >
+        <div className="text-gold text-sm sm:text-base md:text-lg lg:text-xl flex items-center gap-2">
+          <span dangerouslySetInnerHTML={{ __html: skill.icon }} />
+          {skill.name}
+        </div>
+        
+        {selectedSkill === index && (
+          <motion.p
+            className="mt-2 text-sm md:text-base text-gold px-2"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
           >
-            COMPÉTENCES
-          </MotionDiv>
-          <div className="space-y-8 lg:space-y-10 2xl:space-y-12">
-            <div>
-              <h4 className="text-base sm:text-lg md:text-xl lg:text-3xl 2xl:text-4xl font-bold text-gold mb-6 text-center uppercase">
-                SOFT SKILLS
-              </h4>
-              <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 max-w-4xl mx-auto">
-                {skills.soft.map((skill, index) => (
-                  <MotionDiv
-                    key={skill.name}
-                    className="flex items-center px-3 py-1 bg-gold/20 rounded-full text-gold text-sm sm:text-base md:text-lg lg:text-xl shadow-[0_0_6px_rgba(198,162,104,0.3)] hover:bg-gold/40 transition-all duration-300"
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 1.2, delay: index * 0.2, ease: "easeOut" }}
-                    whileHover={{ scale: 1.15, y: -4 }}
-                  >
-                    <span className="mr-2" dangerouslySetInnerHTML={{ __html: skill.icon }} />
-                    {skill.name}
-                  </MotionDiv>
-                ))}
-              </div>
-            </div>
+            {skill.description}
+          </motion.p>
+        )}
+      </motion.div>
+    ))}
+  </div>
+</div>
+
             <div>
               <h4 className="text-base sm:text-lg md:text-xl lg:text-3xl 2xl:text-4xl font-bold text-gold mb-6 text-center uppercase">
                 OUTILS
@@ -365,7 +399,7 @@ export default function Home() {
                 {skills.tools.map((tool, index) => (
                   <MotionDiv
                     key={tool}
-                    className="px-3 py-1 bg-gold/20 rounded-full text-gold text-sm sm:text-base md:text-lg lg:text-xl shadow-[0_0_6px_rgba(198,162,104,0.3)] hover:bg-gold/40 transition-all duration-300"
+                    className="px-3 py-1 bg-gold/20 rounded-xl text-gold text-sm sm:text-base md:text-lg lg:text-xl shadow-[0_0_6px_rgba(198,162,104,0.3)] hover:bg-gold/40 transition-all duration-300"
                     initial={{ opacity: 0, scale: 0 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1.2, delay: index * 0.2, ease: "easeOut" }}
@@ -376,7 +410,7 @@ export default function Home() {
                 ))}
               </div>
             </div>
-          </div>
+         
         </section>
 
         {/* Footer */}
