@@ -3,7 +3,7 @@ import RegistrationForm from "@/components/RegistrationForm";
 import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "log in",
-  description: "my pbbcvbvcbvce",
+  description: "my login",
 };
 
 export default function User() {
