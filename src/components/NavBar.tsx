@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 
 // Dropdown items
 const dropdownItems = [
@@ -15,6 +16,7 @@ const dropdownItems = [
 const NavBar: React.FC = () => {
   const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -23,8 +25,10 @@ const NavBar: React.FC = () => {
   const selectedRole = isMounted ? (pathname === "/Bar" ? "Barman" : "Développeur") : "Développeur";
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 p-3 bg-transparent">
-      <div className="flex items-center gap-2">
+    <nav className="fixed top-0 left-0 w-full  p-3 bg-gray-100 z-30">
+      {/* Moving Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-to-r from-teal-500 via-emerald-400 to-indigo-500 animate-movingGradient"></div>
+      <div className="relative flex items-center gap-2 bg-white/70 backdrop-blur-sm p-3 rounded-xl shadow-lg border border-teal-400 max-w-4xl mx-auto">
         {/* Logo and Name */}
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center">
@@ -35,27 +39,53 @@ const NavBar: React.FC = () => {
               width={100}
               height={100}
             />
-            <h1 className="hidden md:inline text-lg md:text-2xl lg:text-3xl font-semibold text-gold">
+            <h1 className="hidden md:inline text-lg md:text-2xl lg:text-3xl font-semibold text-teal-800">
               ANAMOL JANG KARKI
             </h1>
           </Link>
         </div>
 
         {/* Navigation */}
-        <ul className="flex items-center space-x-4">
-          <li className="text-sm md:text-lg lg:text-xl text-gold relative group flex items-center">
+        <ul className="flex items-center space-x-4 ml-auto">
+          <li 
+            className="text-sm md:text-lg lg:text-xl text-teal-800 relative flex items-center"
+            onMouseEnter={() => setIsDropdownOpen(true)}
+            onMouseLeave={() => setIsDropdownOpen(false)}
+          >
             Portfolio en tant que
             <div className="relative ml-2">
               <span
-                className="inline-block px-4 py-1 bg-black border-2 border-gold rounded-lg shadow-md text-base md:text-lg lg:text-xl transition duration-300 cursor-pointer"
+                className="inline-flex items-center justify-between gap-2 px-4 py-1 bg-teal-600/10 border-2 border-teal-400 rounded-lg shadow-md text-base md:text-lg lg:text-xl text-teal-800 transition duration-300 cursor-pointer"
               >
                 {selectedRole}
+                <motion.div
+                  animate={{ 
+                    rotate: isDropdownOpen ? 180 : 0
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width="16" 
+                    height="16" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="#0f766e" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </motion.div>
               </span>
 
               {/* Dropdown Menu */}
-              <ul className="absolute top-full left-0 mt-1 bg-black border border-gray-600 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transform scale-y-0 group-hover:scale-y-100 origin-top transition duration-300">
+              <ul className={`absolute top-full left-0 mt-1 bg-white/70 backdrop-blur-sm border border-teal-400 rounded-md shadow-lg transition-all duration-300 ${
+                isDropdownOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-0"
+              } origin-top`}>
                 {dropdownItems.map((item, index) => (
-                  <li key={index} className="text-sm md:text-base text-gold hover:bg-gray-700 p-2">
+                  <li key={index} className="text-sm md:text-base text-teal-800 hover:bg-teal-600/30 p-2">
                     <Link href={item.href} className="block w-full text-center">
                       {item.label}
                     </Link>
