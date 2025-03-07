@@ -2,9 +2,8 @@
 
 import Image from "next/image";
 import { MotionDiv } from "@/components/MotionDiv";
-import {  useState, useRef } from "react";
+import { useState, useRef } from "react";
 import TealParticles from "@/components/TealParticle";
-
 
 interface Qualification {
   title: string;
@@ -28,18 +27,28 @@ interface Experience {
 }
 
 interface Intro {
-    name: string;
-    title: string;
-    objective: string;
-    description: string;
-  }
+  name: string;
+  title: string;
+  objective: string;
+  description: string[]; // Changed to string array for bullet points
+}
+
 // Data based on your CV
 const intro: Intro = {
-    name: "ANAMOL JANG KARKI",
-    title: "Barman Expérimenté Mixologue & Barista | Auto-Entrepreneur",
-    objective: "",
-    description: "Origine : Népalais, 23 ans • Plus de 4 ans d’expérience en tant que BARMAN dans plus de 35 établissements : restaurants, brasseries chics, bateaux, bars, clubs, événements, boîtes de nuit • Super connaissance de tous les cocktails classiques • Pleine expérience au bar à boissons chaudes • 5 mois d’expérience en tant que CHEF DE RANG/SERVEUR • Sens du service et habile avec le plateau • Jeune, souriant et professionnel • Véhiculé, à l’aise avec le travail tard le soir",
-  };
+  name: "ANAMOL JANG KARKI",
+  title: "Barman Expérimenté Mixologue & Barista | Auto-Entrepreneur",
+  objective: "",
+  description: [
+    "Origine : Népalais, 23 ans",
+    "Plus de 4 ans d’expérience comme barman dans plus de 35 établissements (restaurants, brasseries chics, bateaux, bars, clubs, événements, boîtes de nuit)",
+    "Excellente maîtrise des cocktails classiques",
+    "Expérience complète au bar à boissons chaudes",
+    "5 mois d’expérience en tant que chef de rang/serveur",
+    "Sens du service et habilité avec le plateau",
+    "Jeune, souriant et professionnel",
+    "Véhiculé, à l’aise avec le travail tard le soir",
+  ],
+};
 
 const qualifications: Qualification[] = [
   { title: "Barman" },
@@ -119,7 +128,6 @@ const experiences: Experience[] = [
 ];
 
 export default function BarCV() {
-
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
   const introRef = useRef<HTMLDivElement>(null);
@@ -127,8 +135,6 @@ export default function BarCV() {
   const skillsRef = useRef<HTMLDivElement>(null);
   const languagesRef = useRef<HTMLDivElement>(null);
   const experiencesRef = useRef<HTMLDivElement>(null);
-
-  
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
     if (ref.current) {
@@ -141,8 +147,8 @@ export default function BarCV() {
   };
 
   const gradientStyle = {
-    filter: `hue-rotate(${Math.random() * 360}deg)`, // Random initial hue
-    transition: 'filter 0.5s ease-in-out'
+    filter: `hue-rotate(${Math.random() * 360}deg)`,
+    transition: "filter 0.5s ease-in-out",
   };
 
   return (
@@ -182,7 +188,7 @@ export default function BarCV() {
 
       {/* Sidebar */}
       <div
-        className={`fixed z-40  right-0 w-48 h-full bg-gradient-to-r from-teal-500 via-emerald-400 to-indigo-500 animate-movingGradient backdrop-blur-sm border-r border-teal-400  flex flex-col items-center py-6 transition-transform duration-300 shadow-lg ${
+        className={`fixed z-40 right-0 w-48 h-full bg-gradient-to-r from-teal-500 via-emerald-400 to-indigo-500 animate-movingGradient backdrop-blur-sm border-r border-teal-400 flex flex-col items-center py-6 transition-transform duration-300 shadow-lg ${
           isSidebarVisible ? "translate-x-0" : "-translate-y-full"
         }`}
       >
@@ -237,10 +243,13 @@ export default function BarCV() {
       {/* Main Content */}
       <div className="relative">
         {/* Teal Particles */}
-        <TealParticles particleCount={90}/>
+        <TealParticles particleCount={90} />
 
         {/* Intro */}
-        <div ref={introRef} className="flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
+        <div
+          ref={introRef}
+          className="flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10"
+        >
           <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-4xl gap-6">
             <MotionDiv
               className="text-center max-w-2xl"
@@ -260,8 +269,15 @@ export default function BarCV() {
               >
                 {intro.title}
               </MotionDiv>
-              <p className="text-xs sm:text-sm md:text-base lg:text-lg 2xl:text-lg italic mt-3 max-w-2xl mx-auto text-slate-600">{intro.objective}</p>
-              <p className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base mt-3 max-w-3xl mx-auto text-slate-700">{intro.description}</p>
+              <p className="text-xs sm:text-sm md:text-base lg:text-lg 2xl:text-lg italic mt-3 max-w-2xl mx-auto text-slate-600">
+                {intro.objective}
+              </p>
+              {/* Updated Description as Bullet Points */}
+              <ul className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base mt-3 max-w-3xl mx-auto text-slate-700 list-disc list-inside">
+                {intro.description.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
             </MotionDiv>
             <MotionDiv
               className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-64 lg:h-64 2xl:w-48 2xl:h-48 rounded-full border-[6px] border-teal-400 shadow-lg"
@@ -283,6 +299,7 @@ export default function BarCV() {
           </div>
         </div>
 
+        {/* Rest of the sections (Qualifications, Skills, Languages, Experiences) remain unchanged */}
         {/* Qualifications */}
         <section ref={qualificationsRef} className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
           <MotionDiv
@@ -386,7 +403,10 @@ export default function BarCV() {
                 whileHover={{ scale: 1.05, y: -8 }}
                 style={{ borderColor: `hsl(${(Math.random() * 360) % 360}, 80%, 50%)` }}
               >
-                <h3 className="text-base sm:text-lg md:text-xl lg:text-lg font-bold text-teal-800 mb-3 uppercase tracking-tight" style={gradientStyle}>
+                <h3
+                  className="text-base sm:text-lg md:text-xl lg:text-lg font-bold text-teal-800 mb-3 uppercase tracking-tight"
+                  style={gradientStyle}
+                >
                   {exp.role} - {exp.establishment}
                 </h3>
                 <p className="text-[10px] sm:text-xs md:text-sm lg:text-base italic text-slate-600">

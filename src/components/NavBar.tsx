@@ -34,7 +34,7 @@ const NavBar: React.FC = () => {
           <Link href="/" className="flex items-center">
             <Image
               className="w-[60px] md:w-[80px] lg:w-[100px] h-auto"
-              src="/images/logo.png"
+              src="/images/ajklogo.svg"
               alt="Anamol Karki Logo"
               width={100}
               height={100}
