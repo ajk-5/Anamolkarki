@@ -1,12 +1,16 @@
 "use client";
 
-import Image from "next/image";
-import { MotionDiv } from "@/components/MotionDiv";
 import { useEffect, useState, useRef } from "react";
-import { motion } from "framer-motion";
 import TealParticles from "@/components/TealParticle";
+import NavSidebar from "@/components/NavSidebar";
+import IntroSection from "@/components/IntroSection";
+import ProjectsSection from "@/components/ProjectsSection";
+import ExperiencesSection from "@/components/ExperienceSection";
+import EducationSection from "@/components/EducationSection";
+import SkillsSection from "@/components/SkillSection";
+import ContactSection from "@/components/ContactSection";
 
-// Updated interfaces with string[] for descriptions
+// Interfaces
 interface Intro {
   name: string;
   title: string;
@@ -43,10 +47,9 @@ interface Skill {
 
 interface Skills {
   soft: Skill[];
-  tools: { name: string; icon: string }[]; // Updated to include icon
+  tools: { name: string; icon: string }[];
 }
 
-// Updated data with bullet points
 const intro: Intro = {
   name: "ANAMOL JANG KARKI",
   title: "Développeur Fullstack Web / Mobile",
@@ -222,7 +225,7 @@ const skills: Skills = {
     },
     {
       name: "JIRA/TRELLO",
-      icon: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='#0f766e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='3' width='7' height='7'/><rect x='14' y='3' width='7' height='7'/><rect x='14' y='14' width='7' height='7'/><rect x='3' y='14' width='7' height='7'/></svg>"
+      icon:"<Image src='/images/Atlassian.webp' alt='Jira' width=30 height=30 />"
     },
     {
       name: "GITHUB/GITLAB",
@@ -234,443 +237,93 @@ const skills: Skills = {
     },{
   name:"LINUX",
     icon:'<svg width="30px" height="30px" viewBox="0 0 0.6 0.6" xmlns="http://www.w3.org/2000/svg" fill="none"><path fill="#202020" d="M0.5 0.451c-0.004 -0.004 -0.005 -0.012 -0.007 -0.02 -0.002 -0.008 -0.004 -0.017 -0.011 -0.023v0a0.03 0.03 0 0 0 -0.008 -0.005c0.009 -0.028 0.006 -0.056 -0.004 -0.081 -0.012 -0.031 -0.032 -0.058 -0.048 -0.076 -0.017 -0.022 -0.034 -0.043 -0.034 -0.074 0.001 -0.047 0.005 -0.134 -0.078 -0.134q-0.005 0 -0.011 0c-0.092 0.007 -0.068 0.105 -0.069 0.138 -0.002 0.024 -0.007 0.043 -0.023 0.066 -0.019 0.023 -0.046 0.06 -0.059 0.099 -0.006 0.018 -0.009 0.037 -0.006 0.055a0.037 0.037 0 0 0 -0.002 0.002c-0.006 0.006 -0.01 0.013 -0.015 0.018 -0.004 0.004 -0.011 0.006 -0.017 0.008 -0.007 0.002 -0.014 0.006 -0.019 0.015v0a0.026 0.026 0 0 0 -0.003 0.013c0 0.004 0.001 0.008 0.001 0.012 0.001 0.008 0.003 0.016 0.001 0.021 -0.005 0.015 -0.006 0.025 -0.002 0.032 0.004 0.007 0.012 0.011 0.021 0.013 0.018 0.004 0.042 0.003 0.061 0.013l0.002 -0.003 -0.002 0.003c0.02 0.011 0.041 0.014 0.057 0.011a0.037 0.037 0 0 0 0.026 -0.021c0.013 0 0.027 -0.005 0.049 -0.007 0.015 -0.001 0.034 0.005 0.056 0.004a0.03 0.03 0 0 0 0.003 0.007l0 0c0.009 0.017 0.024 0.025 0.041 0.024s0.035 -0.011 0.049 -0.029l-0.003 -0.002 0.003 0.002c0.014 -0.017 0.037 -0.024 0.052 -0.033 0.008 -0.005 0.014 -0.01 0.014 -0.019s-0.004 -0.018 -0.016 -0.03"/><path fill="#F8BF11" d="M0.509 0.481c0 0.005 -0.004 0.009 -0.011 0.013 -0.014 0.008 -0.038 0.016 -0.054 0.034 -0.014 0.016 -0.03 0.025 -0.045 0.026s-0.027 -0.005 -0.034 -0.02v0c-0.005 -0.009 -0.003 -0.022 0.001 -0.037s0.009 -0.029 0.01 -0.042v0c0.001 -0.016 0.002 -0.029 0.004 -0.04 0.003 -0.011 0.007 -0.018 0.014 -0.022l0.001 -0.001c0.001 0.013 0.007 0.027 0.019 0.03 0.013 0.003 0.031 -0.008 0.039 -0.017l0.005 0c0.007 0 0.013 0 0.019 0.005v0c0.005 0.004 0.007 0.011 0.009 0.019s0.003 0.017 0.009 0.023c0.011 0.012 0.014 0.02 0.014 0.025m-0.262 0.038v0c-0.001 0.016 -0.011 0.025 -0.025 0.028 -0.014 0.003 -0.033 0 -0.052 -0.01 -0.021 -0.011 -0.046 -0.01 -0.063 -0.013 -0.008 -0.002 -0.013 -0.004 -0.016 -0.009 -0.002 -0.005 -0.002 -0.013 0.003 -0.027v0l0 0c0.003 -0.008 0.001 -0.016 -0.001 -0.024 -0.001 -0.008 -0.002 -0.015 0.001 -0.02l0 0c0.004 -0.007 0.009 -0.009 0.015 -0.012 0.006 -0.002 0.014 -0.004 0.02 -0.01l0 0h0c0.006 -0.006 0.01 -0.013 0.015 -0.018 0.004 -0.004 0.008 -0.007 0.014 -0.007h0a0.037 0.037 0 0 1 0.003 0c0.008 0.001 0.015 0.007 0.022 0.016l0.02 0.036v0c0.005 0.011 0.017 0.023 0.026 0.036 0.01 0.012 0.017 0.025 0.016 0.035"/><path fill="#D6A312" d="M0.347 0.18c-0.002 -0.003 -0.005 -0.006 -0.011 -0.008 -0.012 -0.005 -0.017 -0.005 -0.023 -0.01 -0.011 -0.007 -0.019 -0.009 -0.026 -0.009a0.03 0.03 0 0 0 -0.01 0.002c-0.009 0.003 -0.015 0.009 -0.018 0.013 -0.001 0.001 -0.002 0.001 -0.004 0.003 -0.002 0.002 -0.006 0.004 -0.011 0.008 -0.004 0.003 -0.006 0.007 -0.004 0.012s0.006 0.011 0.015 0.016h0c0.005 0.003 0.009 0.007 0.013 0.011a0.03 0.03 0 0 0 0.007 0.004 0.03 0.03 0 0 0 0.01 0.002c0.009 0.001 0.016 -0.002 0.022 -0.006 0.006 -0.003 0.011 -0.008 0.017 -0.01h0c0.012 -0.004 0.021 -0.011 0.023 -0.018a0.012 0.012 0 0 0 0 -0.01"/><path fill="#202020" d="M0.316 0.197c-0.01 0.005 -0.021 0.011 -0.033 0.011s-0.021 -0.005 -0.028 -0.011c-0.003 -0.003 -0.006 -0.005 -0.008 -0.007 -0.004 -0.003 -0.003 -0.007 -0.002 -0.007 0.002 0 0.003 0.004 0.004 0.005 0.002 0.002 0.005 0.004 0.008 0.007 0.006 0.005 0.015 0.01 0.026 0.01s0.023 -0.006 0.031 -0.011c0.004 -0.002 0.01 -0.007 0.014 -0.01 0.003 -0.003 0.003 -0.006 0.006 -0.005s0.001 0.003 -0.003 0.007c-0.004 0.003 -0.01 0.008 -0.015 0.011"/><path fill="#ffffff" d="M0.463 0.401h-0.004c0.003 -0.01 -0.004 -0.018 -0.023 -0.027 -0.02 -0.009 -0.036 -0.008 -0.039 0.01a0.037 0.037 0 0 0 0 0.003 0.037 0.037 0 0 0 -0.004 0.002c-0.009 0.005 -0.015 0.014 -0.017 0.026s-0.004 0.025 -0.004 0.041c0 0.008 -0.004 0.018 -0.007 0.03 -0.033 0.023 -0.078 0.034 -0.117 0.007q-0.004 -0.006 -0.009 -0.012l-0.006 -0.008a0.024 0.024 0 0 0 0.01 -0.002 0.013 0.013 0 0 0 0.007 -0.007c0.002 -0.006 0 -0.015 -0.008 -0.026 -0.008 -0.01 -0.02 -0.022 -0.039 -0.033 -0.014 -0.009 -0.022 -0.019 -0.025 -0.031 -0.004 -0.011 -0.003 -0.024 0 -0.036 0.005 -0.023 0.019 -0.046 0.028 -0.061 0.002 -0.002 0.001 0.003 -0.009 0.021 -0.009 0.017 -0.025 0.055 -0.003 0.084a0.176 0.176 0 0 1 0.014 -0.063c0.012 -0.028 0.038 -0.077 0.04 -0.115 0.001 0.001 0.005 0.003 0.006 0.004 0.005 0.003 0.008 0.007 0.013 0.011a0.032 0.032 0 0 0 0.022 0.007c0.009 0 0.016 -0.003 0.022 -0.006 0.006 -0.004 0.011 -0.008 0.016 -0.009 0.01 -0.003 0.018 -0.009 0.023 -0.015 0.008 0.031 0.026 0.076 0.038 0.098 0.006 0.012 0.019 0.036 0.024 0.066q0.005 0 0.011 0.001c0.014 -0.036 -0.012 -0.076 -0.024 -0.087 -0.005 -0.005 -0.005 -0.007 -0.003 -0.007 0.013 0.011 0.03 0.034 0.036 0.06 0.003 0.012 0.003 0.024 0 0.036q0.002 0.001 0.004 0.002c0.023 0.011 0.031 0.021 0.027 0.034"/><path fill="#E6E6E6" d="M0.301 0.302c-0.021 0 -0.041 0.009 -0.058 0.027S0.213 0.371 0.205 0.4l0.002 0.001v0c0.018 0.011 0.03 0.022 0.038 0.033 0.008 0.011 0.012 0.022 0.008 0.031a0.019 0.019 0 0 1 -0.01 0.011l-0.002 0.001q0.004 0.005 0.008 0.011c0.035 0.024 0.077 0.015 0.108 -0.006 0.003 -0.01 0.006 -0.02 0.006 -0.026 0.001 -0.016 0.002 -0.03 0.005 -0.042 0.003 -0.012 0.009 -0.024 0.02 -0.03q0.001 0 0.002 -0.001a0.037 0.037 0 0 1 0.001 -0.004c-0.009 -0.023 -0.022 -0.043 -0.038 -0.056s-0.034 -0.021 -0.052 -0.021zm0.089 0.081 0 0v0l0 0z"/><path fill="#ffffff" d="M0.348 0.144a0.039 0.039 0 0 1 -0.008 0.025 0.15 0.15 0 0 0 -0.008 -0.003l-0.005 -0.002c0.001 -0.001 0.003 -0.003 0.004 -0.005a0.026 0.026 0 0 0 0.002 -0.009l0 0a0.026 0.026 0 0 0 -0.001 -0.009 0.016 0.016 0 0 0 -0.004 -0.007 0.008 0.008 0 0 0 -0.006 -0.003H0.321a0.009 0.009 0 0 0 -0.006 0.002 0.016 0.016 0 0 0 -0.005 0.007 0.026 0.026 0 0 0 -0.002 0.009v0a0.037 0.037 0 0 0 0 0.005 0.068 0.068 0 0 0 -0.013 -0.004 0.037 0.037 0 0 1 0 -0.005v0a0.037 0.037 0 0 1 0.003 -0.017 0.03 0.03 0 0 1 0.009 -0.012 0.021 0.021 0 0 1 0.013 -0.005h0c0.005 0 0.009 0.001 0.013 0.004a0.03 0.03 0 0 1 0.01 0.012c0.002 0.005 0.004 0.01 0.004 0.016zm-0.071 0.006a0.037 0.037 0 0 0 -0.01 0.005 0.022 0.022 0 0 0 0 -0.006v0a0.026 0.026 0 0 0 -0.002 -0.007 0.015 0.015 0 0 0 -0.004 -0.005 0.006 0.006 0 0 0 -0.004 -0.002 0.006 0.006 0 0 0 -0.004 0.002 0.015 0.015 0 0 0 -0.003 0.006 0.022 0.022 0 0 0 0 0.008v0a0.022 0.022 0 0 0 0.002 0.007 0.014 0.014 0 0 0 0.004 0.006l-0.004 0.003 -0.003 0.002a0.026 0.026 0 0 1 -0.006 -0.009 0.041 0.041 0 0 1 -0.003 -0.014v0a0.041 0.041 0 0 1 0.002 -0.015 0.025 0.025 0 0 1 0.006 -0.011 0.013 0.013 0 0 1 0.01 -0.004 0.013 0.013 0 0 1 0.009 0.003 0.026 0.026 0 0 1 0.007 0.01c0.002 0.004 0.003 0.009 0.003 0.014v0q0 0.003 0 0.006"/><path fill="#202020" d="M0.293 0.163c0 0.001 0.002 0.001 0.004 0.002 0.001 0.001 0.002 0.002 0.003 0.002s0.003 0 0.003 -0.002c0 -0.001 -0.002 -0.002 -0.003 -0.003 -0.002 -0.001 -0.004 -0.001 -0.006 0 0 0 -0.001 0.001 -0.001 0.001zm-0.012 0c0 0.001 -0.002 0.001 -0.004 0.002 -0.001 0.001 -0.002 0.002 -0.003 0.002 -0.001 0 -0.003 0 -0.003 -0.002 0 -0.001 0.002 -0.002 0.003 -0.003 0.002 -0.001 0.004 -0.001 0.006 0 0 0 0.001 0.001 0.001 0.001z"/></svg>'}
-]};
+,{
+  name:"POSTMAN",
+  icon:'<Image src="./images/postman-icon.svg" alt="postman" width=30 height=30 />'
+}
+  ]};
+
 export default function Home() {
-  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
-  const [selectedSkill, setSelectedSkill] = useState<number | null>(null);
   const [hueRotation, setHueRotation] = useState(0);
-  const introRef = useRef<HTMLDivElement>(null);
-  const projectsRef = useRef<HTMLDivElement>(null);
-  const experiencesRef = useRef<HTMLDivElement>(null);
-  const educationRef = useRef<HTMLDivElement>(null);
-  const skillsRef = useRef<HTMLDivElement>(null);
-  const contactRef = useRef<HTMLDivElement>(null);
+  const introRef = useRef<HTMLDivElement>(null!);
+  const projectsRef = useRef<HTMLDivElement>(null!);
+  const experiencesRef = useRef<HTMLDivElement>(null!);
+  const educationRef = useRef<HTMLDivElement>(null!);
+  const skillsRef = useRef<HTMLDivElement>(null!);
+  const contactRef = useRef<HTMLDivElement>(null!);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setHueRotation(prev => (prev + 1) % 360);
+      setHueRotation((prev) => (prev + 1) % 360);
     }, 100);
     return () => clearInterval(interval);
   }, []);
 
-  const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
+  const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
     if (ref.current) {
       ref.current.scrollIntoView({ behavior: "smooth" });
     }
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarVisible(!isSidebarVisible);
-  };
-
-  const gradientStyle = {
-    filter: `hue-rotate(${hueRotation}deg)`,
-    transition: 'filter 0.5s ease-in-out'
-  };
-
   return (
     <div className="min-h-screen text-slate-800 overflow-hidden relative">
-      <TealParticles particleCount={90}/>
-      
-      {/* Background and Sidebar unchanged */}
+      <TealParticles particleCount={90} />
       <div className="fixed inset-0 w-full h-full bg-gray-100 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-teal-500 via-emerald-400 to-indigo-500 animate-movingGradient"></div>
         <div className="absolute top-0 right-0 w-3/4 h-3/4 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 blur-3xl opacity-60 transform translate-x-1/4 -translate-y-1/4 animate-blob"></div>
         <div className="absolute bottom-0 left-0 w-3/4 h-3/4 rounded-full bg-gradient-to-tr from-emerald-400 to-lime-300 blur-3xl opacity-60 transform -translate-x-1/4 translate-y-1/4 animate-blob animation-delay-2000"></div>
         <div className="absolute top-1/2 left-1/2 w-1/2 h-1/2 rounded-full bg-gradient-to-br from-indigo-500 to-cyan-400 blur-3xl opacity-60 transform -translate-x-1/2 -translate-y-1/2 animate-blob animation-delay-4000"></div>
       </div>
-
       <div className="absolute inset-0 opacity-10 pointer-events-none bg-[linear-gradient(90deg,rgba(45,212,191,0.05)_1px,transparent_1px),linear-gradient(180deg,rgba(45,212,191,0.05)_1px,transparent_1px)] bg-[size:30px_30px]"></div>
 
-      <button
-        onClick={toggleSidebar}
-        className="fixed top-1/2 right-4 transform -translate-y-1/2 z-50 bg-teal-600/30 text-teal-800 p-2 rounded-full hover:bg-teal-600/50 transition-all duration-300 shadow-lg"
-        style={gradientStyle}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="22"
-          height="22"
-          viewBox="0 0 22 22"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className={`transition-transform duration-300 ${isSidebarVisible ? "rotate-[-45]" : "rotate-90"}`}
-        >
-          <path d="M15 18l-6-6 6-6" />
-        </svg>
-      </button>
+      <NavSidebar
+        scrollToSection={scrollToSection}
+        introRef={introRef}
+        projectsRef={projectsRef}
+        experiencesRef={experiencesRef}
+        educationRef={educationRef}
+        skillsRef={skillsRef}
+        contactRef={contactRef}
+        hueRotation={hueRotation}
+      />
 
-      <div
-        className={`fixed z-40 right-0 w-48 h-full bg-gradient-to-r from-teal-500 via-emerald-400 to-indigo-500 animate-movingGradient backdrop-blur-sm border-r border-teal-400 flex flex-col items-center py-6 transition-transform duration-300 shadow-lg ${
-          isSidebarVisible ? "translate-x-0" : "-translate-y-full"
-        }`}
-      >
-        <MotionDiv
-          className="text-xl font-bold text-teal-800 mb-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          style={gradientStyle}
-        >
-          Portfolio
-        </MotionDiv>
-        <nav className="top-16 space-y-4 text-sm">
-          {/* Sidebar navigation unchanged */}
-          <button onClick={() => scrollToSection(introRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
-            <span className="mr-2">🏠</span> Intro
-          </button>
-          <button onClick={() => scrollToSection(projectsRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
-            <span className="mr-2">📑</span> Projets
-          </button>
-          <button onClick={() => scrollToSection(experiencesRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
-            <span className="mr-2">💼</span> Expériences
-          </button>
-          <button onClick={() => scrollToSection(educationRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
-            <span className="mr-2">🎓</span> Éducation
-          </button>
-          <button onClick={() => scrollToSection(skillsRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
-            <span className="mr-2">🛠️</span> Compétences
-          </button>
-          <button onClick={() => scrollToSection(contactRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
-            <span className="mr-2">📞</span> Contact
-          </button>
-        </nav>
-      </div>
-
-      {/* Main Content */}
       <div className="relative">
-        {/* Intro Section with Bullet Points */}
-        <div ref={introRef} className="flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
-          <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-4xl gap-6 relative">
-            <h1 className="absolute top-8 text-3xl sm:text-3xl md:text-3xl lg:text-4xl 2xl:text-4xl font-extrabold tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-teal-800 to-indigo-700 drop-shadow-md animate-pulse z-30 md:hidden" style={gradientStyle}>
-              {intro.name}
-            </h1>
-            <MotionDiv
-              className="text-center max-w-2xl mt-16 md:mt-0"
-              initial={{ opacity: 0, scale: 0.2, y: -150 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 1.8, ease: "easeOut", type: "spring", stiffness: 70 }}
-            >
-              <MotionDiv
-                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl 2xl:text-5xl font-bold text-teal-800 mt-4"
-                initial={{ opacity: 0, y: 80 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.2, delay: 0.4, ease: "easeOut" }}
-                style={gradientStyle}
-              >
-                {intro.title}
-              </MotionDiv>
-              <p className="text-xs sm:text-sm md:text-base lg:text-lg 2xl:text-lg italic mt-3 max-w-2xl mx-auto text-slate-600">{intro.objective}</p>
-              <ul className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base mt-3 max-w-3xl mx-auto text-slate-700 list-disc list-inside">
-                {intro.description.map((item, index) => (
-                  <li key={index}>{item}</li>
-                ))}
-              </ul>
-            </MotionDiv>
-            <MotionDiv
-              className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-64 lg:h-64 2xl:w-48 2xl:h-48 rounded-full border-[6px] border-blue-500 shadow-lg"
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 2, delay: 0.8, ease: "easeOut" }}
-              whileHover={{ scale: 1.05 }}
-              style={{ borderColor: `hsl(${(hueRotation + 180) % 360}, 80%, 50%)` }}
-            >
-              <Image
-                src="/images/me.jpg"
-                alt="Anamol Jang Karki"
-                width={584}
-                height={584}
-                className="object-cover rounded-full w-full h-full"
-                priority
-              />
-            </MotionDiv>
-          </div>
-        </div>
-
-        {/* Projects Section with Bullet Points */}
-        <section ref={projectsRef} className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
-          <MotionDiv
-            className="text-xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-6xl font-extrabold text-center mb-8 text-teal-800 uppercase tracking-wide drop-shadow-md transform perspective-1000 translate-z-10"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, type: "spring", stiffness: 50 }}
-            style={gradientStyle}
-          >
-            PROJETS
-          </MotionDiv>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 lg:gap-10 max-w-full">
-            {projects.map((project, index) => (
-              <MotionDiv
-                key={index}
-                className="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden border border-teal-400"
-                initial={{ opacity: 0, y: 150 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.5, delay: index * 0.3, ease: "easeOut" }}
-                whileHover={{ scale: 1.05, y: -8 }}
-                style={{ borderColor: `hsl(${(hueRotation + index * 30) % 360}, 80%, 50%)` }}
-              >
-                <h3 className="text-base sm:text-lg md:text-xl lg:text-lg 2xl:text-lg font-bold text-teal-800 mb-3 uppercase tracking-tight" style={gradientStyle}>
-                  {project.title}
-                </h3>
-                <p className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base italic text-slate-600">{project.role} | {project.period}</p>
-                <ul className="mt-3 text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-slate-700 list-disc list-inside">
-                  {project.description.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </MotionDiv>
-            ))}
-          </div>
-        </section>
-
-        {/* Experiences Section with Bullet Points */}
-        <section ref={experiencesRef} className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
-          <MotionDiv
-            className="text-xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-6xl font-extrabold text-center mb-8 text-teal-800 uppercase tracking-wide drop-shadow-md transform perspective-1000 translate-z-10"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, type: "spring", stiffness: 50 }}
-            style={gradientStyle}
-          >
-            EXPÉRIENCES
-          </MotionDiv>
-          <div className="space-y-4 sm:space-y-6 md:space-y-8 lg:space-y-10 max-w-4xl mx-auto">
-            {experiences.map((exp, index) => (
-              <MotionDiv
-                key={index}
-                className="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 border border-teal-400"
-                initial={{ opacity: 0, x: index % 2 === 0 ? -200 : 200 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 1.5, delay: index * 0.4, ease: "easeOut" }}
-                whileHover={{ scale: 1.05, y: -8 }}
-                style={{ borderColor: `hsl(${(hueRotation + index * 60) % 360}, 80%, 50%)` }}
-              >
-                <h3 className="text-base sm:text-lg md:text-xl lg:text-3xl 2xl:text-4xl font-bold text-teal-800 mb-3 uppercase tracking-tight" style={gradientStyle}>
-                  {exp.title}
-                </h3>
-                <p className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base italic text-slate-600">{exp.location} {exp.period}</p>
-                <ul className="mt-3 text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-slate-700 list-disc list-inside">
-                  {exp.description.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </MotionDiv>
-            ))}
-          </div>
-        </section>
-
-        {/* Education Section with Bullet Points */}
-        <section ref={educationRef} className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
-          <MotionDiv
-            className="text-xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-6xl font-extrabold text-center mb-8 text-teal-800 uppercase tracking-wide drop-shadow-md transform perspective-1000 translate-z-10"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, type: "spring", stiffness: 50 }}
-            style={gradientStyle}
-          >
-            ÉDUCATION
-          </MotionDiv>
-          <div className="space-y-4 sm:space-y-6 md:space-y-8 lg:space-y-10 max-w-4xl mx-auto">
-            {education.map((edu, index) => (
-              <MotionDiv
-                key={index}
-                className="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 border border-teal-400"
-                initial={{ opacity: 0, x: index % 2 === 0 ? -200 : 200 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 1.5, delay: index * 0.4, ease: "easeOut" }}
-                whileHover={{ scale: 1.05, y: -8 }}
-                style={{ borderColor: `hsl(${(hueRotation + index * 90) % 360}, 80%, 50%)` }}
-              >
-                <h3 className="text-base sm:text-lg md:text-xl lg:text-3xl 2xl:text-4xl font-bold text-teal-800 mb-3 uppercase tracking-tight" style={gradientStyle}>
-                  {edu.title}
-                </h3>
-                <p className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base italic text-slate-600">{edu.institution} {edu.period}</p>
-                <ul className="mt-3 text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-slate-700 list-disc list-inside">
-                  {edu.description.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </MotionDiv>
-            ))}
-          </div>
-        </section>
-
-        {/* Skills and Footer sections remain unchanged */}
-        <section ref={skillsRef} className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
-          <MotionDiv
-            className="text-xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-6xl font-extrabold text-center mb-8 text-teal-800 uppercase tracking-wide drop-shadow-md transform perspective-1000 translate-z-10"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, type: "spring", stiffness: 50 }}
-            style={gradientStyle}
-          >
-            COMPÉTENCES
-          </MotionDiv>
-          <div className="space-y-4 sm:space-y-6 md:space-y-8 lg:space-y-10 max-w-4xl mx-auto">
-            <MotionDiv
-              className="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 border border-teal-400"
-              initial={{ opacity: 0, y: 150 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-              whileHover={{ scale: 1.05, y: -8 }}
-              style={{ borderColor: `hsl(${(hueRotation + 0) % 360}, 80%, 50%)` }}
-            >
-              <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl 2xl:text-2xl font-bold text-teal-800 mb-3 uppercase tracking-tight" style={gradientStyle}>
-                SOFT SKILLS
-              </h3>
-              <div className="flex flex-wrap justify-center gap-4 md:gap-6 lg:gap-8">
-                {skills.soft.map((skill, index) => (
-                  <motion.div
-                    key={index}
-                    className={`relative flex flex-col items-center p-4 w-64 md:w-80 rounded-xl shadow-md cursor-pointer transition-all duration-300 ${
-                      selectedSkill === index ? "bg-teal-600/30" : "bg-teal-600/10"
-                    }`}
-                    onClick={() => setSelectedSkill(selectedSkill === index ? null : index)}
-                    onHoverStart={() => setSelectedSkill(selectedSkill === index ? null : index)}
-                    onHoverEnd={() => setSelectedSkill(null)}
-                    initial={{ scale: 1 }}
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    <div className="w-full flex items-center justify-between">
-                      <div className="text-teal-800 text-sm sm:text-base md:text-lg lg:text-xl flex items-center gap-2">
-                        <span dangerouslySetInnerHTML={{ __html: skill.icon.replace('#164e63', '#0f766e') }} />
-                        {skill.name}
-                      </div>
-                      <motion.div
-                        animate={{ 
-                          rotate: selectedSkill === index ? 180 : 0
-                        }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <svg 
-                          xmlns="http://www.w3.org/2000/svg" 
-                          width="16" 
-                          height="16" 
-                          viewBox="0 0 24 24" 
-                          fill="none" 
-                          stroke="#0f766e" 
-                          strokeWidth="2" 
-                          strokeLinecap="round" 
-                          strokeLinejoin="round"
-                        >
-                          <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                      </motion.div>
-                    </div>
-                    {selectedSkill === index && (
-                      <motion.p
-                        className="mt-2 text-sm md:text-base text-slate-700 px-2"
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                      >
-                        {skill.description}
-                      </motion.p>
-                    )}
-                  </motion.div>
-                ))}
-              </div>
-            </MotionDiv>
-
-            <MotionDiv
-              className="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 border border-teal-400"
-              initial={{ opacity: 0, y: 150 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.5, delay: 0.3, ease: "easeOut" }}
-              whileHover={{ scale: 1.05, y: -8 }}
-              style={{ borderColor: `hsl(${(hueRotation + 30) % 360}, 80%, 50%)` }}
-            >
-              <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl 2xl:text-2xl font-bold text-teal-800 mb-3 uppercase tracking-tight" style={gradientStyle}>
-                OUTILS
-              </h3>
-              <div className="flex flex-wrap gap-3">
-                {skills.tools.map((tool, index) => (
-                  <span
-                    key={index}
-                    className="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden border border-teal-400 flex items-center gap-2"
-                  >
-                    <span dangerouslySetInnerHTML={{ __html: tool.icon }} />
-                    {tool.name}
-                  </span>
-                ))}
-              </div>
-            </MotionDiv>
-          </div>
-        </section>
-
-        <footer className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
-          <section ref={contactRef}>
-            <MotionDiv
-              className="text-xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-6xl font-extrabold text-center mb-8 text-teal-800 uppercase tracking-wide drop-shadow-md transform perspective-1000 translate-z-10"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.2, type: "spring", stiffness: 50 }}
-              style={gradientStyle}
-            >
-              CONTACT
-            </MotionDiv>
-            <MotionDiv
-              className="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 border border-teal-400 max-w-4xl mx-auto"
-              initial={{ opacity: 0, y: 150 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-              whileHover={{ scale: 1.05, y: -8 }}
-              style={{ borderColor: `hsl(${(hueRotation + 60) % 360}, 80%, 50%)` }}
-            >
-              <div className="text-center">
-                <p className="text-base sm:text-lg md:text-xl lg:text-2xl 2xl:text-2xl font-bold text-teal-800 mb-4 uppercase">Retrouvez-moi sur</p>
-                <div className="flex flex-col sm:flex-row justify-center gap-4 md:gap-6 lg:gap-8">
-                  <div className="flex items-center text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-teal-800 hover:text-teal-900 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f766e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" /></svg>
-                    <a href="https://www.linkedin.com/in/anamoljang/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-                  </div>
-                  <div className="flex items-center text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-teal-800 hover:text-teal-900 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f766e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" /></svg>
-                    <a href="https://github.com/ajk-5" target="_blank" rel="noopener noreferrer">GitHub</a>
-                  </div>
-                  <div className="flex items-center text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-teal-800 hover:text-teal-900 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f766e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-                    <a href="mailto:anamoljang@gmail.com">anamoljang@gmail.com</a>
-                  </div>
-                </div>
-              </div>
-            </MotionDiv>
-          </section>
-        </footer>
-
-        {/* Global Styles unchanged */}
-        <style jsx global>{`
-          @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(2px, -2px); }
-            60% { transform: translate(-2px, -2px); }
-            80% { transform: translate(2px, 2px); }
-            100% { transform: translate(0); }
-          }
-          @keyframes pulse {
-            0% { text-shadow: 0 0 6px rgba(45, 212, 191, 0.3); }
-            50% { text-shadow: 0 0 12px rgba(45, 212, 191, 0.6); }
-            100% { text-shadow: 0 0 6px rgba(45, 212, 191, 0.3); }
-          }
-          @keyframes movingGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-          }
-          .animate-movingGradient {
-            background-size: 200% 200%;
-            animation: movingGradient 10s ease infinite;
-          }
-          .animate-glitch { animation: glitch 0.3s infinite steps(1); }
-          .animate-pulse { animation: pulse 2s infinite; }
-          .perspective-1000 { perspective: 1000px; }
-          .translate-z-10 { transform: translateZ(10px); }
-        `}</style>
+        <IntroSection intro={intro} hueRotation={hueRotation} introRef={introRef} />
+        <ProjectsSection projects={projects} hueRotation={hueRotation} projectsRef={projectsRef} />
+        <ExperiencesSection experiences={experiences} hueRotation={hueRotation} experiencesRef={experiencesRef} />
+        <EducationSection education={education} hueRotation={hueRotation} educationRef={educationRef} />
+        <SkillsSection skills={skills} hueRotation={hueRotation} skillsRef={skillsRef} />
+        <ContactSection hueRotation={hueRotation} contactRef={contactRef} />
       </div>
+
+      <style jsx global>{`
+        @keyframes glitch {
+          0% { transform: translate(0); }
+          20% { transform: translate(-2px, 2px); }
+          40% { transform: translate(2px, -2px); }
+          60% { transform: translate(-2px, -2px); }
+          80% { transform: translate(2px, 2px); }
+          100% { transform: translate(0); }
+        }
+        @keyframes pulse {
+          0% { text-shadow: 0 0 6px rgba(45, 212, 191, 0.3); }
+          50% { text-shadow: 0 0 12px rgba(45, 212, 191, 0.6); }
+          100% { text-shadow: 0 0 6px rgba(45, 212, 191, 0.3); }
+        }
+        @keyframes movingGradient {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .animate-movingGradient {
+          background-size: 200% 200%;
+          animation: movingGradient 10s ease infinite;
+        }
+        .animate-glitch { animation: glitch 0.3s infinite steps(1); }
+        .animate-pulse { animation: pulse 2s infinite; }
+        .perspective-1000 { perspective: 1000px; }
+        .translate-z-10 { transform: translateZ(10px); }
+      `}</style>
     </div>
   );
 }

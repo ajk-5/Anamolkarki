@@ -25,19 +25,19 @@ const NavBar: React.FC = () => {
   const selectedRole = isMounted ? (pathname === "/Bar" ? "Barman" : "Développeur") : "Développeur";
 
   return (
-    <nav className="fixed top-0 left-0 w-full  p-3 bg-gray-100 z-30">
+    <nav className="fixed top-0 left-0 w-full  p-3  z-30">
       {/* Moving Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-r from-teal-500 via-emerald-400 to-indigo-500 animate-movingGradient"></div>
-      <div className="relative flex items-center gap-2 bg-white/70 backdrop-blur-sm p-3 rounded-xl shadow-lg border border-teal-400 max-w-4xl mx-auto">
+      <div className="absolute inset-0 bg-transparent "></div>
+      <div className="relative flex items-center gap-2 backdrop-blur-sm p-3 rounded-xl shadow-lg border border-teal-400 max-w-4xl mx-auto">
         {/* Logo and Name */}
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center">
             <Image
-              className="w-[60px] md:w-[80px] lg:w-[100px] h-auto"
+              className="w-[50px] md:w-[60px] lg:w-[80px] h-auto"
               src="/images/ajklogo.svg"
               alt="Anamol Karki Logo"
-              width={100}
-              height={100}
+              width={60}
+              height={60}
             />
             <h1 className="hidden md:inline text-lg md:text-2xl lg:text-3xl font-semibold text-teal-800">
               ANAMOL JANG KARKI
