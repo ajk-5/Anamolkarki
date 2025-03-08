@@ -77,6 +77,9 @@ const NavSidebar: React.FC<NavSidebarProps> = ({
           <button onClick={() => scrollToSection(introRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
             <span className="mr-2">🏠</span> Intro
           </button>
+          <button onClick={() => scrollToSection(cvRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
+            <span className="mr-2">🗎</span> CV
+          </button>
           <button onClick={() => scrollToSection(projectsRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
             <span className="mr-2">📑</span> Projets
           </button>
@@ -92,9 +95,7 @@ const NavSidebar: React.FC<NavSidebarProps> = ({
           <button onClick={() => scrollToSection(contactRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
             <span className="mr-2">📞</span> Contact
           </button>
-          <button onClick={() => scrollToSection(cvRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
-            <span className="mr-2">CV</span> CV
-          </button>
+
         </nav>
       </div>
     </>
