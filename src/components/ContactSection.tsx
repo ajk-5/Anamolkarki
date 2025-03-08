@@ -26,7 +26,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ hueRotation, contactRef
           CONTACT
         </MotionDiv>
         <MotionDiv
-          className="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 border border-teal-400 max-w-4xl mx-auto"
+          className="backdrop-blur-sm p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 border border-teal-400 max-w-4xl mx-auto"
           initial={{ opacity: 0, y: 150 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.5, ease: "easeOut" }}

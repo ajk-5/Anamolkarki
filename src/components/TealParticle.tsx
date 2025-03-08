@@ -18,8 +18,8 @@ export default function TealParticles({ particleCount = 50 }: TealParticlesProps
 
   useEffect(() => {
     const positions = Array.from({ length: particleCount }, () => ({
-      x: `${Math.random() * 100}vw`,
-      y: `${Math.random() * 100}vh`,
+      x: `${Math.random() * 1000}vw`,
+      y: `${Math.random() * 1000}vh`,
     }));
     setParticlePositions(positions);
   }, [particleCount]);
@@ -29,15 +29,15 @@ export default function TealParticles({ particleCount = 50 }: TealParticlesProps
       {particlePositions.map((pos, i) => (
         <MotionDiv
           key={i}
-          className="absolute w-1 h-1 bg-teal-500 rounded-full shadow-[0_0_4px_rgba(45,212,191,0.3)]"
+          className="absolute w-1 h-1 bg-teal-400 rounded-full shadow-[0_0_4px_rgba(45,212,191,0.3)]"
           initial={{ x: pos.x, y: pos.y, scale: 0 }}
           animate={{
-            x: [null, `${Math.random() * 100}vw`],
-            y: [null, `${Math.random() * 100}vh`],
+            x: [null, `${Math.random() * 1000}vw`],
+            y: [null, `${Math.random() * 1000}vh`],
             scale: [0, 1, 0],
             opacity: [0, 0.8, 0],
             transition: { 
-              duration: Math.random() * 5 + 2, 
+              duration: Math.random() * 5 + 3, 
               repeat: Infinity, 
               ease: "easeInOut",
               delay: Math.random() * 2

@@ -12,6 +12,7 @@ interface NavSidebarProps {
   educationRef: React.RefObject<HTMLDivElement>;
   skillsRef: React.RefObject<HTMLDivElement>;
   contactRef: React.RefObject<HTMLDivElement>;
+  cvRef: React.RefObject<HTMLDivElement>;
   hueRotation: number;
 }
 
@@ -23,6 +24,7 @@ const NavSidebar: React.FC<NavSidebarProps> = ({
   educationRef,
   skillsRef,
   contactRef,
+  cvRef,
   hueRotation,
 }) => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
@@ -89,6 +91,9 @@ const NavSidebar: React.FC<NavSidebarProps> = ({
           </button>
           <button onClick={() => scrollToSection(contactRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
             <span className="mr-2">📞</span> Contact
+          </button>
+          <button onClick={() => scrollToSection(cvRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
+            <span className="mr-2">CV</span> CV
           </button>
         </nav>
       </div>

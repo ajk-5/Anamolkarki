@@ -416,6 +416,7 @@ export default function BarCV() {
             ))}
           </div>
         </section>
+        
       </div>
 
       {/* Global Styles */}
