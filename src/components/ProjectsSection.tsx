@@ -59,7 +59,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, hueRotation
         <button
           onClick={handlePrev}
           disabled={currentProjectIndex === 0}
-          className={`absolute left-0 top-1/2 transform -translate-y-1/2 z-20 bg-teal-600/30 text-teal-800 p-2 rounded-full hover:bg-teal-600/50 transition-all duration-300 shadow-lg ${
+          className={`absolute left-0 sm:-left-12 top-1/2 transform -translate-y-1/2 z-20 bg-teal-600/30 text-teal-800 p-2 rounded-full hover:bg-teal-600/50 transition-all duration-300 shadow-lg ${
             currentProjectIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
           }`}
           style={gradientStyle}
@@ -82,19 +82,27 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, hueRotation
         {/* Scrollable Container */}
         <div
           ref={scrollContainerRef}
-          className="flex overflow-x-hidden snap-x snap-mandatory scroll-smooth"
-          style={{ scrollSnapType: "x mandatory" }}
+          className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth w-full touch-pan-x"
+          style={{
+            scrollSnapType: "x mandatory",
+            WebkitOverflowScrolling: "touch", // Smooth scrolling on iOS
+            scrollbarWidth: "none", // Hide scrollbar on Firefox
+            msOverflowStyle: "none", // Hide scrollbar on IE/Edge
+          }}
         >
           {projects.map((project, index) => (
             <MotionDiv
               key={index}
-              className="min-w-full  backdrop-blur-sm p-6 rounded-xl shadow-lg transition-all duration-500 border border-teal-400 flex-shrink-0"
+              className="min-w-full w-full backdrop-blur-sm p-4 sm:p-6 rounded-xl shadow-lg transition-all duration-500 border border-teal-400 flex-shrink-0"
               initial={{ opacity: 0, x: 150 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1.5, delay: index * 0.3, ease: "easeOut" }}
               style={{ borderColor: `hsl(${(hueRotation + index * 30) % 360}, 80%, 50%)` }}
             >
-              <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl 2xl:text-2xl font-bold text-teal-800 mb-3 uppercase tracking-tight" style={gradientStyle}>
+              <h3
+                className="text-base sm:text-lg md:text-xl lg:text-2xl 2xl:text-2xl font-bold text-teal-800 mb-3 uppercase tracking-tight"
+                style={gradientStyle}
+              >
                 {project.title}
               </h3>
               <p className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base italic text-slate-600">
@@ -113,7 +121,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, hueRotation
         <button
           onClick={handleNext}
           disabled={currentProjectIndex === projects.length - 1}
-          className={`absolute right-0 top-1/2 transform -translate-y-1/2 z-20 bg-teal-600/30 text-teal-800 p-2 rounded-full hover:bg-teal-600/50 transition-all duration-300 shadow-lg ${
+          className={`absolute right-0 sm:-right-12 top-1/2 transform -translate-y-1/2 z-20 bg-teal-600/30 text-teal-800 p-2 rounded-full hover:bg-teal-600/50 transition-all duration-300 shadow-lg ${
             currentProjectIndex === projects.length - 1 ? "opacity-50 cursor-not-allowed" : ""
           }`}
           style={gradientStyle}
@@ -147,6 +155,13 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, hueRotation
           ))}
         </div>
       </div>
+
+      {/* Hide Scrollbar for Webkit Browsers */}
+      <style jsx>{`
+        div::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </section>
   );
 };
