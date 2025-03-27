@@ -84,6 +84,17 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({ skills, hueRotation, skil
             )}
           </motion.div>
         ))}
+         <MotionDiv className="p-6 border border-violet-300 rounded-lg shadow-lg hover:shadow-xl transition-all duration-500 backdrop-blur-sm w-3/4 md:w-2/3 lg:w-1/2">
+          <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-indigo-300 mb-3 uppercase tracking-wider text-center">OUTILS</h3>
+          <div className="flex flex-row flex-wrap p-1 items-center space-y-4">
+            {skills.tools.map((tool, index) => (
+              <div key={index} className="p-4 bg-white/10 rounded-lg m-3 shadow-md flex items-center gap-2 text-violet-300">
+                <span dangerouslySetInnerHTML={{ __html: tool.icon }} />
+                {tool.name}
+              </div>
+            ))}
+          </div>
+        </MotionDiv>
       </div>
     </section>
   );

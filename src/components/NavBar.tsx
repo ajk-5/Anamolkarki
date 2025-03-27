@@ -26,7 +26,7 @@ const NavBar: React.FC = () => {
 
   return (
     <nav className="fixed top-0 left-0 w-full p-2 z-50">
-      <div className="relative flex items-center gap-2 backdrop-blur-sm p-2 rounded-xl shadow-lg border border-teal-400 max-w-full mx-auto">
+      <div className="relative flex items-center gap-2 backdrop-blur-sm p-2 rounded-xl shadow-lg border border-yellow-900 max-w-full mx-auto">
         {/* Logo and Name */}
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center">
@@ -37,7 +37,7 @@ const NavBar: React.FC = () => {
               width={50}
               height={50}
             />
-            <h1 className="hidden md:inline text-base md:text-xl lg:text-2xl font-semibold text-teal-800">
+            <h1 className="hidden md:inline text-base md:text-xl lg:text-4xl font-semibold text-blue-300">
               ANAMOL JANG KARKI
             </h1>
           </Link>

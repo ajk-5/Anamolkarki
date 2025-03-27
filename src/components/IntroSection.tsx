@@ -54,12 +54,12 @@ const IntroSection: React.FC<IntroSectionProps> = ({ intro, hueRotation, introRe
           </ul>
         </MotionDiv>
         <MotionDiv
-          className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-64 lg:h-64 2xl:w-48 2xl:h-48 rounded-full border-[6px] border-blue-500 shadow-lg"
+          className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-64 lg:h-64 2xl:w-48 2xl:h-48 rounded-full border-[6px] border-blue-900 shadow-lg"
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 2, delay: 0.8, ease: "easeOut" }}
+          transition={{ duration: 1, delay: 0.8, ease: "easeOut" }}
           whileHover={{ scale: 1.05 }}
-          style={{ borderColor: `hsl(${(hueRotation + 180) % 360}, 80%, 50%)` }}
+          style={{ borderColor: `hsl(${(hueRotation + 90) % 360}, 80%, 50%)` }}
         >
           <Image
             src="/images/me.jpg"
