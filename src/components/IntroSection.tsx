@@ -26,7 +26,7 @@ const IntroSection: React.FC<IntroSectionProps> = ({ intro, hueRotation, introRe
     <div ref={introRef} className="flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
       <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-4xl gap-6 relative">
         <h1
-          className="absolute top-8 text-3xl sm:text-3xl md:text-3xl lg:text-4xl 2xl:text-4xl font-extrabold tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-teal-800 to-indigo-700 drop-shadow-md animate-pulse z-30 md:hidden"
+          className="absolute top-8 text-3xl sm:text-3xl md:text-3xl lg:text-4xl 2xl:text-4xl font-extrabold tracking-wider uppercase bg-clip-text bg-violet-300 z-30 md:hidden"
           style={gradientStyle}
         >
           {intro.name}
@@ -38,7 +38,7 @@ const IntroSection: React.FC<IntroSectionProps> = ({ intro, hueRotation, introRe
           transition={{ duration: 1.8, ease: "easeOut", type: "spring", stiffness: 70 }}
         >
           <MotionDiv
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl 2xl:text-5xl font-bold text-teal-800 mt-4"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl 2xl:text-5xl font-bold text-teal-300 mt-4"
             initial={{ opacity: 0, y: 80 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, delay: 0.4, ease: "easeOut" }}
@@ -46,8 +46,8 @@ const IntroSection: React.FC<IntroSectionProps> = ({ intro, hueRotation, introRe
           >
             {intro.title}
           </MotionDiv>
-          <p className="text-xs sm:text-sm md:text-base lg:text-lg 2xl:text-lg italic mt-3 max-w-2xl mx-auto text-slate-600">{intro.objective}</p>
-          <ul className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base mt-3 max-w-3xl mx-auto text-slate-700 list-disc list-inside">
+          <p className="text-xs sm:text-sm md:text-base lg:text-lg 2xl:text-lg italic mt-3 max-w-2xl mx-auto text-violet-400">{intro.objective}</p>
+          <ul className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base mt-3 max-w-3xl mx-auto text-indigo-300 list-disc list-inside">
             {intro.description.map((item, index) => (
               <li key={index}>{item}</li>
             ))}

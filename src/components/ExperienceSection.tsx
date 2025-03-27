@@ -43,11 +43,11 @@ const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ experiences, hu
             whileHover={{ scale: 1.05, y: -8 }}
             style={{ borderColor: `hsl(${(hueRotation + index * 60) % 360}, 80%, 50%)` }}
           >
-            <h3 className="text-base sm:text-lg md:text-xl lg:text-3xl 2xl:text-4xl font-bold text-teal-800 mb-3 uppercase tracking-tight" style={gradientStyle}>
+            <h3 className="text-base sm:text-lg md:text-xl lg:text-3xl 2xl:text-4xl font-bold text-teal-200 mb-3 uppercase tracking-tight" style={gradientStyle}>
               {exp.title}
             </h3>
-            <p className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base italic text-slate-600">{exp.location} {exp.period}</p>
-            <ul className="mt-3 text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-slate-700 list-disc list-inside">
+            <p className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base italic text-indigo-300">{exp.location} {exp.period}</p>
+            <ul className="mt-3 text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-violet-300 list-disc list-inside">
               {exp.description.map((item, idx) => (
                 <li key={idx}>{item}</li>
               ))}

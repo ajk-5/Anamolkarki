@@ -14,7 +14,7 @@ const CVSection: React.FC<CVSectionProps> = ({ hueRotation, cvRef }) => {
   };
 
   // Assuming the PDF is located at /public/cv/cv_ANAMOL_KARKI.pdf
-  const cvUrl = "./cv/cv_ANAMOL_KARKI.pdf";
+  const cvUrl = "../cv/cv_ANAMOL_KARKI.pdf";
 
   return (
     <section

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { MotionDiv } from "@/components/MotionDiv";
-
+import Image from "next/image";
 
 interface NavSidebarProps {
   scrollToSection: (ref: React.RefObject<HTMLDivElement>) => void;
@@ -40,62 +40,41 @@ const NavSidebar: React.FC<NavSidebarProps> = ({
     <>
       <button
         onClick={toggleSidebar}
-        className="fixed top-1/2 right-4 transform -translate-y-1/2 z-50 bg-teal-600/30 text-teal-800 p-2 rounded-full hover:bg-teal-600/50 transition-all duration-300 shadow-lg"
-        style={gradientStyle}
+        className="fixed top-1/2 right-4 z-[100] bg-purple-600 text-white p-2  hover:bg-purple-700 transition-all duration-300 shadow-lg"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="22"
-          height="22"
-          viewBox="0 0 22 22"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className={`transition-transform duration-300 ${isSidebarVisible ? "rotate-[-45]" : "rotate-90"}`}
-        >
-          <path d="M15 18l-6-6 6-6" />
-        </svg>
+        {isSidebarVisible ? "✖" : "☰"}
       </button>
 
       <div
-        className={`fixed z-40 right-0 w-48 h-full bg-gradient-to-r from-teal-500 via-emerald-400 to-indigo-500 animate-movingGradient backdrop-blur-sm border-r border-teal-400 flex flex-col items-center py-6 transition-transform duration-300 shadow-lg ${
+        className={`fixed   botom-0 right-0 w-64 h-full bg-black text-white flex flex-col items-center py-12 transition-transform duration-300 shadow-lg z-50 ${
           isSidebarVisible ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <MotionDiv
-          className="text-xl font-bold text-teal-800 mb-8"
+          className="text-lg font-bold text-purple-400 mb-8 text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
           style={gradientStyle}
         >
-          Portfolio
+               <Image
+                 className="w-[40px] md:w-[50px] lg:w-[60px] h-auto"
+                 src="/images/ajklogo.svg"
+                 alt="Anamol Karki Logo"
+                 width={50}
+                 height={50}
+               />
+          <div className="text-2xl">ANAMOL JANG KARKI</div>
         </MotionDiv>
-        <nav className="space-y-4 text-sm">
-          <button onClick={() => scrollToSection(introRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
-            <span className="mr-2">🏠</span> Intro
-          </button>
-          <button onClick={() => scrollToSection(cvRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
-            <span className="mr-2">🗎</span> CV
-          </button>
-          <button onClick={() => scrollToSection(projectsRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
-            <span className="mr-2">📑</span> Projets
-          </button>
-          <button onClick={() => scrollToSection(experiencesRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
-            <span className="mr-2">💼</span> Expériences
-          </button>
-          <button onClick={() => scrollToSection(educationRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
-            <span className="mr-2">🎓</span> Éducation
-          </button>
-          <button onClick={() => scrollToSection(skillsRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
-            <span className="mr-2">🛠️</span> Compétences
-          </button>
-          <button onClick={() => scrollToSection(contactRef)} className="text-teal-800 hover:text-teal-900 transition-colors flex items-center" style={gradientStyle}>
-            <span className="mr-2">📞</span> Contact
-          </button>
 
+        <nav className="flex flex-col space-y-6 text-lg text-center">
+          <button onClick={() => scrollToSection(introRef)} className="text-white hover:text-purple-400 transition-colors">🏠 INTRO</button>
+          <button onClick={() => scrollToSection(cvRef)} className="text-white hover:text-purple-400 transition-colors">🗎 CV</button>
+          <button onClick={() => scrollToSection(projectsRef)} className="text-white hover:text-purple-400 transition-colors">📑 PROJETS</button>
+          <button onClick={() => scrollToSection(experiencesRef)} className="text-white hover:text-purple-400 transition-colors">💼 EXPÉRIENCES</button>
+          <button onClick={() => scrollToSection(educationRef)} className="text-white hover:text-purple-400 transition-colors">🎓 ÉDUCATION</button>
+          <button onClick={() => scrollToSection(skillsRef)} className="text-white hover:text-purple-400 transition-colors">🛠️ COMPÉTENCES</button>
+          <button onClick={() => scrollToSection(contactRef)} className="text-white hover:text-purple-400 transition-colors">📞 CONTACT</button>
         </nav>
       </div>
     </>

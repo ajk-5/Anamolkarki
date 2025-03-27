@@ -270,11 +270,8 @@ export default function Home() {
   return (
     <div className="min-h-screen text-slate-800 overflow-hidden relative">
      
-      <div className="fixed inset-0 w-full h-full bg-gray-100 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-teal-500 via-blue-400 to-violet-500 animate-movingGradient"></div>
-        <div className="absolute top-0 right-0 w-3/4 h-3/4 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 blur-3xl opacity-60 transform translate-x-1/4 -translate-y-1/4 animate-blob"></div>
-        <div className="absolute bottom-0 left-0 w-3/4 h-3/4 rounded-full bg-gradient-to-tr from-emerald-400 to-lime-300 blur-3xl opacity-60 transform -translate-x-1/4 translate-y-1/4 animate-blob animation-delay-2000"></div>
-        <div className="absolute top-1/2 left-1/2 w-1/2 h-1/2 rounded-full bg-gradient-to-br from-indigo-500 to-cyan-400 blur-3xl opacity-60 transform -translate-x-1/2 -translate-y-1/2 animate-blob animation-delay-4000"></div>
+      <div className="fixed inset-0 w-full h-full bg-black-100 overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(45,212,191,0.05)_1px,transparent_1px),linear-gradient(180deg,rgba(45,212,191,0.05)_1px,transparent_1px)] bg-[size:30px_30px]"></div>
       </div>
       <div className="absolute inset-0 opacity-10 pointer-events-none bg-[linear-gradient(90deg,rgba(45,212,191,0.05)_1px,transparent_1px),linear-gradient(180deg,rgba(45,212,191,0.05)_1px,transparent_1px)] bg-[size:30px_30px]"></div>
     

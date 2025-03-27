@@ -25,6 +25,16 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, hueRotation
     transition: "filter 0.5s ease-in-out",
   };
 
+  // Helper function to determine the project link based on its title
+  const getProjectLink = (title: string): string => {
+    const upperTitle = title.toUpperCase();
+    if (upperTitle.includes("NAVXPERT")) return "https://navxpert.anamolkarki.com";
+    if (upperTitle.includes("ECONOMITIENS")) return "https://github.com/ajk-5/E-CONOMITIENS";
+    if (upperTitle.includes("ESIEACCASION")) return "https://github.com/ajk-5/Accassion";
+    if (upperTitle.includes("ASTAVOID")) return "https://astavoid.anamolkarki.com";
+    return "";
+  };
+
   const scrollToProject = (index: number) => {
     if (index >= 0 && index < projects.length) {
       setCurrentProjectIndex(index);
@@ -90,31 +100,44 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, hueRotation
             msOverflowStyle: "none", // Hide scrollbar on IE/Edge
           }}
         >
-          {projects.map((project, index) => (
-            <MotionDiv
-              key={index}
-              className="min-w-full w-full backdrop-blur-sm p-4 sm:p-6 rounded-xl shadow-lg transition-all duration-500 border border-teal-400 flex-shrink-0"
-              initial={{ opacity: 0, x: 150 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1.5, delay: index * 0.3, ease: "easeOut" }}
-              style={{ borderColor: `hsl(${(hueRotation + index * 30) % 360}, 80%, 50%)` }}
-            >
-              <h3
-                className="text-base sm:text-lg md:text-xl lg:text-2xl 2xl:text-2xl font-bold text-teal-800 mb-3 uppercase tracking-tight"
-                style={gradientStyle}
+          {projects.map((project, index) => {
+            const projectLink = getProjectLink(project.title);
+            return (
+              <MotionDiv
+                key={index}
+                className="min-w-full w-full backdrop-blur-sm p-4 sm:p-6 rounded-xl shadow-lg transition-all duration-500 border border-teal-400 flex-shrink-0"
+                initial={{ opacity: 0, x: 150 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1.5, delay: index * 0.3, ease: "easeOut" }}
+                style={{ borderColor: `hsl(${(hueRotation + index * 30) % 360}, 80%, 50%)` }}
               >
-                {project.title}
-              </h3>
-              <p className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base italic text-slate-600">
-                {project.role} | {project.period}
-              </p>
-              <ul className="mt-3 text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-slate-700 list-disc list-inside">
-                {project.description.map((item, idx) => (
-                  <li key={idx}>{item}</li>
-                ))}
-              </ul>
-            </MotionDiv>
-          ))}
+                <h3
+                  className="text-base sm:text-lg md:text-xl lg:text-2xl 2xl:text-2xl font-bold text-teal-800 mb-1 uppercase tracking-tight"
+                  style={gradientStyle}
+                >
+                  {project.title}
+                </h3>
+                {projectLink && (
+                  <a
+                    href={projectLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-xs sm:text-sm text-green-200 underline mb-3"
+                  >
+                    {projectLink}
+                  </a>
+                )}
+                <p className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base italic text-indigo-300">
+                  {project.role} | {project.period}
+                </p>
+                <ul className="mt-3 text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-violet-300 list-disc list-inside">
+                  {project.description.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </MotionDiv>
+            );
+          })}
         </div>
 
         {/* Right Arrow */}

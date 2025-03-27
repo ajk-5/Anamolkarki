@@ -17,7 +17,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ hueRotation, contactRef
     <footer className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
       <section ref={contactRef}>
         <MotionDiv
-          className="text-xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-6xl font-extrabold text-center mb-8 text-teal-800 uppercase tracking-wide drop-shadow-md transform perspective-1000 translate-z-10"
+          className="text-xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-6xl font-extrabold text-center mb-8 text-teal-200 uppercase tracking-wide drop-shadow-md transform perspective-1000 translate-z-10"
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.2, type: "spring", stiffness: 50 }}
@@ -34,9 +34,9 @@ const ContactSection: React.FC<ContactSectionProps> = ({ hueRotation, contactRef
           style={{ borderColor: `hsl(${(hueRotation + 60) % 360}, 80%, 50%)` }}
         >
           <div className="text-center">
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl 2xl:text-2xl font-bold text-teal-800 mb-4 uppercase">Retrouvez-moi sur</p>
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl 2xl:text-2xl font-bold text-indigo-300 mb-4 uppercase">Retrouvez-moi sur</p>
             <div className="flex flex-col sm:flex-row justify-center gap-4 md:gap-6 lg:gap-8">
-              <div className="flex items-center text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-teal-800 hover:text-teal-900 transition-colors">
+              <div className="flex items-center text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-violet-300 hover:text-violet-500 transition-colors">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
@@ -57,7 +57,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ hueRotation, contactRef
                   LinkedIn
                 </a>
               </div>
-              <div className="flex items-center text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-teal-800 hover:text-teal-900 transition-colors">
+              <div className="flex items-center text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-violet-300 hover:text-teal-900 transition-colors">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
@@ -76,7 +76,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ hueRotation, contactRef
                   GitHub
                 </a>
               </div>
-              <div className="flex items-center text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-teal-800 hover:text-teal-900 transition-colors">
+              <div className="flex items-center text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-indigo-300 hover:text-teal-900 transition-colors">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
