@@ -1,6 +1,7 @@
 "use client";
 
 import { MotionDiv } from "@/components/MotionDiv";
+import Image from "next/image"; 
 
 interface ContactSectionProps {
   hueRotation: number;
@@ -76,27 +77,37 @@ const ContactSection: React.FC<ContactSectionProps> = ({ hueRotation, contactRef
                   GitHub
                 </a>
               </div>
-              <div className="flex items-center text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-indigo-300 hover:text-teal-900 transition-colors">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#0f766e"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="mr-2"
-                >
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                  <polyline points="22,6 12,13 2,6" />
-                </svg>
-                <a href="mailto:anamoljang@gmail.com">anamoljang@gmail.com</a>
+                <div className="flex items-center text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-indigo-300 hover:text-teal-900 transition-colors">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#0f766e"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="mr-2"
+                  >
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                  <a href="mailto:anamoljang@gmail.com">anamoljang@gmail.com</a>
+                </div>
+                <div className="flex items-center text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-indigo-300 hover:text-teal-900 transition-colors">
+                           <Image
+                             className="w-[40px] md:w-[50px] lg:w-[60px] h-auto"
+                             src="/images/onlyfan.svg"
+                             alt="Anamol Karki Logo"
+                             width={60}
+                             height={80}
+                           />
+                  <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">onlyfan</a>
+                </div>
               </div>
             </div>
-          </div>
-        </MotionDiv>
+          </MotionDiv>
       </section>
     </footer>
   );
