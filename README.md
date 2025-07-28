@@ -53,3 +53,6 @@ northeast/
 ├── next.config.js           # Next.js configuration
 ├── tsconfig.json            # TypeScript config
 └── package.json             # Dependencies
+### Environment Variables
+
+Set `POSTGRES_URL` to your Vercel Postgres connection string so the contact form can store submissions.
