@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 
 // Dropdown items
 const dropdownItems = [
-  { href: "/", label: "Développeur" },
+  { href: "/developer", label: "Développeur" },
   { href: "/Bar", label: "Barman" },
 ];
 
