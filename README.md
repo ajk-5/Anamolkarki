@@ -59,4 +59,10 @@ northeast/
 └── package.json             # Dependencies
 ### Environment Variables
 
-Set `POSTGRES_URL` to your Vercel Postgres connection string so the contact form can store submissions.
+Copy `.env.example` to `.env.local` and fill in the values.
+
+- `POSTGRES_URL` – your Vercel Postgres connection string.
+- `SMTP_EMAIL` – email account used to send and receive contact form notifications.
+- `SMTP_PASSWORD` – password or app password for the SMTP account.
+- `SMTP_HOST` – SMTP server host (e.g. `smtp.gmail.com`).
+- `SMTP_PORT` – SMTP server port (e.g. `587`).
