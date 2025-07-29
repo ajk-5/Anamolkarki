@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { MotionDiv } from "@/components/MotionDiv";
-import Image from "next/image"; 
+import Image from "next/image";
 
 interface ContactSectionProps {
   hueRotation: number;
@@ -12,6 +13,37 @@ const ContactSection: React.FC<ContactSectionProps> = ({ hueRotation, contactRef
   const gradientStyle = {
     filter: `hue-rotate(${hueRotation}deg)`,
     transition: "filter 0.5s ease-in-out",
+  };
+
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [status, setStatus] = useState<string | null>(null);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus(null);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        setStatus("Message sent");
+        setForm({ name: "", email: "", message: "" });
+      } else {
+        const data = await res.json();
+        setStatus(data.error || "Error");
+      }
+    } catch {
+      setStatus("Error");
+    }
   };
 
   return (
@@ -96,20 +128,60 @@ const ContactSection: React.FC<ContactSectionProps> = ({ hueRotation, contactRef
                   <a href="mailto:anamoljang@gmail.com">anamoljang@gmail.com</a>
                 </div>
                 <div className="flex items-center text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-indigo-300 hover:text-teal-900 transition-colors">
-                           <Image
-                             className="w-[40px] md:w-[50px] lg:w-[60px] h-auto"
-                             src="/images/onlyfan.svg"
-                             alt="Anamol Karki Logo"
-                             width={60}
-                             height={80}
-                           />
+                  <Image
+                    className="w-[40px] md:w-[50px] lg:w-[60px] h-auto"
+                    src="/images/onlyfan.svg"
+                    alt="Anamol Karki Logo"
+                    width={60}
+                    height={80}
+                  />
                   <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">onlyfan</a>
                 </div>
               </div>
             </div>
+            <form
+              onSubmit={handleSubmit}
+              className="mt-6 space-y-3 bg-white bg-opacity-20 backdrop-blur-lg rounded-lg shadow-2xl p-6 max-w-md mx-auto"
+            >
+              <h2 className="text-2xl font-bold mb-2" style={{ color: "#dfcea8" }}>
+                Contact
+              </h2>
+              <input
+                className="w-full p-2 rounded-md bg-white bg-opacity-30 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-600"
+                name="name"
+                placeholder="Name"
+                value={form.name}
+                onChange={handleChange}
+                required
+              />
+              <input
+                className="w-full p-2 rounded-md bg-white bg-opacity-30 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-600"
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={form.email}
+                onChange={handleChange}
+                required
+              />
+              <textarea
+                className="w-full p-2 rounded-md bg-white bg-opacity-30 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-600"
+                name="message"
+                placeholder="Message"
+                value={form.message}
+                onChange={handleChange}
+                required
+              />
+              <button
+                className="px-4 py-2 bg-teal-600 text-white rounded w-full"
+                type="submit"
+              >
+                Send
+              </button>
+              {status && <p className="text-sm text-center">{status}</p>}
+            </form>
           </MotionDiv>
-      </section>
-    </footer>
+        </section>
+      </footer>
   );
 };
 
