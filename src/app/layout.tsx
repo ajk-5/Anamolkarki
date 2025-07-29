@@ -2,6 +2,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/globals.css";
 import NavBar from "@/components/NavBar";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 
 const geistSans = Geist({
@@ -24,9 +25,9 @@ export default function RootLayout({
 <html lang="en">
 
   <body className={`${geistSans.variable} ${geistMono.variable}`}>
-  <NavBar/>
+    <NavBar />
     <div className=" mt-15 ">{children}</div>
-
+    <SpeedInsights />
   </body>
 </html>
   );
