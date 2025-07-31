@@ -16,7 +16,8 @@
     "next": "15.1.7",
     "nodemailer": "^7.0.5",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "googleapis": "^127.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
