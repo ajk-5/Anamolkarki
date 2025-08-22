@@ -268,17 +268,17 @@ export default function Home() {
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
     if (ref.current) {
-      ref.current.scrollIntoView({ behavior: "smooth" });
+      ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
   return (
-    <div className="min-h-screen text-slate-800 overflow-hidden relative">
-     
-      <div className="fixed inset-0 w-full h-full bg-black-100 overflow-hidden">
+    <div className="min-h-screen text-slate-800 overflow-x-hidden relative">
+
+      <div className="fixed inset-0 w-full h-full bg-black-100 pointer-events-none -z-10">
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(45,212,191,0.05)_1px,transparent_1px),linear-gradient(180deg,rgba(45,212,191,0.05)_1px,transparent_1px)] bg-[size:30px_30px]"></div>
       </div>
-      <div className="absolute inset-0 opacity-10 pointer-events-none bg-[linear-gradient(90deg,rgba(45,212,191,0.05)_1px,transparent_1px),linear-gradient(180deg,rgba(45,212,191,0.05)_1px,transparent_1px)] bg-[size:30px_30px]"></div>
+      <div className="absolute inset-0 opacity-10 pointer-events-none -z-10 bg-[linear-gradient(90deg,rgba(45,212,191,0.05)_1px,transparent_1px),linear-gradient(180deg,rgba(45,212,191,0.05)_1px,transparent_1px)] bg-[size:30px_30px]"></div>
     
       <NavSidebar
         scrollToSection={scrollToSection}
@@ -292,8 +292,10 @@ export default function Home() {
         hueRotation={hueRotation}
       />
 
-      <div className="relative">
+      <div className="relative z-10">
+      <div className="pointer-events-none">
       <TealParticles particleCount={90} />
+      </div>
         <IntroSection intro={intro} hueRotation={hueRotation} introRef={introRef} />
         <CVSection hueRotation={hueRotation}  cvRef={cvRef} />
         <ProjectsSection projects={projects} hueRotation={hueRotation} projectsRef={projectsRef} />
