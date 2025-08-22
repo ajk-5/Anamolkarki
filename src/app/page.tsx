@@ -82,6 +82,8 @@ export default function Home() {
     const userAnswer = answer.trim().toLowerCase();
     const correct = selected.answers?.some((a) => a.trim().toLowerCase() === userAnswer);
     if (correct) {
+      // Set a cookie so the /me page can verify access
+      document.cookie = `friendsorfamily=${encodeURIComponent(userAnswer)}; path=/`;
       router.push(selected.path);
     } else {
       alert("Incorrect answer, try again!");
