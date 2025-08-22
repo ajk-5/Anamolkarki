@@ -21,19 +21,7 @@ const NavBar: React.FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [temperature, setTemperature] = useState<number | null>(null);
 
-  useEffect(() => {
-    setIsMounted(true);
-    fetch(
-      "https://api.open-meteo.com/v1/forecast?latitude=48.8566&longitude=2.3522&current=temperature_2m&timezone=Europe%2FParis"
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.current && typeof data.current.temperature_2m === "number") {
-          setTemperature(Math.round(data.current.temperature_2m));
-        }
-      })
-      .catch(() => {});
-  }, []);
+  
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
@@ -111,18 +99,10 @@ const NavBar: React.FC = () => {
           </li>
         </ul>
 
-        <div className="flex items-center gap-2">
-          <button onClick={toggleSearch} aria-label="Search">
-            <Image src="/images/search.svg" alt="search" width={20} height={20} />
-          </button>
-          <div className="flex items-center text-xs md:text-sm text-teal-800">
-            <Image src="/images/weather.svg" alt="weather" width={20} height={20} />
-            {temperature !== null && <span className="ml-1">{temperature}°C</span>}
-          </div>
-        </div>
+        
       </div>
 
-      {isMenuOpen && (
+      {/*isMenuOpen && (
         <ul className="md:hidden absolute top-full left-0 w-full bg-white/90 backdrop-blur-sm border border-yellow-900 rounded-b-xl shadow">
           {dropdownItems.map((item, index) => (
             <li key={index} className="p-2 text-teal-800 text-center hover:bg-teal-600/30">
@@ -138,7 +118,7 @@ const NavBar: React.FC = () => {
         <div className="absolute top-full right-2 mt-1 bg-white/90 backdrop-blur-sm p-1 rounded shadow-md">
           <input type="text" placeholder="Search..." className="text-sm p-1 text-black outline-none" />
         </div>
-      )}
+      )*/}
     </nav>
   );
 };

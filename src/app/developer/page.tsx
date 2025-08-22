@@ -152,7 +152,7 @@ const experiences: Experience[] = [
   {
     title: "BARMAN",
     location: "",
-    period: "(2021 - AUJOURD'HUI)",
+    period: "(2021 - 2025)",
     description: [
       "Activité pour financer mes études",
       "Gestion de situations stressantes",
