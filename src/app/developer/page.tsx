@@ -75,6 +75,7 @@ const projects: Project[] = [
     role: "Développeur",
     period: "SEPTEMBRE 2024 - FÉVRIER 2025",
     description: [
+      "Site web : navxpert.anamolkarki.com",
       "Solution numérique pour web et mobile",
       "Technologies : C#, ASP.NET, React.js, TypeScript, PostgreSQL, Entity Framework, Leaflet.js, OpenStreetMap",
       "Utilisation de l'API Île-de-France Mobilités avec polling en temps réel",
@@ -120,17 +121,17 @@ const projects: Project[] = [
     ]
   },
   {
-    title: "ANAMOL KARKI : INTERACTIF BLOG",
+    title: "WT4Q.com: INTERACTIF BLOG",
     role: "Chef de projet/Développeur",
-    period: "FEV 2025 - Mars 2025",
+    period: "FEV 2025 - Juillet 2025",
     description: [
-      "Site web : www.Anamolkarki.com",
-      "Technologies : Web API ASP.NET, PostgreSQL, Next.js",
-      "Contenu : articles tech, nouvelles géo, recettes de cocktails (18+)",
+      "Site web : www.wt4q.com",
+      "Technologies : C# Web API ASP.NET, PostgreSQL, Next.js",
+      "Contenu : articles tech, nouvelles géo, recettes de cocktails (18+), jeux en ligne, outils",
       "Authentification via Google OAuth ou inscription",
       "Fonctionnalités : likes, commentaires, Q&A",
       "Configuration en cours dans Docker",
-      "Déploiement prévu première semaine de mars"
+    
     ]
   },
 ];

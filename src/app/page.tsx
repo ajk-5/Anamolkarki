@@ -18,30 +18,23 @@ const profiles: Profile[] = [
     id: "friends",
     label: "Friends/Family",
     icon: "/images/user.svg",
-    question: "Who is my favorite player of all time?",
-    answers: ["lionel messi", "messi", "leo messi"],
-    path: "/developer",
+    question: "Who is my favourite celebrity?",
+    answers: ["lionel messi", "messi", "leo messi","Lionel Messi","LEO MESSI"],
+    path: "/me",
   },
-  {
-    id: "know",
-    label: "Want To Know Me Better",
-    icon: "/images/user.svg",
-    question: "What is my Instagram handle?",
-    answers: ["anamol__karki"],
-    path: "/developer",
-  },
-  {
-    id: "barman",
-    label: "Employer Barman",
-    icon: "/images/user.svg",
-    path: "/Bar",
-  },
+
   {
     id: "dev",
     label: "Employer Developpeur",
     icon: "/images/user.svg",
     path: "/developer",
-  },
+  },  
+  {
+    id: "barman",
+    label: "Employer Barman",
+    icon: "/images/user.svg",
+    path: "/Bar",
+  }
 ];
 
 export default function Home() {
