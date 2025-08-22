@@ -135,7 +135,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ hueRotation, contactRef
                     width={60}
                     height={80}
                   />
-                  <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">onlyfan</a>
+                  <a href="/rickrolled">onlyfan</a>
                 </div>
               </div>
             </div>
