@@ -138,7 +138,7 @@ export default function BarCV() {
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
     if (ref.current) {
-      ref.current.scrollIntoView({ behavior: "smooth" });
+      ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
@@ -152,9 +152,9 @@ export default function BarCV() {
   };
 
   return (
-    <div className="min-h-screen text-slate-800 overflow-hidden relative">
+    <div className="min-h-screen text-slate-800 overflow-x-hidden relative">
       {/* Moving Linear Gradient Background */}
-      <div className="fixed inset-0 w-full h-full bg-gray-100 overflow-hidden">
+      <div className="fixed inset-0 w-full h-full bg-gray-100 pointer-events-none -z-10">
         <div className="absolute inset-0 bg-gradient-to-r from-teal-500 via-emerald-400 to-indigo-500 animate-movingGradient"></div>
         <div className="absolute top-0 right-0 w-3/4 h-3/4 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 blur-3xl opacity-60 transform translate-x-1/4 -translate-y-1/4 animate-blob"></div>
         <div className="absolute bottom-0 left-0 w-3/4 h-3/4 rounded-full bg-gradient-to-tr from-emerald-400 to-lime-300 blur-3xl opacity-60 transform -translate-x-1/4 translate-y-1/4 animate-blob animation-delay-2000"></div>
@@ -162,7 +162,7 @@ export default function BarCV() {
       </div>
 
       {/* Subtle Grid Pattern */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none bg-[linear-gradient(90deg,rgba(45,212,191,0.05)_1px,transparent_1px),linear-gradient(180deg,rgba(45,212,191,0.05)_1px,transparent_1px)] bg-[size:30px_30px]"></div>
+      <div className="absolute inset-0 opacity-10 pointer-events-none -z-10 bg-[linear-gradient(90deg,rgba(45,212,191,0.05)_1px,transparent_1px),linear-gradient(180deg,rgba(45,212,191,0.05)_1px,transparent_1px)] bg-[size:30px_30px]"></div>
 
       {/* Arrow Button */}
       <button
@@ -241,9 +241,11 @@ export default function BarCV() {
       </div>
 
       {/* Main Content */}
-      <div className="relative">
+      <div className="relative z-10">
         {/* Teal Particles */}
+        <div className="pointer-events-none">
         <TealParticles particleCount={90} />
+        </div>
 
         {/* Intro */}
         <div
