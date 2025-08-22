@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -15,18 +15,14 @@ const dropdownItems = [
 // NavBar component
 const NavBar: React.FC = () => {
   const pathname = usePathname();
-  const [isMounted, setIsMounted] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [temperature, setTemperature] = useState<number | null>(null);
 
   
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
 
-  const selectedRole = isMounted ? (pathname === "/Bar" ? "Barman" : "Développeur") : "Développeur";
+  const selectedRole = pathname === "/Bar" ? "Barman" : "Développeur";
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 p-2">
@@ -102,23 +98,7 @@ const NavBar: React.FC = () => {
         
       </div>
 
-      {/*isMenuOpen && (
-        <ul className="md:hidden absolute top-full left-0 w-full bg-white/90 backdrop-blur-sm border border-yellow-900 rounded-b-xl shadow">
-          {dropdownItems.map((item, index) => (
-            <li key={index} className="p-2 text-teal-800 text-center hover:bg-teal-600/30">
-              <Link href={item.href} onClick={() => setIsMenuOpen(false)}>
-                {item.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {isSearchOpen && (
-        <div className="absolute top-full right-2 mt-1 bg-white/90 backdrop-blur-sm p-1 rounded shadow-md">
-          <input type="text" placeholder="Search..." className="text-sm p-1 text-black outline-none" />
-        </div>
-      )*/}
+      {/* Mobile menu placeholder */}
     </nav>
   );
 };

@@ -291,7 +291,7 @@ function TechCard({ item }: { item: TechItem }) {
   return (
     <div className="group flex flex-col items-center justify-center gap-2 rounded-2xl border border-slate-200 p-4 bg-white/70 backdrop-blur shadow-sm hover:shadow-md transition">
       <div
-        className="svg-box size-14"
+        className="svg-box w-14 h-14"
         dangerouslySetInnerHTML={{ __html: item.icon }}
         aria-hidden
       />
