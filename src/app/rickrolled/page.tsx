@@ -1,7 +1,7 @@
 export default function Rickrolled() {
   return (
     <main className="min-h-screen flex items-center justify-center p-4 bg-gray-100">
-      <div className="bg-white p-6 rounded shadow-md text-center space-y-4">
+      <div className="bg-black p-6 rounded shadow-md text-center space-y-4">
         <h1 className="text-2xl font-bold">You&apos;ve been RICKROLLED!</h1>
         <p className="text-lg">Lesson: Don&apos;t click random links. They can get you hacked or RICKROLLED!!!!</p>
         <div className="aspect-video w-full max-w-xl mx-auto">
