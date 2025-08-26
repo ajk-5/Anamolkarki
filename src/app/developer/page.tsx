@@ -222,7 +222,7 @@ const skills: Skills = {
 const badgeSVG = (label: string, bg = "#0ea5a4", fg = "#0b1324") => {
   // uniform 56×56 viewbox with rounded rect + centered text
   return `
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" role="img" aria-label="${label}">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58" role="img" aria-label="${label}">
     <rect x="1" y="1" width="54" height="54" rx="12" fill="${bg}" stroke="#0b1324" stroke-width="2"/>
     <text x="50%" y="52%" text-anchor="middle" dominant-baseline="middle" font-family="Inter, system-ui, Arial" font-size="16" font-weight="700" fill="${fg}">
       ${label}

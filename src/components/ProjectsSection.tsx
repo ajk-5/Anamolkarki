@@ -32,6 +32,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, hueRotation
     if (upperTitle.includes("ECONOMITIENS")) return "https://github.com/ajk-5/E-CONOMITIENS";
     if (upperTitle.includes("ESIEACCASION")) return "https://github.com/ajk-5/Accassion";
     if (upperTitle.includes("ASTAVOID")) return "https://astavoid.anamolkarki.com";
+    if (upperTitle.includes("WT4Q.com")) return "https://www.wt4q.com";
     return "";
   };
 
