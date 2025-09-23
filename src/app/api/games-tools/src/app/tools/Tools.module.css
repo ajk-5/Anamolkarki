@@ -1,0 +1,32 @@
+.main {
+  padding: 1rem;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.item {
+  border: 4px double #4b5563;
+  padding: 0.75rem;
+  margin: 0.75rem 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Make the whole box clickable */
+.blockLink {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.blockLink:focus-visible {
+  outline: 2px dashed #4b5563;
+  outline-offset: 2px;
+}

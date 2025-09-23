@@ -1,0 +1,99 @@
+/* ===== MetroTrade – Modern Light Theme ===== */
+
+.container {
+  /* Theme tokens */
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --ink: #0f172a;
+  --muted: #475569;
+  --border: #e2e8f0;
+  --accent: #2563eb;
+  --accent-2: #0ea5e9;
+
+  display:flex; width:100%; max-width:100%; flex-direction:column;
+  gap:16px; padding:16px; color:var(--ink); background: var(--bg);
+  border-radius:12px; box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06) inset;
+  overflow-x:auto;
+  overflow-y:auto; /* allow page to scroll if board is taller */
+  /* default board sizing vars consumed by board.module.css */
+  --mt-board-min: 300px; --mt-board-max: 980px; --mt-board-vw: 92vw; --mt-board-vh: 82vh;
+  --mt-reserve: 320px; /* vertical space to reserve for HUD/controls when sizing by height */
+}
+
+.topBar { display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px 12px; }
+.brand { font-weight:800; font-size:22px; letter-spacing:.4px; color:var(--accent); }
+.controls { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.controls label { color:var(--muted); font-size:14px; display:flex; align-items:center; gap:6px; }
+.controls input, .controls select { height:34px; padding:0 8px; border:1px solid var(--border); border-radius:8px; background:var(--card); color:var(--ink); }
+.controls input { width:70px; }
+.primary { background:linear-gradient(180deg, var(--accent), var(--accent-2)); color:#fff; border:none; padding:9px 13px; border-radius:8px; cursor:pointer; box-shadow: 0 1px 2px rgba(2,6,23,.2); transition: transform .12s ease, filter .12s ease; }
+.primary:hover { filter: brightness(1.03); transform: translateY(-1px); }
+
+.layout { display:grid; grid-template-columns: 1fr; gap:16px; }
+.boardWrap { position: relative; display:grid; place-items:center; }
+.side { display:none; }
+.hud { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:12px; }
+.turnRow { display:flex; justify-content:space-between; margin-bottom:8px; color:var(--muted); }
+.buttons { display:flex; gap:8px; flex-wrap:wrap; }
+.buttons button { padding:8px 12px; background:#f1f5f9; color:var(--ink); border:1px solid var(--border); border-radius:8px; cursor:pointer; transition:transform .12s ease, background .12s ease; }
+.buttons button:hover:not(:disabled){ transform: translateY(-1px); background:#e2e8f0; }
+.buttons button:disabled{ opacity:0.5; cursor:not-allowed; }
+.log { margin-top:8px; height:170px; overflow:auto; font-size:12px; background:#fafafa; padding:10px; border-radius:8px; border:1px solid var(--border); color:#0f172a; }
+.logLine { opacity:0.9; }
+.overlay { position:fixed; inset:0; backdrop-filter: blur(4px); display:grid; place-items:center; }
+.modal { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; min-width:280px; }
+
+/* Compact the entire UI a bit on medium screens */
+@media (max-width: 1100px) {
+  .container { gap: 12px; padding: 12px; }
+  .brand { font-size: 20px; }
+  .buttons button { padding: 7px 10px; }
+  .hud { padding: 10px; }
+}
+
+/* More compact on small phones */
+@media (max-width: 600px) {
+  .container { gap: 10px; padding: 10px; }
+  .brand { font-size: 18px; }
+  .turnRow { font-size: 0.95em; }
+  .buttons { gap: 6px; }
+  .buttons button { padding: 6px 9px; font-size: 0.9em; }
+  .log { height: 140px; font-size: 11px; padding: 8px; }
+  /* give a touch more breathing room for HUD on smaller screens */
+  .container { --mt-reserve: 360px; }
+}
+
+@media (max-width: 420px) {
+  .container { --mt-reserve: 400px; }
+  .controls input, .controls select { height: 28px; padding: 0 6px; }
+  .log { height: 100px; font-size: 10px; }
+}
+
+/* Optional small size mode (toggle via class) */
+.sizeSm { --mt-board-min: 220px; --mt-board-max: 520px; --mt-board-vw: 82vw; --mt-board-vh: 62vh; }
+.sizeSm .brand { font-size: 18px; }
+.sizeSm .buttons button { padding: 6px 9px; font-size: .9em; }
+.sizeSm .hud { padding: 8px; }
+
+/* Optional large size mode */
+.sizeLg { --mt-board-min: 360px; --mt-board-max: 1100px; --mt-board-vw: 96vw; --mt-board-vh: 88vh; }
+.sizeLg .brand { font-size: 24px; }
+
+/* ===== Square Mode (container kept perfectly square) ===== */
+.squareMode {
+  width: min(100%, 900px);
+  aspect-ratio: 1 / 1;
+  padding: 8px; /* reduce padding to maximize inner area */
+  margin-inline: auto;
+  --mt-board-max: 2000px; /* allow board to expand to container width */
+  --mt-reserve: 280px; /* how much vertical room to keep for bottom area */
+}
+.squareMode .layout {
+  grid-template-columns: 1fr;
+  grid-template-rows: 2fr 1fr; /* board area (2/3), side (1/3) */
+  height: 100%;
+}
+.squareMode .boardWrap { align-items: center; justify-items: center; height: 100%; }
+.squareMode .side { min-height: 0; overflow: auto; }
+
+

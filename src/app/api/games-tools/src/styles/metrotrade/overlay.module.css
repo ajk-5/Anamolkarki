@@ -1,0 +1,55 @@
+.overlay {
+  /* Place controls below the board instead of overlaying it */
+  position: static;
+  width: min(96%, 680px);
+  margin: 6px auto 0;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  padding: 6px 8px;
+  backdrop-filter: blur(6px);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #334155;
+  font-size: 12px;
+}
+.badge {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #3b82f6;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+}
+.turn { font-weight: 700; color: #0f172a; }
+.dice { opacity: 0.9; }
+.controls { display: flex; gap: 6px; }
+.controls button {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #f1f5f9;
+  color: #0f172a;
+  cursor: pointer;
+}
+.controls button:disabled { opacity: 0.5; cursor: not-allowed; }
+.controls button:hover:not(:disabled) { background: #e2e8f0; }
+
+@media (max-width: 600px) {
+  .overlay { width: 98%; padding: 6px; }
+  .meta { font-size: 11px; gap: 8px; }
+  .controls button { padding: 6px 8px; font-size: 12px; }
+}

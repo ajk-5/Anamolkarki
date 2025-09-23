@@ -1,0 +1,13 @@
+.main {
+  padding: 1rem;
+}
+
+.heading {
+  text-transform: uppercase;
+  border-bottom: 2px solid #000;
+  margin-bottom: 1rem;
+}
+
+.back {
+  margin-top: 1rem;
+}

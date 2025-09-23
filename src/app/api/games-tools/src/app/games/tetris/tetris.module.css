@@ -1,0 +1,99 @@
+/* Tetris styles: responsive layout with mobile-friendly controls */
+
+.container{
+  display:grid;
+  /* Ensure the board column is never narrower than the sidebar */
+  grid-template-columns:minmax(300px, 1fr) 300px;
+  gap:18px;
+  justify-content:center;
+  align-items:start;
+  /* Let the page's main layout control height; avoid forcing full viewport */
+  min-height:auto;
+  padding:12px;
+  margin:0;
+  color:#050505;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:#00000000;
+  overscroll-behavior:contain;
+  -webkit-tap-highlight-color:transparent;
+  max-width: 980px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.canvas{
+  display:block;
+  border:2px solid rgba(255,255,255,0.25);
+  border-radius:12px;
+  background:rgba(10, 0, 30, 0);
+  box-shadow:
+    0 8px 28px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.15),
+    inset 0 -2px 8px rgba(0,0,0,0.4);
+  touch-action:none;
+  margin-inline:auto;
+}
+
+.info{
+  padding:14px 16px;
+  border-radius:16px;
+  background:var(--panel);
+  border:1px solid var(--panel-border);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  box-shadow:0 10px 30px rgba(0,0,0,0.45);
+  max-width:280px;
+}
+
+.info h2{margin:8px 0 6px;font-weight:700}
+.info p{opacity:.9;line-height:1.35;margin:0 0 10px}
+.btnrow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0}
+.stat{display:flex;justify-content:space-between;margin:6px 0;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12)}
+.title{opacity:.9}
+.value{font-weight:700}
+.container select,
+.container button,
+.container input[type="range"]{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);background:#2b0a79; color:#fff}
+.container button{cursor:pointer}
+.info small{opacity:.8}
+.settings summary{cursor:pointer;margin:6px 0}
+.info label span{opacity:.9}
+
+.touchControls{display:none;margin:12px auto 0;width:min(100%,640px)}
+
+/* Ensure sidebar (info) sits to the right on desktop */
+.canvas{grid-row:1;grid-column:1}
+.info{grid-row:1;grid-column:2}
+.legend{grid-row:2;grid-column:1 / -1}
+.touchControls button{font-size:18px;padding:10px 0;border-radius:12px;user-select:none;min-height:44px;width:auto;min-width:56px}
+.wide{grid-column:span 2}
+
+.legend{margin:6px auto 0;text-align:center;opacity:.85;font-size:14px}
+
+@media (max-width:780px){
+  /* One-column flow on mobile */
+  .container{
+    grid-template-columns:1fr;
+    align-items:start;
+    /* no extra bottom padding since mobile controls are removed */
+  }
+
+  /* Keep DOM order: canvas -> controls -> legend -> info */
+  .info{max-width:none;width:100%}
+  .canvas{width:100%;height:auto}
+  .btnrow{grid-template-columns:1fr 1fr}
+
+  /* Hide on-screen touch controls entirely on small screens */
+  .touchControls{display:none !important}
+
+  /* Ensure controls appear directly under the canvas */
+  .canvas{order:1}
+  .touchControls{order:2}
+  .legend{order:3}
+  .info{order:4}
+
+  /* Reset explicit desktop grid placement on mobile */
+  .canvas{grid-row:auto;grid-column:auto}
+  .info{grid-row:auto;grid-column:auto}
+  .legend{grid-row:auto;grid-column:auto}
+}

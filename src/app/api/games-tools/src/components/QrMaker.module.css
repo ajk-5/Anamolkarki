@@ -1,0 +1,93 @@
+.wrapper {
+  padding: 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.controls,
+.preview {
+  background: #fff;
+  padding: 1rem;
+  border: 4px double #4b5563;
+}
+
+.field {
+  margin-bottom: 0.75rem;
+}
+
+.label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.textarea {
+  width: 100%;
+  padding: 0.5rem;
+}
+
+.range {
+  width: 100%;
+}
+
+.select {
+  width: 100%;
+  padding: 0.25rem;
+}
+
+.colorInput {
+  width: 100%;
+}
+
+.buttonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.buttonPrimary {
+  background: #2b0a86;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border: none;
+  cursor: pointer;
+}
+
+.buttonSecondary {
+  border: 1px solid #000;
+  padding: 0.5rem 1rem;
+  background: #2b0a86;
+  cursor: pointer;
+}
+
+.previewBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f3f4f600;
+  border: 1px solid #e5e7eb;
+  padding: 1rem;
+}
+
+.tip {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}

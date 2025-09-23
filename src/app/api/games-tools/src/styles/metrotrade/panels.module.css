@@ -1,0 +1,12 @@
+.wrap { display:flex; flex-direction:column; gap:8px; }
+.card { background:#0E1A2C; border:1px solid #2A3B59; border-radius:10px; padding:10px; }
+.card[data-active="true"]{ outline:2px solid #22D3EE; }
+.header { display:flex; align-items:center; gap:8px; font-weight:700; margin-bottom:6px; }
+.badge { background:#60A5FA; color:#001; width:18px; height:18px; display:grid; place-items:center; border-radius:50%; font-weight:800; box-shadow: 0 0 0 1px rgba(255,255,255,.75) inset; }
+.row { display:flex; justify-content:space-between; font-size:13px; padding:2px 0; }
+.props { display:flex; flex-direction:column; gap:6px; max-height:220px; overflow:auto; }
+.prop { background:#0B1424; border:1px solid #1F2D49; border-radius:8px; padding:6px; }
+.pname { font-size:13px; font-weight:700; }
+.pmeta { font-size:11px; opacity:0.85; }
+.actions { display:flex; gap:6px; margin-top:6px; }
+.actions button { padding:6px 8px; background:#18253A; color:#DBE8FF; border:1px solid #2C3F5F; border-radius:8px; cursor:pointer; }

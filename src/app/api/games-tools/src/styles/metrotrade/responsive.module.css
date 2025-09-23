@@ -1,0 +1,27 @@
+.container {}
+.topBar {}
+.controls {}
+.layout {}
+.boardWrap { display: grid; place-items: center; width: 100%; overflow: visible; min-height: 0; }
+.side {}
+
+@media (max-width: 900px) {
+  /* Stack vertically on tablets/phones: board first, sidebar under */
+  .layout { grid-template-columns: 1fr; }
+  .boardWrap { order: 1; }
+  .side { order: 2; }
+}
+
+@media (max-width: 600px) {
+  .topBar { flex-direction: column; align-items: flex-start; }
+  .controls { width: 100%; flex-wrap: wrap; }
+  .controls label { display: flex; align-items: center; width: 100%; }
+  .controls input { width: 100%; margin-left: 0; margin-top: 4px; }
+  .layout { gap: 12px; min-height: 0; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 8px; }
+  .controls { gap: 6px; }
+  .layout { gap: 8px; }
+}

@@ -1,0 +1,278 @@
+/* THEME + BACKGROUND ------------------------------------------------------- */
+.wrapper {
+  /* Purple backdrop + dynamic light position */
+  --bg: #2b0a86;
+  --bg2: #1f085f;
+  --bg3: #14043d;
+  --tiltX: 0deg;
+  --tiltY: 0deg;
+  --lx: 50%;
+  --ly: 35%;
+  /* Board size is computed in JS based on viewport, header, footer */
+
+  width: 100%;
+  max-width: 720px; /* keep reasonable width on large desktop screens */
+  /* Center content on the page */
+  margin: clamp(2px, 0.5vh, 10px) auto;
+  padding: 8px;
+  border-radius: 12px;
+  /* Rich background with spotlight following the pointer */
+  background:
+    radial-gradient(900px circle at var(--lx) var(--ly), rgba(255,255,255,0.18), transparent 45%),
+    radial-gradient(1400px circle at 60% 10%, #3a17a7 0%, var(--bg) 55%, var(--bg2) 85%, var(--bg3) 100%);
+  color: #e5e7eb;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 40px rgba(255,255,255,0.05),
+    0 30px 70px rgba(0,0,0,0.45);
+}
+
+/* Optional: lock the game view between header and footer (fixed position) */
+.locked {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  height: var(--lock-height, auto);
+  max-width: none; /* allow full width while locked */
+  z-index: 10;
+}
+
+/* HEAD / STATS ------------------------------------------------------------- */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3px;
+  height: auto;
+}
+.brand { display: flex; flex-direction: column; gap: 4px; }
+.title { margin: 0; font-size: 16px; line-height: 1.05; font-weight: 800; letter-spacing: 0.2px; color: #ffffff; }
+.subtitle { color: #c7c9ff; font-size: 10px; opacity: 0.9; }
+
+.stats { display: flex; gap: 3px; }
+.card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 3px 6px;
+  border-radius: 8px;
+  min-width: 56px;
+  text-align: center;
+  color: #f9fafb;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 6px 18px rgba(0,0,0,0.35);
+  backdrop-filter: blur(6px) saturate(120%);
+  -webkit-backdrop-filter: blur(6px) saturate(120%);
+}
+.label { font-size: 9px; opacity: 0.85; }
+.value { font-size: 14px; font-weight: 800; }
+
+/* CONTROLS ----------------------------------------------------------------- */
+.controls { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.btn, .btnPrimary {
+  appearance: none; border: none; color: #fff; cursor: pointer;
+  padding: 5px 8px; border-radius: 8px; font-weight: 700;
+  font-size: 0.75rem;
+  background: linear-gradient(180deg, #6b7cff, #4552ff);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 12px 30px rgba(0,0,0,0.35);
+  transition: transform 0.06s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+.btn:hover { opacity: 0.96; transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btnPrimary { background: linear-gradient(180deg, #5da8ff, #2563eb); }
+.btnPrimary:hover { filter: brightness(1.05); }
+
+.tip { color: #cfd2ff; font-size: 11px; margin-left: auto; opacity: 0.9; }
+
+/* PROGRESS ----------------------------------------------------------------- */
+.progress {
+  height: 3px; background: rgba(255,255,255,0.18); border-radius: 5px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.25);
+}
+.progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  width: 0%; transition: width 0.25s ease;
+}
+
+/* BOARD -------------------------------------------------------------------- */
+.board {
+  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+  padding: 8px;
+  border-radius: 12px;
+  /* Square board constrained by computed size */
+  width: var(--board-size, 360px);
+  height: var(--board-size, 360px);
+  margin: 2px auto 0;
+  touch-action: none; /* prevent page scroll during swipes */
+  overscroll-behavior: contain; /* avoid scroll chaining on mobile */
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.35),
+    inset 0 -10px 20px rgba(0,0,0,0.25),
+    0 16px 40px rgba(0,0,0,0.35);
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+}
+.row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+
+/* Desktop layout: put controls on same line as header content */
+@media (min-width: 900px) {
+  .wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    grid-auto-rows: auto;
+    align-items: center;
+    row-gap: 8px;
+  }
+  .header { grid-column: 1 / 3; }
+  .controls { grid-column: 3; justify-self: end; }
+  .progress { grid-column: 1 / -1; }
+  .board { grid-column: 1 / -1; }
+  /* Keep the header compact and hide the long tip on desktop */
+  .tip { display: none; }
+}
+
+@media (max-width: 480px) {
+  .wrapper {
+    margin: 8px auto;
+    padding: 8px;
+  }
+  .board {
+    padding: 8px;
+    gap: 8px;
+  }
+  .row {
+    gap: 8px;
+  }
+}
+
+/* TILES: 3D POLISHED GLASS ------------------------------------------------- */
+.cell {
+  width: 100%; padding-top: 100%; position: relative; border-radius: 8px;
+  display: grid; place-items: center; user-select: none;
+  transform-style: preserve-3d;
+}
+
+/* Translucent empty slot */
+.empty {
+  background: rgba(255,255,255,0.08);
+  border: 1px dashed rgba(255,255,255,0.2);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+/* Glass look (for non-empty tiles) */
+.glass {
+  /* Base tint from original tile color peeks through glass: */
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.40) 0%, rgba(255,255,255,0.16) 58%, rgba(255,255,255,0.08) 100%),
+    radial-gradient(260px circle at var(--lx) var(--ly), rgba(255,255,255,0.28), transparent 60%);
+  border: 1px solid rgba(255,255,255,0.38);
+  backdrop-filter: blur(7px) saturate(135%);
+  -webkit-backdrop-filter: blur(7px) saturate(135%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -10px 16px rgba(0,0,0,0.28),
+    0 10px 20px rgba(0,0,0,0.35),
+    0 28px 60px rgba(0,0,0,0.30);
+  transform: rotateX(var(--tiltY)) rotateY(var(--tiltX));
+  transition: transform 0.12s ease, box-shadow 0.2s ease;
+}
+
+/* Gloss highlight pane */
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: 2% 2% 44% 2%;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.25) 60%, rgba(255,255,255,0.06));
+  opacity: 0.95;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* Moving sheen band */
+.glass::before {
+  /* Disable moving sheen band */
+  content: none;
+}
+@keyframes sheen {
+  0%   { transform: rotate(35deg) translateX(-120%); }
+  100% { transform: rotate(35deg) translateX(220%); }
+}
+
+/* Ensure any legacy sheen styles are suppressed */
+.glass::before { animation: none !important; opacity: 0 !important; }
+
+/* POLISHED GLASS NUMBERS --------------------------------------------------- */
+.num {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-weight: 900;
+  font-size: 18px;
+  color: #ffffff;
+  /* Bevel + depth */
+  text-shadow:
+    0 1px 0 rgba(255,255,255,0.75),
+    0 2px 2px rgba(0,0,0,0.45),
+    0 6px 10px rgba(0,0,0,0.30);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* TILE VALUE TINTS (under the glass) -------------------------------------- */
+/* We keep the classic palette but darker for contrast on purple background. */
+.v2    { background-color: #e7dbc9; }
+.v4    { background-color: #e5d6b7; }
+.v8    { background-color: #cc9168; }
+.v16   { background-color: #c87751; }
+.v32   { background-color: #c65e46; }
+.v64   { background-color: #c64535; }
+.v128  { background-color: #cdb45e; }
+.v256  { background-color: #c7a94a; }
+.v512  { background-color: #c39f38; }
+.v1024 { background-color: #be962a; }
+.v2048 { background-color: #b88e1d; }
+.v4096 { background-color: #3c3a32; }
+.v8192 { background-color: #2f2d27; }
+.vSuper { background-color: rgba(255,255,255,0.12); }
+
+/* OVERLAY (end screens) ---------------------------------------------------- */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(15, 16, 30, 0.55);
+  display: grid; place-items: center; padding: 16px; z-index: 20;
+}
+.overlayCard {
+  background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.10));
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 16px; padding: 20px; width: 100%; max-width: 360px;
+  text-align: center; display: grid; gap: 10px;
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 18px 40px rgba(0,0,0,0.45);
+  backdrop-filter: blur(8px) saturate(130%);
+  -webkit-backdrop-filter: blur(8px) saturate(130%);
+}
+.overlayTitle { margin: 0; font-size: 24px; }
+.overlayText { color: #e2e7ff; margin: 0; }
+.overlayStats {
+  display: grid; grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 6px; font-size: 14px; color: #e7e9ff;
+}
+
+/* FOOTER + ACCESSIBILITY --------------------------------------------------- */
+.footer { text-align: center; color: #cfd2ff; font-size: 12px; margin-top: 8px; }
+.srOnly {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* RESPONSIVE --------------------------------------------------------------- */
+@media (max-width: 420px) {
+  .title { font-size: 22px; }
+  .value { font-size: 16px; }
+  .num { font-size: 20px; }
+}

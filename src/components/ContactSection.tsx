@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { MotionDiv } from "@/components/MotionDiv";
-import Image from "next/image";
+// removed unused Image import after cleanup
 
 interface ContactSectionProps {
   hueRotation: number;
@@ -127,16 +127,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ hueRotation, contactRef
                   </svg>
                   <a href="mailto:anamoljang@gmail.com">anamoljang@gmail.com</a>
                 </div>
-                <div className="flex items-center text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base text-indigo-300 hover:text-teal-900 transition-colors">
-                  <Image
-                    className="w-[40px] md:w-[50px] lg:w-[60px] h-auto"
-                    src="/images/onlyfan.svg"
-                    alt="Anamol Karki Logo"
-                    width={60}
-                    height={80}
-                  />
-                  <a href="/rickrolled">onlyfan</a>
-                </div>
+                
               </div>
             </div>
             <form
