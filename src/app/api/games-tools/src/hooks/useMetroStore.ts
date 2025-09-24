@@ -1,8 +1,17 @@
 "use client";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import type { GameState, InitOptions } from "@/lib/metrotrade/types";
-import { initGame, rollAndAdvance, resolveLanding, endTurn, buyCurrent, buildOnOwned, toggleMortgage, runUntilHuman } from "@/lib/metrotrade/engine";
+import type { GameState, InitOptions } from "../../lib/metrotrade/types";
+import {
+  initGame,
+  rollAndAdvance,
+  resolveLanding,
+  endTurn,
+  buyCurrent,
+  buildOnOwned,
+  toggleMortgage,
+  runUntilHuman,
+} from "../../lib/metrotrade/engine";
 
 interface Store {
   state: GameState;

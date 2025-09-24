@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import TypingPracticeClient from './components/TypingPracticeClient';
-import { getArticlesByCategory } from '@/lib/server/articles';
-import { stripHtml } from '@/lib/text';
+import { getArticlesByCategory } from '../../../lib/server/articles';
+import { stripHtml } from '../../../lib/text';
 
 export const metadata: Metadata = {
   title: 'Typing Practice',

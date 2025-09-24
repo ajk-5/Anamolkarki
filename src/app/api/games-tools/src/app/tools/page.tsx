@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import PrefetchLink from '@/components/PrefetchLink';
+import PrefetchLink from '../../components/PrefetchLink';
 import styles from './Tools.module.css';
 
 export const metadata: Metadata = {

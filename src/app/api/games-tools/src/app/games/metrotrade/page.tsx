@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import MetroTradeGame from '@/components/metrotrade';
+import MetroTradeGame from '../../../components/metrotrade';
 
 
 export const metadata: Metadata = {

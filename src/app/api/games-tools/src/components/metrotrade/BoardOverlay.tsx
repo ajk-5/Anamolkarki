@@ -1,6 +1,6 @@
 "use client";
-import { useMetroStore } from "@/hooks/useMetroStore";
-import styles from "@/styles/metrotrade/overlay.module.css";
+import { useMetroStore } from "../../hooks/useMetroStore";
+import styles from "../../styles/metrotrade/overlay.module.css";
 
 export default function BoardOverlay(){
   const state = useMetroStore(s=>s.state);
