@@ -23,6 +23,7 @@ interface Project {
   role: string;
   period: string;
   description: string[];
+  link?: string;
 }
 interface Experience {
   title: string;
@@ -72,6 +73,7 @@ const projects: Project[] = [
     title: "NAVXPERT: APPLICATION WEB DE NAVIGATION",
     role: "Développeur",
     period: "SEPTEMBRE 2024 - FÉVRIER 2025",
+    link: "https://navxpert.anamolkarki.com",
     description: [
       "Site web : navxpert.anamolkarki.com",
       "Solution numérique pour web et mobile",
@@ -89,6 +91,7 @@ const projects: Project[] = [
     title: "ECONOMITIENS: SUIVI DE LA CONSOMMATION ÉLECTRIQUE",
     role: "Développeur",
     period: "MARS 2024 - JUILLET 2024",
+    link: "https://github.com/ajk-5/E-CONOMITIENS",
     description: [
       "Application desktop",
       "Technologies : C#, WPF (MVVM), XAML, MySQL, Arduino, UML",
@@ -101,6 +104,7 @@ const projects: Project[] = [
     title: "ESIEACCASION : SECOND-HAND MARKETPLACE",
     role: "Chef de projet/Développeur",
     period: "SEPTEMBRE 2023 - FÉVRIER 2024",
+    link: "https://github.com/ajk-5/Accassion",
     description: [
       "Plateforme en ligne pour articles d'occasion",
       "Technologies : PHP, MySQL, HTML/CSS, modèle MVC",
@@ -112,6 +116,7 @@ const projects: Project[] = [
     title: "ASTAVOID : JEUX DES MINES",
     role: "Chef de projet/Développeur",
     period: "MARS 2023 - JUILLET 2023",
+    link: "https://astavoid.anamolkarki.com",
     description: [
       "Jeu interactif sur le web",
       "Technologies : JavaScript, Node.js, HTML, CSS, Nunjucks",
@@ -123,6 +128,7 @@ const projects: Project[] = [
     title: "90stimes.com: The Nineties Times",
     role: "Chef de projet/Développeur",
     period: "FEV 2025 - Juillet 2025",
+    link: "https://90stimes.com",
     description: [
       "Site web : www.90stimes.com",
       "Frontend : Next.js | Backend : ASP.NET Web API",
