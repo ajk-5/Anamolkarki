@@ -8,6 +8,7 @@ interface Project {
   role: string;
   period: string;
   description: string[];
+  link?: string;
 }
 
 interface ProjectsSectionProps {
@@ -102,7 +103,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, hueRotation
           }}
         >
           {projects.map((project, index) => {
-            const projectLink = getProjectLink(project.title);
+            const projectLink = project.link ?? getProjectLink(project.title);
             return (
               <MotionDiv
                 key={index}
