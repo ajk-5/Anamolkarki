@@ -23,6 +23,7 @@ interface Project {
   role: string;
   period: string;
   description: string[];
+  link?: string;
 }
 interface Experience {
   title: string;
@@ -124,18 +125,19 @@ const projects: Project[] = [
     role: "Chef de projet/Développeur",
     period: "FEV 2025 - Juillet 2025",
     description: [
-      "Site web : www.90stimes.com",
+      "Site web : https://www.90stimes.com",
       "Frontend : Next.js | Backend : ASP.NET Web API",
-      "Base de donnAces : PostgreSQL",
+      "Base de données : PostgreSQL",
       "Reverse proxy : Nginx",
-      "Cartes : OpenStreetMap (Leaflet prAvu)",
-      "MAtA�o : API met.no (locationforecast 2.0)",
-      "Personnalisation : IP pour news & mAtA�o",
+      "Cartes : OpenStreetMap (Leaflet prévu)",
+      "Météo : API met.no (Locationforecast 2.0)",
+      "Personnalisation : IP pour news & météo",
       "Contenu : articles tech, nouvelles géo, recettes de cocktails (18+), jeux en ligne, outils",
       "Authentification via Google OAuth ou inscription",
       "Fonctionnalités : likes, commentaires, Q&A",
       "Configuration en cours dans Docker",
     ],
+    link: "https://www.90stimes.com",
   },
 ];
 
