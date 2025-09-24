@@ -1,8 +1,8 @@
 "use client";
-import { useMetroStore } from "@/hooks/useMetroStore";
-import { BOARD } from "@/lib/metrotrade/constants";
+import { useMetroStore } from "../../hooks/useMetroStore";
+import { BOARD } from "../../../lib/metrotrade/constants";
 import Tile from "./Tile";
-import boardCss from "@/styles/metrotrade/board.module.css";
+import boardCss from "../../styles/metrotrade/board.module.css";
 
 export default function Board(){
   const state = useMetroStore(s=>s.state);

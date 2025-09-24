@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import PrefetchLink from '@/components/PrefetchLink';
+import PrefetchLink from '../../components/PrefetchLink';
 import styles from './Games.module.css';
 import Image from 'next/image';
 

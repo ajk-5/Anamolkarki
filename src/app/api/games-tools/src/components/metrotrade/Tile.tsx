@@ -1,7 +1,7 @@
 "use client";
-import type { Tile as T } from "@/lib/metrotrade/types";
-import { useMetroStore } from "@/hooks/useMetroStore";
-import ui from "@/styles/metrotrade/board.module.css";
+import type { Tile as T } from "../../../lib/metrotrade/types";
+import { useMetroStore } from "../../hooks/useMetroStore";
+import ui from "../../styles/metrotrade/board.module.css";
 
 export default function Tile({ tile }: { tile: T }) {
   const state = useMetroStore((s) => s.state);

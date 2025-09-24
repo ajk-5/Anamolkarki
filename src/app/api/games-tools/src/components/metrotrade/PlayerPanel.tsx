@@ -1,6 +1,6 @@
 "use client";
-import { useMetroStore } from "@/hooks/useMetroStore";
-import pcss from "@/styles/metrotrade/panels.module.css";
+import { useMetroStore } from "../../hooks/useMetroStore";
+import pcss from "../../styles/metrotrade/panels.module.css";
 
 export default function PlayerPanel(){
   const state = useMetroStore(s=>s.state);

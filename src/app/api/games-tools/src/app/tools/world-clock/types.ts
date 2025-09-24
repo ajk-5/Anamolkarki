@@ -1,4 +1,4 @@
-import type { WorldCity } from '@/lib/worldCities';
+import type { WorldCity } from '../../../lib/worldCities';
 
 export interface CityWeather extends WorldCity {
   time: string;

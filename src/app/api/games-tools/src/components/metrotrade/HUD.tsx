@@ -1,6 +1,6 @@
 "use client";
-import { useMetroStore } from "@/hooks/useMetroStore";
-import styles from "@/styles/metrotrade/ui.module.css";
+import { useMetroStore } from "../../hooks/useMetroStore";
+import styles from "../../styles/metrotrade/ui.module.css";
 
 export default function HUD(){
   const state = useMetroStore(s=>s.state);
