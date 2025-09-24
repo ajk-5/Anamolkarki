@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import WeatherIcon from '@/components/WeatherIcon';
+import WeatherIcon from '../../../components/WeatherIcon';
 import styles from './WorldClock.module.css';
 
 import type { CityWeather } from './types';

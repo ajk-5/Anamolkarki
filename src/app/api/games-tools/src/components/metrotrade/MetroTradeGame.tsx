@@ -1,10 +1,10 @@
 "use client";
 import { useMemo, useState } from "react";
-import { useMetroStore } from "@/hooks/useMetroStore";
+import { useMetroStore } from "../../hooks/useMetroStore";
 import Board from "./Board";
 import BoardOverlay from "./BoardOverlay";
-import styles from "@/styles/metrotrade/ui.module.css";
-import responsive from "@/styles/metrotrade/responsive.module.css";
+import styles from "../../styles/metrotrade/ui.module.css";
+import responsive from "../../styles/metrotrade/responsive.module.css";
 
 export default function MetroTradeGame(){
   const [players, setPlayers] = useState(2);

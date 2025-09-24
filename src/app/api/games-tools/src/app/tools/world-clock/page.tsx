@@ -3,7 +3,7 @@
 
 import { Metadata } from 'next';
 
-import { WORLD_CITIES, WorldCity } from '@/lib/worldCities';
+import { WORLD_CITIES, WorldCity } from '../../../lib/worldCities';
 import WorldClockClient from './WorldClockClient';
 import type { CityWeather } from './types';
 
