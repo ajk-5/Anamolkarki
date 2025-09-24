@@ -69,7 +69,41 @@ const intro: Intro = {
 
 const projects: Project[] = [
   {
-    title: "NAVXPERT: APPLICATION WEB DE NAVIGATION",
+    title: "90STIMES.COM : THE NINETIES TIMES",
+    role: "Chef de projet/Développeur",
+    period: "FÉVRIER 2025 - JUILLET 2025",
+    description: [
+      "Site web : 90stimes.com",
+      "Frontend : Next.js | Backend : ASP.NET Web API",
+      "Base de données : PostgreSQL",
+      "Reverse proxy : Nginx",
+      "Cartes : OpenStreetMap (Leaflet prévu)",
+      "Météo : API MET Norway (Location Forecast 2.0)",
+      "Personnalisation : adaptation IP pour les actualités et la météo",
+      "Contenu : articles tech, actualités géopolitiques, recettes de cocktails (18+), jeux en ligne, outils",
+      "Authentification via Google OAuth ou inscription",
+      "Fonctionnalités : likes, commentaires, questions-réponses",
+      "Configuration en cours dans Docker",
+    ],
+  },
+  {
+    title: "PARIS-GURU : GUIDE INTELLIGENT POUR PARIS",
+    role: "Chef de projet/Développeur",
+    period: "AOÛT 2025 - EN COURS (NON LANCÉ)",
+    description: [
+      "Application mobile Android et iOS développée en React Native",
+      "Backend : Web API ASP.NET en C#",
+      "Modules IA et machine learning en Python (Django)",
+      "Interface web Next.js connectée à la plateforme",
+      "Base de données : PostgreSQL avec extension PostGIS",
+      "Cache applicatif : Redis pour les notifications contextuelles",
+      "Guide intelligent avec alertes sur le patrimoine historique, culturel et artistique à proximité",
+      "Suggestions d'événements, restaurants, clubs, jeux et activités touristiques",
+      "Billetterie et réservations intégrées pour les utilisateurs",
+    ],
+  },
+  {
+    title: "NAVXPERT : APPLICATION WEB DE NAVIGATION",
     role: "Développeur",
     period: "SEPTEMBRE 2024 - FÉVRIER 2025",
     description: [
@@ -86,7 +120,7 @@ const projects: Project[] = [
     ],
   },
   {
-    title: "ECONOMITIENS: SUIVI DE LA CONSOMMATION ÉLECTRIQUE",
+    title: "ECONOMITIENS : SUIVI DE LA CONSOMMATION ÉLECTRIQUE",
     role: "Développeur",
     period: "MARS 2024 - JUILLET 2024",
     description: [
@@ -109,7 +143,7 @@ const projects: Project[] = [
     ],
   },
   {
-    title: "ASTAVOID : JEUX DES MINES",
+    title: "ASTAVOID : JEU DES MINES",
     role: "Chef de projet/Développeur",
     period: "MARS 2023 - JUILLET 2023",
     description: [
@@ -117,24 +151,6 @@ const projects: Project[] = [
       "Technologies : JavaScript, Node.js, HTML, CSS, Nunjucks",
       "Thème spatial avec astéroïdes",
       "Expérience immersive",
-    ],
-  },
-  {
-    title: "90stimes.com: The Nineties Times",
-    role: "Chef de projet/Développeur",
-    period: "FEV 2025 - Juillet 2025",
-    description: [
-      "Site web : www.90stimes.com",
-      "Frontend : Next.js | Backend : ASP.NET Web API",
-      "Base de donnAces : PostgreSQL",
-      "Reverse proxy : Nginx",
-      "Cartes : OpenStreetMap (Leaflet prAvu)",
-      "MAtA�o : API met.no (locationforecast 2.0)",
-      "Personnalisation : IP pour news & mAtA�o",
-      "Contenu : articles tech, nouvelles géo, recettes de cocktails (18+), jeux en ligne, outils",
-      "Authentification via Google OAuth ou inscription",
-      "Fonctionnalités : likes, commentaires, Q&A",
-      "Configuration en cours dans Docker",
     ],
   },
 ];
@@ -257,6 +273,7 @@ const TECH = {
     { name: "React Native", subtitle: "Framework", icon: badgeSVG("RN","#a7f3d0","#065f46") },
     { name: "Next.js", subtitle: "Framework", icon: badgeSVG("Next","#e5e7eb","#111827") },
     { name: "ASP.NET", subtitle: "Framework", icon: badgeSVG("ASP.NET","#c4b5fd","#0b1324") },
+    { name: "Django", subtitle: "Framework", icon: badgeSVG("Django","#facc15","#0f172a") },
     { name: "WPF", subtitle: "Framework", icon: badgeSVG("WPF","#fde68a","#0b1324") },
     { name: "Entity Framework", subtitle: "ORM", icon: badgeSVG("EF","#86efac","#065f46") },
     { name: "Leaflet.js", subtitle: "Lib map", icon: badgeSVG("Leaflet","#bbf7d0","#065f46") },
@@ -268,6 +285,8 @@ const TECH = {
   databases: [
     { name: "MySQL", subtitle: "Base de données", icon: badgeSVG("MySQL","#60a5fa","#0b1324") },
     { name: "PostgreSQL", subtitle: "Base de données", icon: badgeSVG("Postgres","#38bdf8","#0b1324") },
+    { name: "PostGIS", subtitle: "Extension SIG", icon: badgeSVG("PostGIS","#34d399","#0b1324") },
+    { name: "Redis", subtitle: "Base de données en mémoire", icon: badgeSVG("Redis","#f87171","#0b1324") },
   ] as TechItem[],
 
   os: [
@@ -282,6 +301,7 @@ const TECH = {
     { name: "Trello", subtitle: "Outil", icon: badgeSVG("Trello","#bfdbfe","#0b1324") },
     { name: "Postman", subtitle: "Outil", icon: badgeSVG("Postman","#fdba74","#0b1324") },
     { name: "Nginx", subtitle: "Outil", icon: badgeSVG("Nginx","#86efac","#065f46") },
+    { name: "Redis", subtitle: "Cache", icon: badgeSVG("Redis","#f87171","#0b1324") },
     { name: "Figma", subtitle: "Outil", icon: badgeSVG("Figma","#f5d0fe","#0b1324") },
     { name: "Canva", subtitle: "Outil", icon: badgeSVG("Canva","#a7f3d0","#065f46") },
     { name: "Photoshop", subtitle: "Outil", icon: badgeSVG("Ps","#c7d2fe","#0b1324") },
