@@ -3,20 +3,29 @@
 @import "tailwindcss/utilities";
 
 :root {
-  --background:linear-gradient(45deg, #000000, #132a02, #010a58, #1b3b02);
-  --foreground: #171717;
-
+  --background: linear-gradient(180deg, #030712 0%, #0b1324 40%, #000000 100%);
+  --foreground: #e5e7eb; /* light text for dark background */
 }
 
+/* Keep consistent palette regardless of OS theme */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: linear-gradient(180deg, #030712 0%, #0b1324 40%, #000000 100%);
+    --foreground: #e5e7eb;
   }
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Hide scrollbars on elements that opt-in */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;    /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar { /* Chrome, Safari, Opera */
+  display: none;
 }

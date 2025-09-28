@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import { MotionDiv } from "@/components/MotionDiv";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import TealParticles from "@/components/TealParticle";
+import ContactSection from "@/components/ContactSection";
 
 interface Qualification {
   title: string;
@@ -135,6 +136,13 @@ export default function BarCV() {
   const skillsRef = useRef<HTMLDivElement>(null);
   const languagesRef = useRef<HTMLDivElement>(null);
   const experiencesRef = useRef<HTMLDivElement>(null);
+  const contactRef = useRef<HTMLDivElement>(null!);
+
+  const [hueRotation, setHueRotation] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => setHueRotation((h) => (h + 1) % 360), 100);
+    return () => clearInterval(interval);
+  }, []);
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
     if (ref.current) {
@@ -147,7 +155,7 @@ export default function BarCV() {
   };
 
   const gradientStyle = {
-    filter: `hue-rotate(${Math.random() * 360}deg)`,
+    filter: `hue-rotate(${hueRotation}deg)`,
     transition: "filter 0.5s ease-in-out",
   };
 
@@ -250,7 +258,8 @@ export default function BarCV() {
         {/* Intro */}
         <div
           ref={introRef}
-          className="flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10"
+          id="intro"
+          className="scroll-mt-24 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10"
         >
           <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-4xl gap-6">
             <MotionDiv
@@ -287,7 +296,7 @@ export default function BarCV() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 2, delay: 0.8, ease: "easeOut" }}
               whileHover={{ scale: 1.05 }}
-              style={{ borderColor: `hsl(${(Math.random() * 360) % 360}, 80%, 50%)` }}
+              style={{ borderColor: `hsl(${(hueRotation + 90) % 360}, 80%, 50%)` }}
             >
               <Image
                 src="/images/me.jpg"
@@ -303,7 +312,7 @@ export default function BarCV() {
 
         {/* Rest of the sections (Qualifications, Skills, Languages, Experiences) remain unchanged */}
         {/* Qualifications */}
-        <section ref={qualificationsRef} className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
+        <section ref={qualificationsRef} id="qualifications" className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10 scroll-mt-24">
           <MotionDiv
             className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-center mb-8 text-teal-800 uppercase tracking-wide drop-shadow-md"
             initial={{ opacity: 0, scale: 0.5 }}
@@ -330,7 +339,7 @@ export default function BarCV() {
         </section>
 
         {/* Skills */}
-        <section ref={skillsRef} className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
+        <section ref={skillsRef} id="skills" className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10 scroll-mt-24">
           <MotionDiv
             className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-center mb-8 text-teal-800 uppercase tracking-wide drop-shadow-md"
             initial={{ opacity: 0, scale: 0.5 }}
@@ -357,7 +366,7 @@ export default function BarCV() {
         </section>
 
         {/* Languages */}
-        <section ref={languagesRef} className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
+        <section ref={languagesRef} id="languages" className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10 scroll-mt-24">
           <MotionDiv
             className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-center mb-8 text-teal-800 uppercase tracking-wide drop-shadow-md"
             initial={{ opacity: 0, scale: 0.5 }}
@@ -384,7 +393,7 @@ export default function BarCV() {
         </section>
 
         {/* Experiences */}
-        <section ref={experiencesRef} className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
+        <section ref={experiencesRef} id="experiences" className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10 scroll-mt-24">
           <MotionDiv
             className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-center mb-8 text-teal-800 uppercase tracking-wide drop-shadow-md"
             initial={{ opacity: 0, scale: 0.5 }}
@@ -403,7 +412,7 @@ export default function BarCV() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1.5, delay: index * 0.1, ease: "easeOut" }}
                 whileHover={{ scale: 1.05, y: -8 }}
-                style={{ borderColor: `hsl(${(Math.random() * 360) % 360}, 80%, 50%)` }}
+                style={{ borderColor: `hsl(${(hueRotation + 90) % 360}, 80%, 50%)` }}
               >
                 <h3
                   className="text-base sm:text-lg md:text-xl lg:text-lg font-bold text-teal-800 mb-3 uppercase tracking-tight"
@@ -420,6 +429,9 @@ export default function BarCV() {
         </section>
         
       </div>
+
+        <div id="contact" className="scroll-mt-24" />
+        <ContactSection hueRotation={hueRotation} contactRef={contactRef} />
 
       {/* Global Styles */}
       <style jsx global>{`
@@ -468,3 +480,6 @@ export default function BarCV() {
     </div>
   );
 }
+
+
+

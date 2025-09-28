@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import TealParticles from "@/components/TealParticle";
-import NavSidebar from "@/components/NavSidebar";
+import PageShell from "@/components/PageShell";
 import IntroSection from "@/components/IntroSection";
 import ProjectsSection from "@/components/ProjectsSection";
 import ExperiencesSection from "@/components/ExperienceSection";
@@ -262,6 +262,7 @@ const TECH = {
     { name: "JavaScript", subtitle: "Langage", icon: badgeSVG("JS","#f7df1e","#1f2937") },
     { name: "TypeScript", subtitle: "Langage", icon: badgeSVG("TS","#3b82f6","#ffffff") },
     { name: "Python", subtitle: "Langage", icon: badgeSVG("PY","#eab308","#1f2937") },
+    { name: "Java", subtitle: "Langage", icon: badgeSVG("JAVA","#f97316","#1f2937") },
     { name: "Bash", subtitle: "Langage", icon: badgeSVG("BASH","#94a3b8","#0b1324") },
     { name: "HTML", subtitle: "Langage", icon: badgeSVG("HTML","#fb923c","#1f2937") },
     { name: "CSS", subtitle: "Langage", icon: badgeSVG("CSS","#60a5fa","#0b1324") },
@@ -274,6 +275,8 @@ const TECH = {
     { name: "Next.js", subtitle: "Framework", icon: badgeSVG("Next","#e5e7eb","#111827") },
     { name: "ASP.NET", subtitle: "Framework", icon: badgeSVG("ASP.NET","#c4b5fd","#0b1324") },
     { name: "Django", subtitle: "Framework", icon: badgeSVG("Django","#facc15","#0f172a") },
+    { name: "Spring Boot", subtitle: "Framework Java", icon: badgeSVG("Spring","#86efac","#065f46") },
+    { name: "Symfony", subtitle: "Framework PHP", icon: badgeSVG("Symfony","#111827","#ffffff") },
     { name: "WPF", subtitle: "Framework", icon: badgeSVG("WPF","#fde68a","#0b1324") },
     { name: "Entity Framework", subtitle: "ORM", icon: badgeSVG("EF","#86efac","#065f46") },
     { name: "Leaflet.js", subtitle: "Lib map", icon: badgeSVG("Leaflet","#bbf7d0","#065f46") },
@@ -404,10 +407,6 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
-    ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
   return (
     <div className="min-h-screen text-slate-800 overflow-x-hidden relative">
       {/* Background layers (non-blocking & behind content) */}
@@ -416,17 +415,7 @@ export default function Home() {
       </div>
       <div className="absolute inset-0 opacity-10 pointer-events-none -z-10 bg-[linear-gradient(90deg,rgba(45,212,191,0.05)_1px,transparent_1px),linear-gradient(180deg,rgba(45,212,191,0.05)_1px,transparent_1px)] bg-[size:30px_30px]" />
 
-      <NavSidebar
-        scrollToSection={scrollToSection}
-        introRef={introRef}
-        projectsRef={projectsRef}
-        experiencesRef={experiencesRef}
-        educationRef={educationRef}
-        skillsRef={skillsRef}
-        contactRef={contactRef}
-        cvRef={cvRef}
-        hueRotation={hueRotation}
-      />
+      {/* Global sidebar now handles navigation; local sidebar removed for consistency */}
 
       <div className="relative z-10">
         {/* Prevent particles from stealing scroll/touch */}
@@ -434,25 +423,38 @@ export default function Home() {
           <TealParticles particleCount={90} />
         </div>
 
-        <IntroSection intro={intro} hueRotation={hueRotation} introRef={introRef} />
-        <CVSection hueRotation={hueRotation} cvRef={cvRef} />
-        <ProjectsSection projects={projects} hueRotation={hueRotation} projectsRef={projectsRef} />
-        <ExperiencesSection
-          experiences={experiences}
-          hueRotation={hueRotation}
-          experiencesRef={experiencesRef}
-        />
-        <EducationSection education={education} hueRotation={hueRotation} educationRef={educationRef} />
+        {/* Hero banner */}
 
-        {/* NEW: Technical stack (SVG tiles in bordered boxes) */}
-        <div ref={skillsRef}>
-          {/* Keep your original soft skills section if you like */}
-          <SkillsSection skills={skills} hueRotation={hueRotation} skillsRef={skillsRef} />
-          {/* Add the structured/dynamic tech section */}
-          <TechStackSection hueRotation={hueRotation} />
-        </div>
 
-        <ContactSection hueRotation={hueRotation} contactRef={contactRef} />
+        <div id="intro" className="scroll-mt-24" />
+        <PageShell className="mb-8">
+          <IntroSection intro={intro} hueRotation={hueRotation} introRef={introRef} />
+        </PageShell>
+        <div id="cv" className="scroll-mt-24" />
+        <PageShell className="mb-8"><CVSection hueRotation={hueRotation} cvRef={cvRef} /></PageShell>
+        <div id="projects" className="scroll-mt-24" />
+        <PageShell className="mb-8"><ProjectsSection projects={projects} hueRotation={hueRotation} projectsRef={projectsRef} /></PageShell>
+        <div id="experiences" className="scroll-mt-24" />
+        <PageShell className="mb-8">
+          <ExperiencesSection
+            experiences={experiences}
+            hueRotation={hueRotation}
+            experiencesRef={experiencesRef}
+          />
+        </PageShell>
+        <div id="education" className="scroll-mt-24" />
+        <PageShell className="mb-8"><EducationSection education={education} hueRotation={hueRotation} educationRef={educationRef} /></PageShell>
+
+        <div id="skills" className="scroll-mt-24" />
+        <PageShell className="mb-8" >
+          <div ref={skillsRef} className="scroll-mt-24">
+            <SkillsSection skills={skills} hueRotation={hueRotation} skillsRef={skillsRef} />
+            <TechStackSection hueRotation={hueRotation} />
+          </div>
+        </PageShell>
+
+        <div id="contact" className="scroll-mt-24" />
+        <PageShell className="mb-8"><ContactSection hueRotation={hueRotation} contactRef={contactRef} /></PageShell>
       </div>
 
       <style jsx global>{`
@@ -490,3 +492,4 @@ export default function Home() {
     </div>
   );
 }
+

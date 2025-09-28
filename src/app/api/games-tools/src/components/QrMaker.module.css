@@ -1,13 +1,6 @@
-.wrapper {
-  padding: 1rem;
-}
+.wrapper { padding: 1rem; color: #e5e7eb; }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
 
 .grid {
   display: grid;
@@ -22,38 +15,30 @@
 
 .controls,
 .preview {
-  background: #fff;
+  background: rgba(255,255,255,0.06);
+  color: #e5e7eb;
   padding: 1rem;
-  border: 4px double #4b5563;
+  border: 1px solid rgba(45,212,191,0.35);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .field {
   margin-bottom: 0.75rem;
 }
 
-.label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 0.25rem;
-}
+.label { display: block; font-weight: 500; margin-bottom: 0.25rem; color: #cbd5e1; }
 
-.textarea {
-  width: 100%;
-  padding: 0.5rem;
-}
+.textarea { width: 100%; padding: 0.5rem; color: #e5e7eb; background: #0b1220; border: 1px solid #374151; border-radius: 10px; }
 
 .range {
   width: 100%;
 }
 
-.select {
-  width: 100%;
-  padding: 0.25rem;
-}
+.select { width: 100%; padding: 0.25rem; color: #e5e7eb; background: #0b1220; border: 1px solid #374151; border-radius: 10px; }
 
-.colorInput {
-  width: 100%;
-}
+.colorInput { width: 100%; background: #0b1220; border: 1px solid #374151; border-radius: 10px; }
 
 .buttonRow {
   display: flex;
@@ -62,32 +47,10 @@
   margin-top: 0.5rem;
 }
 
-.buttonPrimary {
-  background: #2b0a86;
-  color: #fff;
-  padding: 0.5rem 1rem;
-  border: none;
-  cursor: pointer;
-}
+.buttonPrimary { background: #14b8a6; color: #0b1220; padding: 0.5rem 1rem; border: none; cursor: pointer; border-radius: 10px; }
 
-.buttonSecondary {
-  border: 1px solid #000;
-  padding: 0.5rem 1rem;
-  background: #2b0a86;
-  cursor: pointer;
-}
+.buttonSecondary { border: 1px solid rgba(45,212,191,0.35); padding: 0.5rem 1rem; background: rgba(255,255,255,0.08); color:#e5e7eb; cursor: pointer; border-radius: 10px; }
 
-.previewBox {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #f3f4f600;
-  border: 1px solid #e5e7eb;
-  padding: 1rem;
-}
+.previewBox { display: flex; justify-content: center; align-items: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.2); padding: 1rem; border-radius: 10px; }
 
-.tip {
-  margin-top: 1rem;
-  font-size: 0.875rem;
-  color: #6b7280;
-}
+.tip { margin-top: 1rem; font-size: 0.875rem; color: #9ca3af; }

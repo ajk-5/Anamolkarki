@@ -45,7 +45,7 @@ const NavBar: React.FC = () => {
           </Link>
         </div>
 
-        <ul className="hidden md:flex items-center space-x-2 mx-auto">
+        <ul className="hidden md:flex items-center space-x-4 mx-auto">
           <li
             className="text-xs md:text-sm lg:text-base text-teal-800 relative flex items-center"
             onMouseEnter={() => setIsDropdownOpen(true)}
@@ -92,6 +92,30 @@ const NavBar: React.FC = () => {
                 ))}
               </ul>
             </div>
+          </li>
+          <li>
+            <Link
+              href="/tools"
+              className="px-3 py-1 text-xs md:text-sm lg:text-base text-teal-800 hover:text-teal-900 bg-teal-600/10 border-2 border-teal-400 rounded-lg shadow-md transition"
+            >
+              Tools
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/games"
+              className="px-3 py-1 text-xs md:text-sm lg:text-base text-teal-800 hover:text-teal-900 bg-teal-600/10 border-2 border-teal-400 rounded-lg shadow-md transition"
+            >
+              Games
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/contact"
+              className="px-3 py-1 text-xs md:text-sm lg:text-base text-slate-900 bg-teal-400/90 hover:bg-teal-300 border-2 border-teal-500 rounded-lg shadow-md transition font-semibold"
+            >
+              Contact Me
+            </Link>
           </li>
         </ul>
 

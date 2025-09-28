@@ -1,157 +1,82 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { JSX, useState, type SVGProps } from "react";
-
-// --- Inline SVG Icons ---
-type Icon = (props: SVGProps<SVGSVGElement>) => JSX.Element;
-
-const UsersIcon: Icon = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" {...props}>
-    <circle cx="8" cy="8" r="3" strokeWidth={1.5} />
-    <path d="M14 21a6 6 0 0 0-12 0" strokeWidth={1.5} strokeLinecap="round" />
-    <circle cx="16.5" cy="7.5" r="2.5" strokeWidth={1.5} />
-    <path d="M22 21a5 5 0 0 0-7.5-4.5" strokeWidth={1.5} strokeLinecap="round" />
-  </svg>
-);
-
-const CodeIcon: Icon = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" {...props}>
-    <path d="M9 18L3 12l6-6" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M15 6l6 6-6 6" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const BeerIcon: Icon = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" {...props}>
-    <rect x="5" y="8" width="9" height="11" rx="2" strokeWidth={1.5} />
-    <path d="M14 10h2a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2" strokeWidth={1.5} />
-    <path d="M5 8h9a3 3 0 0 0 0-6H9a3 3 0 0 0-4 3" strokeWidth={1.5} strokeLinecap="round" />
-  </svg>
-);
-
-// --- Types ---
-interface Profile {
-  id: string;
-  label: string;
-  icon: Icon;
-  question?: string;
-  answers?: string[]; // lowercase answers for simple case-insensitive matching
-  path: string;
-}
-
-// --- Data ---
-const profiles: Profile[] = [
-  {
-    id: "friends",
-    label: "Friends/Family",
-    icon: UsersIcon,
-    question: "Who is my favourite celebrity?",
-    answers: ["lionel messi", "messi", "leo messi"],
-    path: "/me",
-  },
-  {
-    id: "dev",
-    label: "Employer Developpeur",
-    icon: CodeIcon,
-    path: "/developer",
-  },
-  {
-    id: "barman",
-    label: "Employer Barman",
-    icon: BeerIcon,
-    path: "/Bar",
-  },
-];
+import Link from "next/link";
+import Image from "next/image";
+import TealParticles from "@/components/TealParticle";
 
 export default function Home() {
-  const [selected, setSelected] = useState<Profile | null>(null);
-  const [answer, setAnswer] = useState("");
-  const router = useRouter();
-
-  const handleSelect = (profile: Profile) => {
-    if (profile.question) {
-      setSelected(profile);
-    } else {
-      router.push(profile.path);
-    }
-  };
-
-  const handleSubmit = () => {
-    if (!selected) return;
-    const userAnswer = answer.trim().toLowerCase();
-    const correct = selected.answers?.some((a) => a.trim().toLowerCase() === userAnswer);
-    if (correct) {
-      // Set a cookie so the /me page can verify access
-      document.cookie = `friendsorfamily=${encodeURIComponent(userAnswer)}; path=/`;
-      router.push(selected.path);
-    } else {
-      alert("Incorrect answer, try again!");
-    }
-  };
-
-  // Always render a 2x2 grid like Netflix. If fewer than 4 profiles, pad with invisible placeholders
-  const cells: (Profile | null)[] = Array.from({ length: 4 }, (_, i) => profiles[i] ?? null);
-
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center text-center gap-8 bg-black">
-      {!selected && (
-        <>
-          <h1 className="text-3xl font-bold text-white">Who’s watching?</h1>
-          <div className="grid grid-cols-2 gap-8 w-[min(90vw,28rem)]">
-            {cells.map((p, idx) =>
-              p ? (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => handleSelect(p)}
-                  className="group flex flex-col items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
-                  aria-label={p.label}
-                >
-                  <div className="aspect-square w-28 sm:w-36 rounded-lg overflow-hidden border border-white/10 bg-white/10 backdrop-blur-sm flex items-center justify-center transition-transform duration-200 group-hover:scale-105 group-focus-visible:scale-105 group-hover:border-white/30 group-focus-visible:border-white/40">
-                    <p.icon className="w-12 sm:w-14 h-12 sm:h-14 text-white/90" />
-                  </div>
-                  <span className="mt-3 text-white/80 text-sm tracking-wide group-hover:text-white group-focus-visible:text-white">
-                    {p.label}
-                  </span>
-                </button>
-              ) : (
-                <div key={`placeholder-${idx}`} className="flex flex-col items-center">
-                  <div className="aspect-square w-28 sm:w-36 opacity-0 pointer-events-none" />
-                  <span className="mt-3 text-transparent text-sm">placeholder</span>
-                </div>
-              )
-            )}
-          </div>
-        </>
-      )}
+    <main className="relative min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900 to-black">
+      <TealParticles particleCount={60} />
 
-      {selected?.question && (
-        <div className="flex flex-col gap-4 items-center">
-          <h2 className="text-xl font-semibold text-white max-w-xs">{selected.question}</h2>
-          <input
-            type="text"
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleSubmit();
-            }}
-            placeholder="Type your answer"
-            className="p-2 rounded text-black"
-          />
-          <div className="flex gap-3">
-            <button
-              onClick={() => setSelected(null)}
-              className="bg-white/20 text-white px-4 py-2 rounded border border-white/40"
-            >
-              Back
-            </button>
-            <button onClick={handleSubmit} className="bg-red-600 text-white px-4 py-2 rounded">
-              Submit
-            </button>
-          </div>
+      <section className="relative z-10 mx-auto max-w-5xl px-6 text-center">
+      
+
+        <h1 className="mt-5 text-4xl md:text-6xl font-extrabold leading-tight">
+          <span className="bg-gradient-to-r from-teal-300 via-cyan-200 to-white bg-clip-text text-transparent">
+            ANAMOL JANG KARKI
+          </span>
+        </h1>
+
+        <p className="mt-4 text-slate-300 max-w-2xl mx-auto">
+          I craft performant web and mobile experiences with Next.js, ASP.NET, and React Native — and I love building playful tools and games along the way.
+        </p>
+
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/developer"
+            className="px-5 py-2 rounded-lg bg-teal-500 text-slate-900 font-semibold shadow-md hover:bg-teal-400 transition"
+          >
+            Portfolio
+          </Link>
+          <Link
+            href="/games"
+            className="px-5 py-2 rounded-lg border border-teal-300/50 text-teal-200 hover:bg-teal-500/10 transition"
+          >
+            Play Games
+          </Link>
+          <Link
+            href="/tools"
+            className="px-5 py-2 rounded-lg border border-teal-300/50 text-teal-200 hover:bg-teal-500/10 transition"
+          >
+            Use Tools
+          </Link>
+          <Link
+            href="/contact"
+            className="px-5 py-2 rounded-lg border border-slate-600 text-slate-200 hover:bg-white/5 transition"
+          >
+            Contact
+          </Link>
         </div>
-      )}
-    </div>
+      </section>
+
+      <section className="relative z-10 mt-14 grid grid-cols-1 md:grid-cols-3 gap-4 px-6 max-w-5xl w-full">
+        <Link href="/games" className="group rounded-xl border border-teal-500/20 bg-white/5 backdrop-blur-sm p-5 hover:border-teal-400/50 transition">
+          <div className="flex items-center gap-3">
+            <Image src="/images/tetris.png" alt="Games preview" width={80} height={60} className="rounded-md object-cover" />
+            <div>
+              <h3 className="text-white font-semibold">Arcade</h3>
+              <p className="text-sm text-slate-300">2048 • Tetris • Metrotrade</p>
+            </div>
+          </div>
+        </Link>
+        <Link href="/tools" className="group rounded-xl border border-teal-500/20 bg-white/5 backdrop-blur-sm p-5 hover:border-teal-400/50 transition">
+          <div>
+            <h3 className="text-white font-semibold">Tools</h3>
+            <p className="text-sm text-slate-300">World Clock • QR • Typing</p>
+          </div>
+        </Link>
+        <Link href="/projects" className="group rounded-xl border border-teal-500/20 bg-white/5 backdrop-blur-sm p-5 hover:border-teal-400/50 transition">
+          <div>
+            <h3 className="text-white font-semibold">Projects</h3>
+            <p className="text-sm text-slate-300">Next.js • ASP.NET • Mobile</p>
+          </div>
+        </Link>
+      </section>
+
+      <footer className="relative z-10 mt-12 mb-8 text-center text-xs text-slate-400">
+        © {new Date().getFullYear()} Anamol Jang Karki
+      </footer>
+    </main>
   );
 }
