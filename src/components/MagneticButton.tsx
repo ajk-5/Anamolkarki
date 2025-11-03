@@ -11,6 +11,7 @@ type Props = PropsWithChildren<{
   className?: string;
   variant?: Variant;
   size?: Size;
+  type?: "button" | "submit" | "reset";
 }> & HTMLMotionProps<"button">;
 
 export default function MagneticButton({
@@ -18,6 +19,7 @@ export default function MagneticButton({
   className = "",
   variant = "primary",
   size = "md",
+  type = "button",
   disabled,
   ...rest
 }: Props) {
@@ -91,7 +93,7 @@ export default function MagneticButton({
   }, [variant]);
 
   const baseClasses = [
-    "relative isolate rounded-xl font-semibold",
+    "relative isolate rounded-xl font-semibold no-tap-highlight",
     sizeClasses,
     variantClasses,
     "transition-colors duration-200 select-none",
@@ -112,12 +114,12 @@ export default function MagneticButton({
     <motion.button
       {...rest}
       disabled={disabled}
-      type={(rest as any).type ?? "button"}
+      type={type}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       onPointerDown={handlePointerDown}
       whileTap={{ scale: isCoarse || prefersReducedMotion ? 0.98 : 0.99 }}
-      style={{ x: springX, y: springY, WebkitTapHighlightColor: "transparent" as any }}
+      style={{ x: springX, y: springY }}
       className={baseClasses}
     >
       <span className="relative z-10">{children}</span>

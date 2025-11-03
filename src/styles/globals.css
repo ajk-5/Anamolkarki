@@ -98,3 +98,8 @@ body {
   .aurora .blob { filter: blur(60px); opacity: 0.5; }
   .noise-overlay { opacity: .03; }
 }
+
+/* Utility: remove iOS tap highlight */
+.no-tap-highlight {
+  -webkit-tap-highlight-color: transparent;
+}
