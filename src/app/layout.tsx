@@ -5,6 +5,9 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import Link from "next/link";
 import Image from "next/image";
 import SideBar from "@/components/SideBar";
+import AuroraBackground from "@/components/AuroraBackground";
+import GridPattern from "@/components/GridPattern";
+import MobileTabBar from "@/components/MobileTabBar";
 
 
 const geistSans = Geist({
@@ -27,6 +30,10 @@ export default function RootLayout({
 <html lang="en">
 
   <body className={`${geistSans.variable} ${geistMono.variable}`}>
+    {/* Global visual backdrop */}
+    <AuroraBackground />
+    <GridPattern />
+    <div className="noise-overlay" />
     {/* Brand at top-center */}
     <header className="fixed top-2 left-1/2 -translate-x-1/2 z-50">
       <Link href="/" className="flex items-center gap-3 px-3 py-2 rounded-full border border-teal-500/40 bg-white/10 backdrop-blur-md shadow-md hover:bg-white/15 transition">
@@ -38,10 +45,12 @@ export default function RootLayout({
     {/* Creative global sidebar */}
     <SideBar />
 
-    {/* Page content with space for sidebar */}
-    <div className="pt-24 pl-4 md:pl-16 lg:pl-16 xl:pl-20 pr-4">
+    {/* Page content with space for sidebar and mobile tab bar */}
+    <div className="pt-24 pb-24 pl-4 md:pl-16 lg:pl-16 xl:pl-20 pr-4">
       {children}
     </div>
+    {/* Mobile primary navigation */}
+    <MobileTabBar />
     <SpeedInsights />
   </body>
 </html>

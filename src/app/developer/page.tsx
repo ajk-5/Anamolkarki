@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
 import TealParticles from "@/components/TealParticle";
 import PageShell from "@/components/PageShell";
 import IntroSection from "@/components/IntroSection";
@@ -10,6 +11,7 @@ import EducationSection from "@/components/EducationSection";
 import SkillsSection from "@/components/SkillSection"; // keep for SOFT skills
 import ContactSection from "@/components/ContactSection";
 import CVSection from "@/components/CVSection";
+import MagneticButton from "@/components/MagneticButton";
 
 // Interfaces
 interface Intro {
@@ -424,6 +426,40 @@ export default function Home() {
         </div>
 
         {/* Hero banner */}
+        <section className="mx-auto max-w-6xl px-4 mb-8">
+          <div className="relative overflow-hidden rounded-2xl border border-teal-500/20 bg-white/5 backdrop-blur-md">
+            <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 via-cyan-500/10 to-fuchsia-500/10" />
+            <div className="relative z-10 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-teal-400/30 bg-white/10 px-3 py-1 text-xs text-teal-200">
+                  <span className="inline-block h-2 w-2 rounded-full bg-teal-400 animate-float" />
+                  Full‑Stack Developer • Web & Mobile
+                </div>
+                <h1 className="mt-3 text-2xl md:text-3xl font-extrabold tracking-tight">
+                  <span className="bg-gradient-to-r from-teal-300 via-cyan-200 to-fuchsia-200 bg-clip-text text-transparent">
+                    Crafting fast, elegant user experiences
+                  </span>
+                </h1>
+                <p className="mt-2 text-slate-200/90 max-w-2xl">
+                  Next.js, ASP.NET, React Native, PostgreSQL, and more. Explore my work, stack, and experiences below.
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <a
+                  href="/cv/cv_ANAMOL_KARKI.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-xl border border-slate-500 px-5 py-3 text-slate-100 hover:bg-white/10 transition"
+                >
+                  View CV
+                </a>
+                <Link href="/contact">
+                  <MagneticButton>Contact Me</MagneticButton>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
 
 
         <div id="intro" className="scroll-mt-24" />

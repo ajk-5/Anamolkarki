@@ -3,8 +3,15 @@
 @import "tailwindcss/utilities";
 
 :root {
-  --background: linear-gradient(180deg, #030712 0%, #0b1324 40%, #000000 100%);
+  --background: radial-gradient(1200px 800px at 50% -20%, rgba(20, 184, 166, 0.15), transparent 60%),
+                radial-gradient(800px 600px at 110% 10%, rgba(59, 130, 246, 0.12), transparent 60%),
+                radial-gradient(1000px 700px at -10% 80%, rgba(236, 72, 153, 0.10), transparent 60%),
+                linear-gradient(180deg, #030712 0%, #0b1324 40%, #000000 100%);
   --foreground: #e5e7eb; /* light text for dark background */
+  --grid-color: rgba(148, 163, 184, 0.08);
+  --accent: #14b8a6;
+  --safe-bottom: env(safe-area-inset-bottom);
+  --safe-top: env(safe-area-inset-top);
 }
 
 /* Keep consistent palette regardless of OS theme */
@@ -28,4 +35,66 @@ body {
 }
 .no-scrollbar::-webkit-scrollbar { /* Chrome, Safari, Opera */
   display: none;
+}
+
+/* ---------- Subtle grid backdrop (masked to center) ---------- */
+.bg-grid-mask {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+  background-size: 32px 32px, 32px 32px;
+  mask-image: radial-gradient(ellipse at 50% 30%, black 20%, transparent 70%);
+}
+
+/* ---------- Aurora animated blobs ---------- */
+.aurora {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.aurora .blob {
+  position: absolute;
+  filter: blur(80px);
+  opacity: 0.55;
+  transform-origin: center;
+}
+.animate-aurora-slow { animation: aurora 22s ease-in-out infinite alternate; }
+.animate-aurora-med  { animation: aurora 16s ease-in-out infinite alternate; }
+.animate-aurora-fast { animation: aurora 12s ease-in-out infinite alternate; }
+
+@keyframes aurora {
+  0%   { transform: translate(-10%, -10%) scale(1) rotate(0deg); }
+  50%  { transform: translate(10%, 5%) scale(1.2) rotate(30deg); }
+  100% { transform: translate(5%, 15%) scale(1.05) rotate(-10deg); }
+}
+
+/* ---------- Floating subtle motion utility ---------- */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+@keyframes float {
+  0%,100% { transform: translateY(0px); }
+  50%     { transform: translateY(-8px); }
+}
+
+/* ---------- Soft noise overlay to avoid banding ---------- */
+.noise-overlay {
+  position: fixed;
+  inset: 0; 
+  pointer-events: none; 
+  z-index: 0;
+  opacity: .05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E");
+}
+
+/* Mobile tuning */
+@media (max-width: 768px) {
+  .aurora .blob { filter: blur(60px); opacity: 0.5; }
+  .noise-overlay { opacity: .03; }
 }
