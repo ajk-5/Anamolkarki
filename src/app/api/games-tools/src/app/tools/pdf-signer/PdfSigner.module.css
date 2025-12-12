@@ -1,0 +1,496 @@
+.root {
+  min-height: 100vh;
+  padding: 16px;
+  box-sizing: border-box;
+  background: #020617;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #e5e7eb;
+}
+
+.layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel {
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 16px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  padding: 16px;
+}
+
+.previewPanel {
+  flex: 1;
+  background: radial-gradient(circle at top, #0f172a 0, #020617 55%);
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-bottom: 12px;
+}
+
+.header {
+  max-width: 1200px;
+  margin: 0 auto 12px auto;
+}
+
+.section {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(31, 41, 55, 0.9);
+}
+
+.sectionLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+  margin-bottom: 6px;
+}
+
+.fileInput {
+  display: block;
+  width: 100%;
+  max-width: 260px;
+  font-size: 12px;
+  color: #e5e7eb;
+}
+
+.fileInputHidden {
+  display: none;
+}
+
+.helpText {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.controlsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.controlLabel {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.select {
+  min-width: 120px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  background: #020617;
+  color: #e5e7eb;
+  font-size: 12px;
+}
+
+.toggleGroup {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 2px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(75, 85, 99, 0.9);
+}
+
+.toggleButton {
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.toggleButtonActive {
+  background: radial-gradient(circle at top left, #22c55e, #22d3ee);
+  color: #020617;
+  font-weight: 600;
+}
+
+.actionsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.primaryButton,
+.secondaryButton {
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.primaryButton {
+  background: linear-gradient(135deg, #22c55e, #22d3ee);
+  color: #020617;
+  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.35);
+}
+
+.primaryButton:disabled {
+  opacity: 0.7;
+  cursor: default;
+  box-shadow: none;
+}
+
+.secondaryButton {
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  border-color: rgba(75, 85, 99, 0.9);
+}
+
+.secondaryButton:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.previewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.previewMeta {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.previewPlaceholder {
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px dashed rgba(148, 163, 184, 0.7);
+  background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), #020617);
+}
+
+.previewPlaceholderInner {
+  text-align: center;
+  max-width: 260px;
+}
+
+.previewIcon {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  margin-bottom: 4px;
+}
+
+.previewTitle {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.previewText {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.previewFrameWrapper {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(30, 64, 175, 0.7);
+  background: #020617;
+  width: 100%;
+  max-width: 100%;
+  min-height: 260px;
+}
+
+.pdfFrame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  pointer-events: none;
+}
+
+.previewOverlay {
+  position: absolute;
+  inset: 0;
+  cursor: crosshair;
+  z-index: 2;
+}
+
+.signatureSvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.previewToolbar {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.toolbarButton {
+  border: none;
+  background: transparent;
+  color: #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  min-width: 60px;
+}
+
+.toolbarButton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.toolbarButtonActive {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(56, 189, 248, 0.9);
+}
+
+.toolbarIcon {
+  width: 22px;
+  height: 22px;
+}
+
+.toolbarLabel {
+  margin-top: 3px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+.pageBadge {
+  font-size: 10px;
+  color: #9ca3af;
+}
+
+.topToolbar {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toolbarRowMain {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.toolbarRowSecondary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.toolbarControls {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.toolbarControl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(51, 65, 85, 0.9);
+}
+
+.toolbarIconSmall {
+  width: 18px;
+  height: 18px;
+}
+
+.toolbarControlInputs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.toolbarControlLabel {
+  font-size: 10px;
+  color: #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toolbarColorInput {
+  width: 28px;
+  height: 18px;
+  padding: 0;
+  border-radius: 4px;
+  border: 1px solid #4b5563;
+  background: transparent;
+}
+
+.toolbarRangeInput {
+  width: 90px;
+}
+
+.mark {
+  position: absolute;
+  min-width: 100px;
+  max-width: 260px;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.markSignature {
+  border-color: rgba(34, 197, 94, 0.9);
+}
+
+.markInput {
+  width: 100%;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px dashed rgba(148, 163, 184, 0.7);
+  background: transparent;
+  font-size: 11px;
+  padding: 4px 6px;
+  resize: both;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.markSignature .markInput {
+  font-size: 14px;
+  font-style: italic;
+}
+
+.markRemove {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.markLabel {
+  margin-top: 3px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+}
+
+@media (max-width: 640px) {
+  .root {
+    padding: 8px;
+  }
+
+  .panel {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .formPanel {
+    flex: 1;
+    max-width: 100%;
+  }
+
+  .controlsRow,
+  .appearanceRow,
+  .actionsRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toggleGroup {
+    display: none;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .previewFrameWrapper {
+    min-height: 220px;
+  }
+
+  .toolbarControl {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .toolbarRangeInput {
+    width: 100%;
+  }
+}
+
+.appearanceRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.appearanceField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.colorInput {
+  width: 40px;
+  height: 24px;
+  padding: 0;
+  border-radius: 6px;
+  border: 1px solid #4b5563;
+  background: transparent;
+}
+
+.rangeInput {
+  width: 120px;
+}

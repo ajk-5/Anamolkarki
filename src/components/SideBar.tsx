@@ -150,13 +150,6 @@ export default function SideBar() {
               <span className="hidden group-hover:inline">Contact Me</span>
               <Icon.Briefcase className="w-5 h-5 mx-auto group-hover:hidden" />
             </Link>
-            <Link
-              href="/Bar"
-              className="flex items-center justify-center gap-2 px-2 py-2 rounded-lg bg-white/10 text-teal-100 hover:bg-white/20 transition"
-            >
-              <Icon.Bar className="w-5 h-5" />
-              <span className="hidden group-hover:inline">Portfolio as Barman</span>
-            </Link>
           </div>
         </nav>
       </div>

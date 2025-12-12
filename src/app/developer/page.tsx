@@ -410,46 +410,38 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen text-slate-800 overflow-x-hidden relative">
-      {/* Background layers (non-blocking & behind content) */}
-      <div className="fixed inset-0 w-full h-full pointer-events-none -z-10">
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(45,212,191,0.05)_1px,transparent_1px),linear-gradient(180deg,rgba(45,212,191,0.05)_1px,transparent_1px)] bg-[size:30px_30px]" />
+    <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-slate-100">
+      <div className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.08),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(168,85,247,0.08),transparent_30%),radial-gradient(circle_at_50%_80%,rgba(249,115,22,0.07),transparent_40%)]" />
+      <div className="pointer-events-none fixed inset-0 -z-10 opacity-20 bg-[linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(180deg,rgba(148,163,184,0.08)_1px,transparent_1px)] bg-[size:60px_60px]" />
+      <div className="pointer-events-none fixed inset-0 -z-30 mix-blend-soft-light">
+        <TealParticles particleCount={120} />
       </div>
-      <div className="absolute inset-0 opacity-10 pointer-events-none -z-10 bg-[linear-gradient(90deg,rgba(45,212,191,0.05)_1px,transparent_1px),linear-gradient(180deg,rgba(45,212,191,0.05)_1px,transparent_1px)] bg-[size:30px_30px]" />
-
-      {/* Global sidebar now handles navigation; local sidebar removed for consistency */}
-
       <div className="relative z-10">
-        {/* Prevent particles from stealing scroll/touch */}
-        <div className="pointer-events-none">
-          <TealParticles particleCount={90} />
-        </div>
-
         {/* Hero banner */}
-        <section className="mx-auto max-w-6xl px-4 mb-8">
-          <div className="relative overflow-hidden rounded-2xl border border-teal-500/20 bg-white/5 backdrop-blur-md">
-            <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 via-cyan-500/10 to-fuchsia-500/10" />
-            <div className="relative z-10 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <section className="mx-auto mb-8 max-w-6xl px-4">
+          <div className="relative overflow-hidden rounded-3xl border border-slate-800/60 bg-gradient-to-br from-slate-900/70 via-slate-900/40 to-slate-950 p-6 shadow-2xl ring-1 ring-slate-800/40">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(34,211,238,0.1),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(168,85,247,0.1),transparent_35%)]" />
+            <div className="relative z-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full border border-teal-400/30 bg-white/10 px-3 py-1 text-xs text-teal-200">
                   <span className="inline-block h-2 w-2 rounded-full bg-teal-400 animate-float" />
-                  Full‑Stack Developer • Web & Mobile
+                  Full-Stack Developer | Web & Mobile
                 </div>
-                <h1 className="mt-3 text-2xl md:text-3xl font-extrabold tracking-tight">
+                <h1 className="mt-3 text-3xl md:text-4xl font-extrabold tracking-tight">
                   <span className="bg-gradient-to-r from-teal-300 via-cyan-200 to-fuchsia-200 bg-clip-text text-transparent">
                     Crafting fast, elegant user experiences
                   </span>
                 </h1>
-                <p className="mt-2 text-slate-200/90 max-w-2xl">
+                <p className="mt-2 max-w-2xl text-slate-200/90">
                   Next.js, ASP.NET, React Native, PostgreSQL, and more. Explore my work, stack, and experiences below.
                 </p>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <a
                   href="/cv/cv_ANAMOL_KARKI.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-xl border border-slate-500 px-5 py-3 text-slate-100 hover:bg-white/10 transition"
+                  className="rounded-xl border border-slate-600 px-5 py-3 text-slate-100 transition hover:-translate-y-0.5 hover:bg-white/10"
                 >
                   View CV
                 </a>

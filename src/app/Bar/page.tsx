@@ -1,485 +1,187 @@
 "use client";
 
-import Image from "next/image";
-import { MotionDiv } from "@/components/MotionDiv";
-import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import TealParticles from "@/components/TealParticle";
-import ContactSection from "@/components/ContactSection";
+import { MotionDiv } from "@/components/MotionDiv";
 
-interface Qualification {
-  title: string;
-}
+import { stats, qualifications, skills, languages, experiences } from "./resumeData";
 
-interface Skill {
-  name: string;
-}
-
-interface Language {
-  name: string;
-}
-
-interface Experience {
-  role: string;
-  establishment: string;
-  type: string;
-  location: string;
-  period: string;
-  contract?: string;
-}
-
-interface Intro {
-  name: string;
-  title: string;
-  objective: string;
-  description: string[]; // Changed to string array for bullet points
-}
-
-// Data based on your CV
-const intro: Intro = {
-  name: "ANAMOL JANG KARKI",
-  title: "Barman Expérimenté Mixologue & Barista | Auto-Entrepreneur",
-  objective: "",
-  description: [
-    "Origine : Népalais, 23 ans",
-    "Plus de 4 ans d’expérience comme barman dans plus de 35 établissements (restaurants, brasseries chics, bateaux, bars, clubs, événements, boîtes de nuit)",
-    "Excellente maîtrise des cocktails classiques",
-    "Expérience complète au bar à boissons chaudes",
-    "5 mois d’expérience en tant que chef de rang/serveur",
-    "Sens du service et habilité avec le plateau",
-    "Jeune, souriant et professionnel",
-    "Véhiculé, à l’aise avec le travail tard le soir",
-  ],
-};
-
-const qualifications: Qualification[] = [
-  { title: "Barman" },
-  { title: "Serveur" },
-  { title: "Barman Mixologue" },
-  { title: "Barman Cocktail" },
-  { title: "Barista" },
-  { title: "Chef de Rang" },
-];
-
-const skills: Skill[] = [
-  { name: "Cocktails de base" },
-  { name: "Création de cocktails" },
-  { name: "Mixologie" },
-  { name: "Service au plateau" },
-  { name: "Service client" },
-  { name: "Service au comptoir" },
-  { name: "Encaissement" },
-  { name: "Compétences administratives" },
-  { name: "Cocktails avancés" },
-  { name: "Service à l'assiette" },
-  { name: "Barista" },
-  { name: "Gestion du bar" },
-  { name: "Portage de plateau" },
-  { name: "Débarassage des tables" },
-  { name: "Respect des règles d'hygiène et de sécurité" },
-];
-
-const languages: Language[] = [
-  { name: "Anglais" },
-  { name: "Français" },
-  { name: "Népalais" },
-  { name: "Espagnol" },
-  { name: "Hindi" },
-];
-
-const experiences: Experience[] = [
-  { role: "Salle/Bar", establishment: "Bleu Coupole Printemps Haussmann", type: "Brasserie chic", location: "75009 - Paris", period: "01/2025", contract: "Extra" },
-  { role: "Barman", establishment: "Stellar", type: "Restaurant - bar", location: "75011 - Paris", period: "01/2025", contract: "Extra" },
-  { role: "Barman", establishment: "Sas Le Diamant Bleu", type: "Restaurant gastronomique", location: "94200 - Ivry-sur-Seine", period: "01/2025", contract: "Extra" },
-  { role: "Barman", establishment: "Café du Palais", type: "Café - restaurant", location: "75116 - Paris", period: "12/2024", contract: "Extra" },
-  { role: "Barista", establishment: "Paillettes", type: "Bar-club", location: "75002 - Paris", period: "12/2024", contract: "Extra" },
-  { role: "Barman", establishment: "Le Patio Opéra", type: "Restaurant bistronomique", location: "75009 - Paris", period: "12/2024", contract: "Extra" },
-  { role: "Barman Cocktail", establishment: "Club Cochon L’Auberge", type: "Restaurant - bar", location: "75009 - Paris", period: "09/2024 - 10/2024", contract: "Extra" },
-  { role: "Barman", establishment: "The Little Italy", type: "Restaurant italien", location: "75017 - Paris", period: "09/2024", contract: "Extra" },
-  { role: "Barman", establishment: "Atica", type: "Restaurant gastronomique", location: "75005 - Paris", period: "08/2024", contract: "Extra" },
-  { role: "Barman", establishment: "Le Florès", type: "Brasserie", location: "75007 - Paris", period: "08/2024", contract: "Extra" },
-  { role: "Barman", establishment: "La Marbrerie", type: "Salle de concert", location: "93100 - Montreuil", period: "08/2024", contract: "Extra" },
-  { role: "Barman", establishment: "L’Absinthe", type: "Café - bar", location: "75003 - Paris", period: "08/2024", contract: "Extra" },
-  { role: "Barman", establishment: "Café Joséphine", type: "Brasserie chic", location: "75001 - Paris", period: "08/2024", contract: "Extra" },
-  { role: "Barman", establishment: "The Brooklyn Pizzeria", type: "Pizzeria", location: "75003 - Paris", period: "08/2024", contract: "Extra" },
-  { role: "Barman", establishment: "Enza Famiglia Louvre", type: "Restaurant italien", location: "75001 - Paris", period: "08/2024", contract: "Extra" },
-  { role: "Barman", establishment: "Terrass Hotel", type: "Restaurant d’hôtel", location: "75018 - Paris", period: "07/2024", contract: "Extra" },
-  { role: "Barman", establishment: "Hôtel Particulier Montmartre", type: "Hôtel ******", location: "75018 - Paris", period: "07/2024", contract: "Extra" },
-  { role: "Barman", establishment: "Le Magnifique", type: "Brasserie chic", location: "75008 - Paris", period: "03/2024", contract: "Extra" },
-  { role: "Barman", establishment: "Kubri", type: "Concept food", location: "75011 - Paris", period: "03/2024", contract: "Extra" },
-  { role: "Barman", establishment: "Lombem", type: "Café - restaurant", location: "75002 - Paris", period: "02/2024", contract: "Extra" },
-  { role: "Barman", establishment: "Le Patio Opéra", type: "Restaurant bistronomique", location: "75009 - Paris", period: "02/2024", contract: "Extra" },
-  { role: "Barman", establishment: "Soho", type: "Restaurant italien", location: "75005 - Paris", period: "02/2024", contract: "Extra" },
-  { role: "Barman", establishment: "Jungle Palace", type: "Restaurant - bar", location: "75010 - Paris", period: "02/2024", contract: "Extra" },
-  { role: "Barman", establishment: "La Petite Halle", type: "Restaurant - bar", location: "75019 - Paris", period: "12/2023", contract: "Extra" },
-  { role: "Barman", establishment: "La Boite à Cocktails", type: "Evénementiel", location: "75002 - Paris", period: "12/2023", contract: "Extra" },
-  { role: "Barman", establishment: "Barolo", type: "Café - restaurant", location: "94340 - Joinville-le-Pont", period: "12/2023", contract: "Extra" },
-  { role: "Barman", establishment: "Restaurant I’Alma", type: "Brasserie chic", location: "75007 - Paris", period: "12/2023", contract: "Extra" },
-  { role: "Barman", establishment: "Les Trois Hiboux", type: "Evénementiel", location: "60128 - Plailly", period: "10/2023", contract: "Extra" },
-  { role: "Serveur", establishment: "Les Empotés", type: "Traiteur", location: "92000 - Nanterre", period: "09/2023", contract: "Extra" },
-  { role: "Barman", establishment: "Quartier Vavin", type: "Café - restaurant", location: "75006 - Paris", period: "09/2023", contract: "Extra" },
-  { role: "Barman", establishment: "Villa Mikuna", type: "Brasserie chic", location: "75009 - Paris", period: "09/2023", contract: "Extra" },
-  { role: "Barman", establishment: "Café du Trocadéro", type: "Café - restaurant", location: "75016 - Paris", period: "06/2023 - 09/2023", contract: "CDi" },
-  { role: "Barman", establishment: "Summer Act", type: "Bar", location: "75011 - Paris", period: "03/2023 -", contract: "CDA" },
-  { role: "Barman", establishment: "Café Carrousel", type: "Café - restaurant", location: "75001 - Paris", period: "03/2023 -", contract: "CDA" },
-  { role: "Barman", establishment: "Bazturo", type: "Bar-restaurant", location: "75006 - Paris", period: "03/2023 -", contract: "CDA" },
-  { role: "Barman", establishment: "Le Biscornu", type: "Bar-club", location: "75002 - Paris", period: "03/2023 -", contract: "CDA" },
-  { role: "Barman", establishment: "Le Verre Siffleur", type: "Autres", location: "75014 - Paris", period: "03/2023 -", contract: "CDA" },
-  { role: "Barman", establishment: "Salamnamaste", type: "Restaurant chic", location: "94000 - Créteil", period: "03/2022 -", contract: "CDA" },
-  { role: "Barman", establishment: "Jardin du Prince", type: "Restaurant ", location: "94000 - Créteil", period: "03/2021 -", contract: "CDA" },
-];
-
-export default function BarCV() {
-  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
-
-  const introRef = useRef<HTMLDivElement>(null);
-  const qualificationsRef = useRef<HTMLDivElement>(null);
-  const skillsRef = useRef<HTMLDivElement>(null);
-  const languagesRef = useRef<HTMLDivElement>(null);
-  const experiencesRef = useRef<HTMLDivElement>(null);
-  const contactRef = useRef<HTMLDivElement>(null!);
-
-  const [hueRotation, setHueRotation] = useState(0);
-  useEffect(() => {
-    const interval = setInterval(() => setHueRotation((h) => (h + 1) % 360), 100);
-    return () => clearInterval(interval);
-  }, []);
-
-  const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
-    if (ref.current) {
-      ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
-
-  const toggleSidebar = () => {
-    setIsSidebarVisible(!isSidebarVisible);
-  };
-
-  const gradientStyle = {
-    filter: `hue-rotate(${hueRotation}deg)`,
-    transition: "filter 0.5s ease-in-out",
-  };
-
+export default function BarPortfolio() {
   return (
-    <div className="min-h-screen text-slate-800 overflow-x-hidden relative">
-      {/* Moving Linear Gradient Background */}
-      <div className="fixed inset-0 w-full h-full bg-gray-100 pointer-events-none -z-10">
-        <div className="absolute inset-0 bg-gradient-to-r from-teal-500 via-emerald-400 to-indigo-500 animate-movingGradient"></div>
-        <div className="absolute top-0 right-0 w-3/4 h-3/4 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 blur-3xl opacity-60 transform translate-x-1/4 -translate-y-1/4 animate-blob"></div>
-        <div className="absolute bottom-0 left-0 w-3/4 h-3/4 rounded-full bg-gradient-to-tr from-emerald-400 to-lime-300 blur-3xl opacity-60 transform -translate-x-1/4 translate-y-1/4 animate-blob animation-delay-2000"></div>
-        <div className="absolute top-1/2 left-1/2 w-1/2 h-1/2 rounded-full bg-gradient-to-br from-indigo-500 to-cyan-400 blur-3xl opacity-60 transform -translate-x-1/2 -translate-y-1/2 animate-blob animation-delay-4000"></div>
+    <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-slate-100">
+      <div className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.08),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(168,85,247,0.08),transparent_30%),radial-gradient(circle_at_50%_80%,rgba(249,115,22,0.07),transparent_40%)]" />
+      <div className="pointer-events-none fixed inset-0 -z-10 opacity-20 bg-[linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(180deg,rgba(148,163,184,0.08)_1px,transparent_1px)] bg-[size:60px_60px]" />
+      <div className="pointer-events-none fixed inset-0 -z-30 mix-blend-soft-light">
+        <TealParticles particleCount={120} />
       </div>
 
-      {/* Subtle Grid Pattern */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none -z-10 bg-[linear-gradient(90deg,rgba(45,212,191,0.05)_1px,transparent_1px),linear-gradient(180deg,rgba(45,212,191,0.05)_1px,transparent_1px)] bg-[size:30px_30px]"></div>
-
-      {/* Arrow Button */}
-      <button
-        onClick={toggleSidebar}
-        className="fixed top-1/2 right-4 transform -translate-y-1/2 z-50 bg-teal-600/30 text-teal-800 p-2 rounded-full hover:bg-teal-600/50 transition-all duration-300 shadow-lg"
-        style={gradientStyle}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="22"
-          height="22"
-          viewBox="0 0 22 22"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className={`transition-transform duration-300 ${isSidebarVisible ? "rotate-[-45]" : "rotate-90"}`}
-        >
-          <path d="M15 18l-6-6 6-6" />
-        </svg>
-      </button>
-
-      {/* Sidebar */}
-      <div
-        className={`fixed z-40 right-0 w-48 h-full bg-gradient-to-r from-teal-500 via-emerald-400 to-indigo-500 animate-movingGradient backdrop-blur-sm border-r border-teal-400 flex flex-col items-center py-6 transition-transform duration-300 shadow-lg ${
-          isSidebarVisible ? "translate-x-0" : "-translate-y-full"
-        }`}
-      >
-        <MotionDiv
-          className="mt-16 text-xl font-bold text-teal-800 mb-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          style={gradientStyle}
-        >
-          Navigation
-        </MotionDiv>
-        <nav className="space-y-4 text-sm">
-          <button
-            onClick={() => scrollToSection(introRef)}
-            className="text-teal-800 hover:text-teal-900 transition-colors flex items-center"
-            style={gradientStyle}
-          >
-            <span className="mr-2">👤</span> Infos Personnelles
-          </button>
-          <button
-            onClick={() => scrollToSection(qualificationsRef)}
-            className="text-teal-800 hover:text-teal-900 transition-colors flex items-center"
-            style={gradientStyle}
-          >
-            <span className="mr-2">🎓</span> Qualifications
-          </button>
-          <button
-            onClick={() => scrollToSection(skillsRef)}
-            className="text-teal-800 hover:text-teal-900 transition-colors flex items-center"
-            style={gradientStyle}
-          >
-            <span className="mr-2">🛠️</span> Compétences
-          </button>
-          <button
-            onClick={() => scrollToSection(languagesRef)}
-            className="text-teal-800 hover:text-teal-900 transition-colors flex items-center"
-            style={gradientStyle}
-          >
-            <span className="mr-2">🌐</span> Langues
-          </button>
-          <button
-            onClick={() => scrollToSection(experiencesRef)}
-            className="text-teal-800 hover:text-teal-900 transition-colors flex items-center"
-            style={gradientStyle}
-          >
-            <span className="mr-2">💼</span> Expériences
-          </button>
-        </nav>
-      </div>
-
-      {/* Main Content */}
-      <div className="relative z-10">
-        {/* Teal Particles */}
-        <div className="pointer-events-none">
-        <TealParticles particleCount={90} />
-        </div>
-
-        {/* Intro */}
-        <div
-          ref={introRef}
-          id="intro"
-          className="scroll-mt-24 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10"
-        >
-          <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-4xl gap-6">
-            <MotionDiv
-              className="text-center max-w-2xl"
-              initial={{ opacity: 0, scale: 0.2, y: -150 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 1.8, ease: "easeOut", type: "spring", stiffness: 70 }}
-            >
-              <h1 className="mt-8 text-3xl sm:text-3xl md:text-3xl lg:text-4xl 2xl:text-4xl font-extrabold tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-teal-800 to-indigo-700 drop-shadow-md animate-pulse md:hidden">
-                {intro.name}
+      <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-16 pt-14 lg:px-8">
+        {/* Hero */}
+        <section id="intro" className="relative overflow-hidden rounded-3xl border border-slate-800/60 bg-gradient-to-br from-slate-900/70 via-slate-900/40 to-slate-950 p-6 shadow-2xl ring-1 ring-slate-800/40">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(34,211,238,0.1),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(168,85,247,0.1),transparent_35%)]" />
+          <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 rounded-full border border-teal-500/40 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.14em] text-teal-200">
+                Barman Portfolio
+                <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+              </div>
+              <h1 className="text-3xl font-black leading-tight tracking-tight sm:text-4xl lg:text-5xl">
+                Service, mixologie, et expérience client
               </h1>
-              <MotionDiv
-                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl 2xl:text-5xl font-bold text-teal-800 mt-4"
-                initial={{ opacity: 0, y: 80 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.2, delay: 0.4, ease: "easeOut" }}
-                style={gradientStyle}
-              >
-                {intro.title}
-              </MotionDiv>
-              <p className="text-xs sm:text-sm md:text-base lg:text-lg 2xl:text-lg italic mt-3 max-w-2xl mx-auto text-slate-600">
-                {intro.objective}
+              <p className="max-w-2xl text-slate-300">
+                Barman et mixologue mobile à Paris et Île-de-France. Spécialisé en cocktails classiques et créations, habitué aux rushs, aux événements et aux shifts tardifs.
               </p>
-              {/* Updated Description as Bullet Points */}
-              <ul className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base mt-3 max-w-3xl mx-auto text-slate-700 list-disc list-inside">
-                {intro.description.map((item, index) => (
-                  <li key={index}>{item}</li>
-                ))}
-              </ul>
-            </MotionDiv>
-            <MotionDiv
-              className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-64 lg:h-64 2xl:w-48 2xl:h-48 rounded-full border-[6px] border-teal-400 shadow-lg"
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 2, delay: 0.8, ease: "easeOut" }}
-              whileHover={{ scale: 1.05 }}
-              style={{ borderColor: `hsl(${(hueRotation + 90) % 360}, 80%, 50%)` }}
-            >
-              <Image
-                src="/images/me.jpg"
-                alt="Anamol Jang Karki"
-                width={584}
-                height={584}
-                className="object-cover rounded-full w-full h-full"
-                priority
-              />
-            </MotionDiv>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href="/Bar/gallery"
+                  className="rounded-xl border border-fuchsia-400/50 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:border-fuchsia-300/70"
+                >
+                  Voir la galerie
+                </Link>
+                <Link
+                  href="/contact"
+                  className="rounded-xl border border-teal-500/40 bg-white/5 px-4 py-2 text-sm font-semibold text-teal-100 transition hover:-translate-y-0.5"
+                >
+                  Réserver / Me contacter
+                </Link>
+                <Link
+                  href="/cv/cv_bar_ANAMOL_KARKI.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-xl border border-slate-700 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:border-cyan-400/60"
+                >
+                  Télécharger le CV barman (PDF)
+                </Link>
+              </div>
+            </div>
+            <div className="grid w-full max-w-sm grid-cols-2 gap-3 lg:max-w-md">
+              {stats.map((s) => (
+                <div key={s.label} className="rounded-2xl border border-slate-800/60 bg-white/5 px-4 py-3 text-sm shadow-lg backdrop-blur">
+                  <div className="text-[11px] uppercase tracking-[0.12em] text-slate-400">{s.label}</div>
+                  <div className="mt-1 text-2xl font-bold text-white">{s.value}</div>
+                  <div className="text-[12px] text-slate-400">{s.detail}</div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        </section>
 
-        {/* Rest of the sections (Qualifications, Skills, Languages, Experiences) remain unchanged */}
         {/* Qualifications */}
-        <section ref={qualificationsRef} id="qualifications" className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10 scroll-mt-24">
-          <MotionDiv
-            className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-center mb-8 text-teal-800 uppercase tracking-wide drop-shadow-md"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, type: "spring", stiffness: 50 }}
-            style={gradientStyle}
-          >
-            Qualifications
-          </MotionDiv>
-          <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-10 max-w-4xl mx-auto">
-            {qualifications.map((qual, index) => (
+        <section id="qualifications" className="space-y-4">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Profil</p>
+              <h2 className="text-2xl font-extrabold sm:text-3xl">Qualifications</h2>
+              <p className="text-sm text-slate-300">Polyvalence : bar, salle, cocktails, café, service plateau.</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {qualifications.map((q) => (
               <MotionDiv
-                key={index}
-                className="px-4 py-2 bg-teal-600/10 rounded-full text-teal-800 text-sm sm:text-base md:text-lg lg:text-xl shadow-[0_0_6px_rgba(45,212,191,0.3)] hover:bg-teal-600/30 transition-all duration-300"
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1.2, delay: index * 0.2, ease: "easeOut" }}
-                whileHover={{ scale: 1.15, y: -4 }}
+                key={q}
+                className="rounded-full border border-slate-700 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.35)]"
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
               >
-                {qual.title}
+                {q}
               </MotionDiv>
             ))}
           </div>
         </section>
 
         {/* Skills */}
-        <section ref={skillsRef} id="skills" className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10 scroll-mt-24">
-          <MotionDiv
-            className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-center mb-8 text-teal-800 uppercase tracking-wide drop-shadow-md"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, type: "spring", stiffness: 50 }}
-            style={gradientStyle}
-          >
-            Compétences
-          </MotionDiv>
-          <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-10 max-w-4xl mx-auto">
-            {skills.map((skill, index) => (
+        <section id="skills" className="space-y-4">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Compétences</p>
+              <h2 className="text-2xl font-extrabold sm:text-3xl">Techniques & service</h2>
+              <p className="text-sm text-slate-300">Cocktails, gestion de flux, service client, hygiène et sécurité.</p>
+            </div>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {skills.map((s) => (
               <MotionDiv
-                key={index}
-                className="px-4 py-2 bg-teal-600/10 rounded-full text-teal-800 text-sm sm:text-base md:text-lg lg:text-xl shadow-[0_0_6px_rgba(45,212,191,0.3)] hover:bg-teal-600/30 transition-all duration-300"
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1.2, delay: index * 0.2, ease: "easeOut" }}
-                whileHover={{ scale: 1.15, y: -4 }}
+                key={s}
+                className="rounded-2xl border border-slate-800/60 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 text-sm text-slate-100 shadow-[0_10px_40px_rgba(0,0,0,0.35)]"
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
               >
-                {skill.name}
+                {s}
               </MotionDiv>
             ))}
           </div>
         </section>
 
         {/* Languages */}
-        <section ref={languagesRef} id="languages" className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10 scroll-mt-24">
-          <MotionDiv
-            className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-center mb-8 text-teal-800 uppercase tracking-wide drop-shadow-md"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, type: "spring", stiffness: 50 }}
-            style={gradientStyle}
-          >
-            Langues Parlées
-          </MotionDiv>
-          <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-10 max-w-4xl mx-auto">
-            {languages.map((lang, index) => (
-              <MotionDiv
-                key={index}
-                className="px-4 py-2 bg-teal-600/10 rounded-full text-teal-800 text-sm sm:text-base md:text-lg lg:text-xl shadow-[0_0_6px_rgba(45,212,191,0.3)] hover:bg-teal-600/30 transition-all duration-300"
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1.2, delay: index * 0.2, ease: "easeOut" }}
-                whileHover={{ scale: 1.15, y: -4 }}
-              >
-                {lang.name}
-              </MotionDiv>
+        <section id="languages" className="space-y-4">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Langues</p>
+              <h2 className="text-2xl font-extrabold sm:text-3xl">Communication</h2>
+              <p className="text-sm text-slate-300">À l’aise avec des équipes et des clients internationaux.</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {languages.map((l) => (
+              <span key={l} className="rounded-full border border-slate-700 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100">
+                {l}
+              </span>
             ))}
           </div>
         </section>
 
         {/* Experiences */}
-        <section ref={experiencesRef} id="experiences" className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10 scroll-mt-24">
-          <MotionDiv
-            className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-center mb-8 text-teal-800 uppercase tracking-wide drop-shadow-md"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, type: "spring", stiffness: 50 }}
-            style={gradientStyle}
-          >
-            Expériences
-          </MotionDiv>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10 max-w-full">
+        <section id="experiences" className="space-y-4">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Expériences</p>
+              <h2 className="text-2xl font-extrabold sm:text-3xl">Établissements servis</h2>
+              <p className="text-sm text-slate-300">Événementiel, brasseries, restaurants gastronomiques, bars et clubs.</p>
+            </div>
+            <div className="rounded-full border border-slate-800 bg-slate-900/60 px-3 py-2 text-xs text-slate-300">
+              {experiences.length} missions répertoriées
+            </div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
             {experiences.map((exp, index) => (
               <MotionDiv
-                key={index}
-                className="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden border border-teal-400"
-                initial={{ opacity: 0, y: 150 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.5, delay: index * 0.1, ease: "easeOut" }}
-                whileHover={{ scale: 1.05, y: -8 }}
-                style={{ borderColor: `hsl(${(hueRotation + 90) % 360}, 80%, 50%)` }}
+                key={`${exp.establishment}-${index}`}
+                className="rounded-2xl border border-slate-800/60 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 shadow-[0_12px_48px_rgba(0,0,0,0.35)]"
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
               >
-                <h3
-                  className="text-base sm:text-lg md:text-xl lg:text-lg font-bold text-teal-800 mb-3 uppercase tracking-tight"
-                  style={gradientStyle}
-                >
-                  {exp.role} - {exp.establishment}
+                <h3 className="text-lg font-semibold text-white">
+                  {exp.role} · {exp.establishment}
                 </h3>
-                <p className="text-[10px] sm:text-xs md:text-sm lg:text-base italic text-slate-600">
-                  {exp.type} | {exp.location} | {exp.period} {exp.contract ? `(${exp.contract})` : ""}
+                <p className="text-sm text-slate-300">{exp.type}</p>
+                <p className="text-sm text-slate-400">{exp.location}</p>
+                <p className="text-sm text-slate-400">
+                  {exp.period}
+                  {exp.contract ? ` (${exp.contract})` : ""}
                 </p>
               </MotionDiv>
             ))}
           </div>
         </section>
-        
+
+        {/* Gallery CTA */}
+        <section className="rounded-3xl border border-slate-800/60 bg-slate-900/60 p-5 shadow-xl backdrop-blur flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="text-xs uppercase tracking-[0.2em] text-slate-400">Galerie dédiée</div>
+            <h4 className="text-xl font-bold text-white">Techniques, outils et verrerie</h4>
+            <p className="text-sm text-slate-300">Consultez la page galerie pour les micro-animations détaillées.</p>
+          </div>
+          <Link
+            href="/Bar/gallery"
+            className="rounded-full border border-fuchsia-400/50 bg-white/10 px-4 py-2 text-xs font-semibold text-slate-100 transition hover:-translate-y-0.5"
+          >
+            Ouvrir la galerie
+          </Link>
+        </section>
       </div>
-
-        <div id="contact" className="scroll-mt-24" />
-        <ContactSection hueRotation={hueRotation} contactRef={contactRef} />
-
-      {/* Global Styles */}
-      <style jsx global>{`
-        @keyframes glitch {
-          0% { transform: translate(0); }
-          20% { transform: translate(-2px, 2px); }
-          40% { transform: translate(2px, -2px); }
-          60% { transform: translate(-2px, -2px); }
-          80% { transform: translate(2px, 2px); }
-          100% { transform: translate(0); }
-        }
-        @keyframes pulse {
-          0% { text-shadow: 0 0 6px rgba(45, 212, 191, 0.3); }
-          50% { text-shadow: 0 0 12px rgba(45, 212, 191, 0.6); }
-          100% { text-shadow: 0 0 6px rgba(45, 212, 191, 0.3); }
-        }
-        @keyframes movingGradient {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        @keyframes blob {
-          0% { transform: translate(0%, 0%) scale(1); }
-          33% { transform: translate(30%, -50%) scale(1.2); }
-          66% { transform: translate(-20%, 20%) scale(0.8); }
-          100% { transform: translate(0%, 0%) scale(1); }
-        }
-        .animate-movingGradient {
-          background-size: 200% 200%;
-          animation: movingGradient 10s ease infinite;
-        }
-        .animate-blob {
-          animation: blob 7s ease-in-out infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-        .animate-glitch { animation: glitch 0.3s infinite steps(1); }
-        .animate-pulse { animation: pulse 2s infinite; }
-        .perspective-1000 { perspective: 1000px; }
-        .translate-z-10 { transform: translateZ(10px); }
-      `}</style>
     </div>
   );
 }
-
-
-

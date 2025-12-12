@@ -4,17 +4,20 @@ import { getArticlesByCategory } from '../../../lib/server/articles';
 import { stripHtml } from '../../../lib/text';
 
 export const metadata: Metadata = {
-  title: 'Typing Practice',
+  title: 'Typing Practice | Free Online Typing Test',
   description:
-    'Practice typing online using the our latest technology article. Typing test1, practice typing test, typing online practice81, typing online, practice typing online, typing master.',
-  keywords: [
-    'typing test1',
-    'practice typing test',
-    'typing online practice81',
-    'typing online',
-    'practice typing online',
-    'typing master',
-  ],
+    'Improve your typing speed with live articles, accuracy tracking, and instant words-per-minute stats. Browser-based, no account needed.',
+  keywords: ['typing practice', 'typing test', 'typing speed test', 'typing online', 'wpm test', 'free typing tool'],
+  openGraph: {
+    title: 'Typing Practice | Free Online Typing Test',
+    description: 'Practice typing with fresh text and WPM stats. No sign-up, works in your browser.',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Typing Practice - Free WPM Test',
+    description: 'Boost your typing speed with instant WPM and accuracy feedback.',
+  },
 };
 
 async function fetchLatestTechText(): Promise<string> {

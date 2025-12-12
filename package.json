@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -13,8 +13,11 @@
     "@vercel/speed-insights": "^1.2.0",
     "autoprefixer": "^10.4.20",
     "framer-motion": "^12.4.7",
+    "pdf-lib": "^1.17.1",
     "googleapis": "^127.0.0",
+    "html2canvas": "^1.4.1",
     "immer": "^10.1.1",
+    "jspdf": "^3.0.4",
     "next": "15.1.7",
     "nodemailer": "^7.0.5",
     "qrcode": "^1.5.4",

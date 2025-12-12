@@ -4,9 +4,28 @@ import QrMaker from '../../../components/QrMaker';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
-  title: 'QR Code Scanner Online - Free Tool, No Sign Up',
-  description: 'QR code scanner online no sign up or login required.Downloadable in png or svg format. Free to use.',
-  keywords: 'QR code generator, free QR code, custom QR code, QR code PNG, QR code SVG, QR code for Wi-Fi, QR code for payment,QR code no sign up needed, QR code for business',
+  title: 'QR Code Generator & Scanner | Free, No Sign Up',
+  description:
+    'Create or scan QR codes instantly in your browser. Export PNG or SVG, no account or upload required.',
+  keywords: [
+    'qr code generator',
+    'free qr code',
+    'qr code png',
+    'qr code svg',
+    'qr code scanner online',
+    'wifi qr code',
+    'payment qr code',
+  ],
+  openGraph: {
+    title: 'Free QR Code Generator & Scanner (PNG/SVG)',
+    description: 'Generate and scan QR codes in the browser. Export PNG or SVG without sign-up.',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'QR Code Generator & Scanner | Free',
+    description: 'Make or read QR codes instantly. Export PNG/SVG. 100% browser-based.',
+  },
 };
  
 export default function QrCodeScannerPage() {

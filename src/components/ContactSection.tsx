@@ -17,6 +17,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ hueRotation, contactRef
 
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState<string | null>(null);
+  const [rateLimited, setRateLimited] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -37,6 +38,10 @@ const ContactSection: React.FC<ContactSectionProps> = ({ hueRotation, contactRef
       if (res.ok) {
         setStatus("Message sent");
         setForm({ name: "", email: "", message: "" });
+      } else if (res.status === 429) {
+        const data = await res.json();
+        setStatus(data.error || "Rate limit reached. Try again later.");
+        setRateLimited(true);
       } else {
         const data = await res.json();
         setStatus(data.error || "Error");
@@ -113,46 +118,56 @@ const ContactSection: React.FC<ContactSectionProps> = ({ hueRotation, contactRef
                 
               </div>
             </div>
-            <form
-              onSubmit={handleSubmit}
-              className="mt-6 space-y-3 bg-white bg-opacity-20 backdrop-blur-lg rounded-lg shadow-2xl p-6 max-w-md mx-auto"
-            >
-              <h2 className="text-2xl font-bold mb-2" style={{ color: "#dfcea8" }}>
-                Contact
-              </h2>
-              <input
-                className="w-full p-2 rounded-md bg-white bg-opacity-30 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-600"
-                name="name"
-                placeholder="Name"
-                value={form.name}
-                onChange={handleChange}
-                required
-              />
-              <input
-                className="w-full p-2 rounded-md bg-white bg-opacity-30 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-600"
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={form.email}
-                onChange={handleChange}
-                required
-              />
-              <textarea
-                className="w-full p-2 rounded-md bg-white bg-opacity-30 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-600"
-                name="message"
-                placeholder="Message"
-                value={form.message}
-                onChange={handleChange}
-                required
-              />
-              <button
-                className="px-4 py-2 bg-teal-600 text-white rounded w-full"
-                type="submit"
+            {rateLimited ? (
+              <div className="mt-6 space-y-3 bg-white bg-opacity-20 backdrop-blur-lg rounded-lg shadow-2xl p-6 max-w-md mx-auto text-center text-sm text-teal-100">
+                <h2 className="text-2xl font-bold mb-2" style={{ color: "#dfcea8" }}>
+                  Contact limit reached
+                </h2>
+                <p>You&apos;ve already sent 3 messages in the past hour. Please try again later.</p>
+                {status && <p className="text-xs text-slate-200">{status}</p>}
+              </div>
+            ) : (
+              <form
+                onSubmit={handleSubmit}
+                className="mt-6 space-y-3 bg-white bg-opacity-20 backdrop-blur-lg rounded-lg shadow-2xl p-6 max-w-md mx-auto"
               >
-                Send
-              </button>
-              {status && <p className="text-sm text-center">{status}</p>}
-            </form>
+                <h2 className="text-2xl font-bold mb-2" style={{ color: "#dfcea8" }}>
+                  Contact
+                </h2>
+                <input
+                  className="w-full p-2 rounded-md bg-white bg-opacity-30 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-600"
+                  name="name"
+                  placeholder="Name"
+                  value={form.name}
+                  onChange={handleChange}
+                  required
+                />
+                <input
+                  className="w-full p-2 rounded-md bg-white bg-opacity-30 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-600"
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={form.email}
+                  onChange={handleChange}
+                  required
+                />
+                <textarea
+                  className="w-full p-2 rounded-md bg-white bg-opacity-30 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-600"
+                  name="message"
+                  placeholder="Message"
+                  value={form.message}
+                  onChange={handleChange}
+                  required
+                />
+                <button
+                  className="px-4 py-2 bg-teal-600 text-white rounded w-full"
+                  type="submit"
+                >
+                  Send
+                </button>
+                {status && <p className="text-sm text-center">{status}</p>}
+              </form>
+            )}
           </MotionDiv>
         </section>
       </footer>

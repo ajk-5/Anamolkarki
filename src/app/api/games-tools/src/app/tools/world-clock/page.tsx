@@ -9,9 +9,19 @@ import type { CityWeather } from './types';
 
 
 export const metadata: Metadata = {
-  title: 'World Clock – Global Time & Weather',
-  description: 'Current local time and weather for 100 major cities around the world.',
-  keywords: ['world clock', 'global time', 'weather', 'cities', 'tools'],
+  title: 'World Clock | Live Global Time & Weather',
+  description: 'Check current local time and live weather for 100+ major cities worldwide.',
+  keywords: ['world clock', 'global time', 'time zones', 'live weather', 'city time', 'world time tool'],
+  openGraph: {
+    title: 'World Clock | Live Global Time & Weather',
+    description: 'Current time and weather for cities across the globe. Fast, free, no sign-up.',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'World Clock - Global Time & Weather',
+    description: 'Instantly check local times and live weather for 100+ cities around the world.',
+  },
 };
 
 async function fetchCity(city: WorldCity): Promise<CityWeather> {
