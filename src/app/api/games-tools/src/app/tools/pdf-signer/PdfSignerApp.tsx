@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import type { PDFPage, RGB } from 'pdf-lib';
 import styles from './PdfSigner.module.css';
 
 type MarkKind = 'text' | 'signature';
@@ -26,6 +27,15 @@ interface SignatureStroke {
   color: string;
   width: number;
 }
+
+type PDFPageWithLine = PDFPage & {
+  drawLine?: (options: {
+    start: { x: number; y: number };
+    end: { x: number; y: number };
+    thickness?: number;
+    color?: RGB;
+  }) => void;
+};
 
 const createId = () => {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
@@ -286,7 +296,7 @@ const PdfSignerApp: React.FC = () => {
 
       // Draw pencil signatures as vector strokes
       strokes.forEach((stroke) => {
-        const page = pages[stroke.pageIndex] || pages[0];
+        const page = (pages[stroke.pageIndex] || pages[0]) as PDFPageWithLine;
         const { width, height } = page.getSize();
         const strokeRgb = hexToRgb(stroke.color) ?? rgb(0, 0, 0);
 
@@ -299,8 +309,8 @@ const PdfSignerApp: React.FC = () => {
           const endX = current.xPercent * width;
           const endY = height * (1 - current.yPercent);
 
-          if (typeof (page as any).drawLine === 'function') {
-            (page as any).drawLine({
+          if (typeof page.drawLine === 'function') {
+            page.drawLine({
               start: { x: startX, y: startY },
               end: { x: endX, y: endY },
               thickness: stroke.width * height,

@@ -226,7 +226,7 @@ const FacturePdfApp: React.FC = () => {
       echeance,
       remiseMontant,
     };
-    setSavedDrafts((prev) => ({ ...prev, [name]: data }));
+    setSavedDrafts({ ...savedDrafts, [name]: data });
     setSelectedDraft(name);
   };
 
@@ -336,7 +336,7 @@ const FacturePdfApp: React.FC = () => {
         doc.setFontSize(10);
         clientLines.forEach((line) => {
           const wrapped = doc.splitTextToSize(line, usableWidth * 0.6);
-          wrapped.forEach((wLine) => {
+          wrapped.forEach((wLine: string) => {
             doc.text(wLine, marginLeft, y);
             y += 4;
           });
@@ -415,7 +415,7 @@ const FacturePdfApp: React.FC = () => {
 
         ensureSpace(rowHeight + 2);
 
-        descLines.forEach((line, idx) => {
+        descLines.forEach((line: string, idx: number) => {
           doc.setTextColor(
             item.description ? 15 : 148,
             item.description ? 23 : 163,
@@ -514,7 +514,7 @@ const FacturePdfApp: React.FC = () => {
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(9.5);
-      tvaLines.forEach((line) => {
+      tvaLines.forEach((line: string) => {
         doc.text(line, marginLeft, y);
         y += 4;
       });
@@ -535,7 +535,7 @@ const FacturePdfApp: React.FC = () => {
       let bankY = y;
       bankLines.forEach((line) => {
         const wrapped = doc.splitTextToSize(line, colWidth);
-        wrapped.forEach((wLine) => {
+        wrapped.forEach((wLine: string) => {
           doc.text(wLine, marginLeft + colWidth, bankY);
           bankY += 4;
         });
@@ -550,7 +550,7 @@ const FacturePdfApp: React.FC = () => {
       const condX = marginLeft + labelWidth + 1;
       let condY = y;
 
-      conditionsLines.forEach((line, index) => {
+      conditionsLines.forEach((line: string, index: number) => {
         if (index === 0) {
           doc.text(line, condX, condY);
         } else {

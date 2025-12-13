@@ -127,7 +127,6 @@ function drawImageHighQuality(
   dh: number
 ) {
   ctx.imageSmoothingEnabled = true;
-  // @ts-expect-error: imageSmoothingQuality exists in modern browsers
   ctx.imageSmoothingQuality = "high";
   ctx.drawImage(src, dx, dy, dw, dh);
 }
@@ -168,7 +167,6 @@ async function decodeToImageBitmap(blob: Blob): Promise<ImageBitmap> {
       el.onerror = () => reject(new Error("Decode failed."));
       el.src = url;
     });
-    // @ts-expect-error: createImageBitmap may not exist
     return await createImageBitmap(img);
   } finally {
     URL.revokeObjectURL(url);
@@ -177,7 +175,6 @@ async function decodeToImageBitmap(blob: Blob): Promise<ImageBitmap> {
 
 async function loadFileToBitmap(file: File): Promise<ImageBitmap> {
   try {
-    // @ts-expect-error: imageOrientation option may not exist in TS lib
     return await createImageBitmap(file, { imageOrientation: "from-image" });
   } catch {
     return await createImageBitmap(file);
@@ -213,14 +210,11 @@ export default function ImageCompressorCanvasApp() {
   const [busy, setBusy] = useState<boolean>(false);
   const [status, setStatus] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const jobIdRef = useRef<number>(0);
 
   const selectedFormat = useMemo(
     () => ALL_FORMATS.find((f) => f.mime === formatMime) ?? ALL_FORMATS[ALL_FORMATS.length - 1],
     [formatMime]
   );
-
-  const activeItem = useMemo(() => items.find((i) => i.id === activeId) ?? null, [items, activeId]);
 
   useEffect(() => {
     const detected = new Set<string>();
@@ -235,8 +229,7 @@ export default function ImageCompressorCanvasApp() {
       if (outUrl) URL.revokeObjectURL(outUrl);
       if (bitmap) bitmap.close();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [outUrl, bitmap]);
 
   useEffect(() => {
     if (!supportedMimeSet.size) return;
@@ -244,7 +237,6 @@ export default function ImageCompressorCanvasApp() {
     if (!ALL_FORMATS.some((f) => f.mime === formatMime)) {
       setFormatMime(ALL_FORMATS[0].mime);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supportedMimeSet, formatMime]);
 
   useEffect(() => {
@@ -333,25 +325,6 @@ export default function ImageCompressorCanvasApp() {
     return c;
   }
 
-  async function encodeWithSettings(q: number | undefined) {
-    if (!bitmap) throw new Error("No image loaded.");
-
-    const fit = computeFitSize(bitmap.width, bitmap.height, maxSide);
-    const c = drawToWorkCanvas(bitmap, fit.w, fit.h);
-
-    const usedQ = selectedFormat.supportsQuality ? clamp(q ?? quality, 0.01, 1) : undefined;
-    let blob: Blob;
-    try {
-      blob = await toBlobAsync(c, selectedFormat.mime, usedQ);
-    } catch (err) {
-      throw new Error(
-        `Encoding to ${selectedFormat.label} is not available in this browser. Try WebP or JPEG instead.`
-      );
-    }
-
-    return { blob, usedQ, outW: fit.w, outH: fit.h };
-  }
-
   async function encodeWithSettingsFor(bm: ImageBitmap, q: number | undefined) {
     const fit = computeFitSize(bm.width, bm.height, maxSide);
     const c = drawToWorkCanvas(bm, fit.w, fit.h);
@@ -368,47 +341,6 @@ export default function ImageCompressorCanvasApp() {
 
     return { blob, usedQ, outW: fit.w, outH: fit.h };
   }
-
-async function computePSNRAgainstOriginal(out: Blob) {
-  if (!bitmap) return null;
-
-    const SAMPLE_MAX = 256;
-    const fit = computeFitSize(bitmap.width, bitmap.height, SAMPLE_MAX);
-
-    const aCanvas = document.createElement("canvas");
-    aCanvas.width = fit.w;
-    aCanvas.height = fit.h;
-    const aCtx = aCanvas.getContext("2d", { willReadFrequently: true });
-    if (!aCtx) return null;
-
-    if (!selectedFormat.supportsAlpha) {
-      aCtx.fillStyle = bgColor;
-      aCtx.fillRect(0, 0, fit.w, fit.h);
-    }
-    drawImageHighQuality(aCtx, bitmap, 0, 0, fit.w, fit.h);
-    const aData = aCtx.getImageData(0, 0, fit.w, fit.h);
-
-    const outBm = await decodeToImageBitmap(out);
-    try {
-      const bCanvas = document.createElement("canvas");
-      bCanvas.width = fit.w;
-      bCanvas.height = fit.h;
-      const bCtx = bCanvas.getContext("2d", { willReadFrequently: true });
-      if (!bCtx) return null;
-
-      if (!selectedFormat.supportsAlpha) {
-        bCtx.fillStyle = bgColor;
-        bCtx.fillRect(0, 0, fit.w, fit.h);
-      }
-
-      drawImageHighQuality(bCtx, outBm, 0, 0, fit.w, fit.h);
-      const bData = bCtx.getImageData(0, 0, fit.w, fit.h);
-
-      return computePSNR(aData, bData);
-    } finally {
-      outBm.close?.();
-  }
-}
 
 async function computePSNRAgainstOriginalFor(bm: ImageBitmap, out: Blob, bgColor: string, selectedFormat: Format) {
   const SAMPLE_MAX = 256;
@@ -468,35 +400,6 @@ async function computePSNRAgainstOriginalFor(bm: ImageBitmap, out: Blob, bgColor
       setOutPSNR(psnr);
     }
     return url;
-  }
-
-  async function runEncode(manual = true) {
-    setError("");
-    setStatus("");
-    setBusy(true);
-    const myJob = ++jobIdRef.current;
-    let result: { blob: Blob; psnr: number | null; url: string } | null = null;
-
-    try {
-      if (!bitmap || !activeItem) throw new Error("Pick an image first.");
-
-      setStatus("Encoding...");
-      const { blob } = await encodeWithSettings(manual ? quality : undefined);
-      if (jobIdRef.current !== myJob) return;
-
-      const psnr = selectedFormat.lossy ? await computePSNRAgainstOriginal(blob) : Infinity;
-      if (jobIdRef.current !== myJob) return;
-
-      const url = persistOutput(blob, psnr);
-      result = { blob, psnr, url };
-      setStatus("Done.");
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to encode.");
-    } finally {
-      if (jobIdRef.current === myJob) setBusy(false);
-    }
-
-    return result ?? undefined;
   }
 
   async function optimizeSingle(item: ImageItem) {
@@ -997,6 +900,7 @@ async function computePSNRAgainstOriginalFor(bm: ImageBitmap, out: Blob, bgColor
 
                 {outUrl ? (
                   <div className="preview" style={{ marginTop: 10 }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={outUrl} alt="Output preview" />
                   </div>
                 ) : (
