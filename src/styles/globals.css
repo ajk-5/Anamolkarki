@@ -3,13 +3,18 @@
 @import "tailwindcss/utilities";
 
 :root {
-  --background: radial-gradient(1200px 800px at 50% -20%, rgba(20, 184, 166, 0.15), transparent 60%),
-                radial-gradient(800px 600px at 110% 10%, rgba(59, 130, 246, 0.12), transparent 60%),
-                radial-gradient(1000px 700px at -10% 80%, rgba(236, 72, 153, 0.10), transparent 60%),
-                linear-gradient(180deg, #030712 0%, #0b1324 40%, #000000 100%);
-  --foreground: #e5e7eb; /* light text for dark background */
+  --background: radial-gradient(1200px 900px at 10% -10%, rgba(56, 189, 248, 0.18), transparent 60%),
+                radial-gradient(900px 700px at 90% 0%, rgba(20, 184, 166, 0.16), transparent 55%),
+                radial-gradient(1000px 700px at 0% 85%, rgba(245, 158, 11, 0.12), transparent 60%),
+                linear-gradient(180deg, #05070f 0%, #0b1224 45%, #06080f 100%);
+  --foreground: #e2e8f0;
   --grid-color: rgba(148, 163, 184, 0.08);
-  --accent: #14b8a6;
+  --surface: rgba(10, 16, 30, 0.72);
+  --surface-strong: rgba(8, 12, 24, 0.92);
+  --surface-border: rgba(148, 163, 184, 0.14);
+  --accent: #38bdf8;
+  --accent-strong: #22d3ee;
+  --accent-warm: #f59e0b;
   --safe-bottom: env(safe-area-inset-bottom);
   --safe-top: env(safe-area-inset-top);
 }
@@ -17,15 +22,33 @@
 /* Keep consistent palette regardless of OS theme */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: linear-gradient(180deg, #030712 0%, #0b1324 40%, #000000 100%);
-    --foreground: #e5e7eb;
+    --background: radial-gradient(1200px 900px at 10% -10%, rgba(56, 189, 248, 0.18), transparent 60%),
+                  radial-gradient(900px 700px at 90% 0%, rgba(20, 184, 166, 0.16), transparent 55%),
+                  radial-gradient(1000px 700px at 0% 85%, rgba(245, 158, 11, 0.12), transparent 60%),
+                  linear-gradient(180deg, #05070f 0%, #0b1224 45%, #06080f 100%);
+    --foreground: #e2e8f0;
   }
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--font-body), sans-serif;
+  letter-spacing: -0.01em;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display), serif;
+  letter-spacing: -0.02em;
+}
+
+::selection {
+  background: rgba(56, 189, 248, 0.3);
+  color: #f8fafc;
 }
 
 /* Hide scrollbars on elements that opt-in */
@@ -46,8 +69,8 @@ body {
   background-image:
     linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
     linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
-  background-size: 32px 32px, 32px 32px;
-  mask-image: radial-gradient(ellipse at 50% 30%, black 20%, transparent 70%);
+  background-size: 42px 42px, 42px 42px;
+  mask-image: radial-gradient(ellipse at 50% 25%, black 22%, transparent 70%);
 }
 
 /* ---------- Aurora animated blobs ---------- */
@@ -60,8 +83,8 @@ body {
 }
 .aurora .blob {
   position: absolute;
-  filter: blur(80px);
-  opacity: 0.55;
+  filter: blur(90px);
+  opacity: 0.5;
   transform-origin: center;
 }
 .animate-aurora-slow { animation: aurora 22s ease-in-out infinite alternate; }
@@ -89,14 +112,79 @@ body {
   inset: 0; 
   pointer-events: none; 
   z-index: 0;
-  opacity: .05;
+  opacity: 0.06;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E");
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: reveal 0.8s ease forwards;
+}
+
+.reveal-delay-1 { animation-delay: 0.1s; }
+.reveal-delay-2 { animation-delay: 0.2s; }
+.reveal-delay-3 { animation-delay: 0.3s; }
+.reveal-delay-4 { animation-delay: 0.4s; }
+.reveal-delay-5 { animation-delay: 0.5s; }
+
+@keyframes reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-sky-300/60 bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-300 px-5 py-2 text-sm font-semibold text-slate-950 shadow-lg transition-all hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700/70 bg-slate-950/60 px-5 py-2 text-sm font-semibold text-slate-100 transition-all hover:-translate-y-0.5 hover:border-sky-300/60 hover:text-sky-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-transparent bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 transition-all hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40;
+  }
+
+  .btn-icon {
+    @apply inline-flex items-center justify-center rounded-full border border-slate-700/70 bg-slate-950/70 p-2 text-slate-200 shadow-md transition-all hover:-translate-y-0.5 hover:border-sky-300/60 hover:text-sky-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40;
+  }
+
+  .btn-dot {
+    @apply h-3 w-3 rounded-full border border-slate-700/70 bg-slate-900/70 transition;
+  }
+
+  .btn-dot-active {
+    @apply border-transparent bg-gradient-to-r from-sky-400 to-emerald-300 shadow-md;
+  }
+
+  .input-field {
+    @apply w-full rounded-xl border border-slate-700/70 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-sky-300/70 focus:outline-none focus:ring-2 focus:ring-sky-500/20;
+  }
+
+  .card-surface {
+    @apply rounded-2xl border border-slate-800/70 bg-slate-950/70 shadow-2xl backdrop-blur;
+  }
 }
 
 /* Mobile tuning */
 @media (max-width: 768px) {
-  .aurora .blob { filter: blur(60px); opacity: 0.5; }
-  .noise-overlay { opacity: .03; }
+  .aurora .blob { filter: blur(65px); opacity: 0.45; }
+  .noise-overlay { opacity: 0.04; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* Utility: remove iOS tap highlight */

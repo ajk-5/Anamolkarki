@@ -8,22 +8,22 @@ import { stats, qualifications, skills, languages, experiences } from "./resumeD
 
 export default function BarPortfolio() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-slate-100">
-      <div className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.08),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(168,85,247,0.08),transparent_30%),radial-gradient(circle_at_50%_80%,rgba(249,115,22,0.07),transparent_40%)]" />
-      <div className="pointer-events-none fixed inset-0 -z-10 opacity-20 bg-[linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(180deg,rgba(148,163,184,0.08)_1px,transparent_1px)] bg-[size:60px_60px]" />
+    <div className="relative min-h-screen overflow-x-hidden text-slate-100">
+      <div className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(circle_at_15%_20%,rgba(56,189,248,0.12),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(20,184,166,0.12),transparent_35%),radial-gradient(circle_at_0%_90%,rgba(245,158,11,0.08),transparent_45%)]" />
+      <div className="pointer-events-none fixed inset-0 -z-10 opacity-25 bg-[linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(180deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:70px_70px]" />
       <div className="pointer-events-none fixed inset-0 -z-30 mix-blend-soft-light">
-        <TealParticles particleCount={120} />
+        <TealParticles particleCount={90} />
       </div>
 
       <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-16 pt-14 lg:px-8">
         {/* Hero */}
-        <section id="intro" className="relative overflow-hidden rounded-3xl border border-slate-800/60 bg-gradient-to-br from-slate-900/70 via-slate-900/40 to-slate-950 p-6 shadow-2xl ring-1 ring-slate-800/40">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(34,211,238,0.1),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(168,85,247,0.1),transparent_35%)]" />
+        <section id="intro" className="relative overflow-hidden rounded-3xl border border-slate-800/70 bg-slate-950/70 p-6 shadow-2xl">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(56,189,248,0.16),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(34,211,238,0.12),transparent_40%)]" />
           <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 rounded-full border border-teal-500/40 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.14em] text-teal-200">
+              <div className="inline-flex items-center gap-2 rounded-full border border-slate-700/70 bg-slate-950/70 px-3 py-1 text-xs uppercase tracking-[0.2em] text-slate-300">
                 Barman Portfolio
-                <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+                <span className="h-2 w-2 rounded-full bg-sky-300 shadow-[0_0_10px_rgba(56,189,248,0.8)]" />
               </div>
               <h1 className="text-3xl font-black leading-tight tracking-tight sm:text-4xl lg:text-5xl">
                 Service, mixologie, et expérience client
@@ -34,13 +34,13 @@ export default function BarPortfolio() {
               <div className="flex flex-wrap gap-3">
                 <Link
                   href="/Bar/gallery"
-                  className="rounded-xl border border-fuchsia-400/50 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:border-fuchsia-300/70"
+                  className="btn-outline"
                 >
                   Voir la galerie
                 </Link>
                 <Link
                   href="/contact"
-                  className="rounded-xl border border-teal-500/40 bg-white/5 px-4 py-2 text-sm font-semibold text-teal-100 transition hover:-translate-y-0.5"
+                  className="btn-primary"
                 >
                   Réserver / Me contacter
                 </Link>
@@ -48,7 +48,7 @@ export default function BarPortfolio() {
                   href="/cv/cv_bar_ANAMOL_KARKI.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-xl border border-slate-700 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:border-cyan-400/60"
+                  className="btn-ghost"
                 >
                   Télécharger le CV barman (PDF)
                 </Link>
@@ -56,7 +56,7 @@ export default function BarPortfolio() {
             </div>
             <div className="grid w-full max-w-sm grid-cols-2 gap-3 lg:max-w-md">
               {stats.map((s) => (
-                <div key={s.label} className="rounded-2xl border border-slate-800/60 bg-white/5 px-4 py-3 text-sm shadow-lg backdrop-blur">
+                <div key={s.label} className="rounded-2xl border border-slate-800/70 bg-slate-950/70 px-4 py-3 text-sm shadow-2xl backdrop-blur">
                   <div className="text-[11px] uppercase tracking-[0.12em] text-slate-400">{s.label}</div>
                   <div className="mt-1 text-2xl font-bold text-white">{s.value}</div>
                   <div className="text-[12px] text-slate-400">{s.detail}</div>
@@ -168,7 +168,7 @@ export default function BarPortfolio() {
         </section>
 
         {/* Gallery CTA */}
-        <section className="rounded-3xl border border-slate-800/60 bg-slate-900/60 p-5 shadow-xl backdrop-blur flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <section className="rounded-3xl border border-slate-800/70 bg-slate-950/70 p-6 shadow-2xl backdrop-blur flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="text-xs uppercase tracking-[0.2em] text-slate-400">Galerie dédiée</div>
             <h4 className="text-xl font-bold text-white">Techniques, outils et verrerie</h4>
@@ -176,7 +176,7 @@ export default function BarPortfolio() {
           </div>
           <Link
             href="/Bar/gallery"
-            className="rounded-full border border-fuchsia-400/50 bg-white/10 px-4 py-2 text-xs font-semibold text-slate-100 transition hover:-translate-y-0.5"
+            className="btn-outline"
           >
             Ouvrir la galerie
           </Link>

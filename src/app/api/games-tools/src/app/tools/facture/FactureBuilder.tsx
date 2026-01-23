@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 import { jsPDF } from 'jspdf';
 import './facture.css';
 
@@ -93,35 +93,66 @@ const formatMoney = (value: number): string => {
   return value.toFixed(2).replace('.', ',');
 };
 
-function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T) => void] {
-  const [value, setValue] = useState<T>(initialValue);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
+function useLocalStorage<T>(
+  key: string,
+  initialValue: T
+): [T, (value: T | ((prev: T) => T)) => void] {
+  const getSnapshot = useCallback(() => {
+    if (typeof window === 'undefined') return null;
     try {
-      const stored = window.localStorage.getItem(key);
-      if (!stored) return;
-      setValue(JSON.parse(stored) as T);
+      return window.localStorage.getItem(key);
     } catch {
-      // ignore
+      return null;
     }
   }, [key]);
 
-  const setAndStore = (next: T) => {
-    setValue(next);
-    if (typeof window === 'undefined') return;
+  const subscribe = useCallback(
+    (callback: () => void) => {
+      if (typeof window === 'undefined') return () => {};
+      const storageEvent = `local-storage:${key}`;
+      const onStorage = (event: StorageEvent) => {
+        if (event.key === key) callback();
+      };
+      const onCustom = () => callback();
+      window.addEventListener('storage', onStorage);
+      window.addEventListener(storageEvent, onCustom);
+      return () => {
+        window.removeEventListener('storage', onStorage);
+        window.removeEventListener(storageEvent, onCustom);
+      };
+    },
+    [key]
+  );
+
+  const raw = useSyncExternalStore(subscribe, getSnapshot, () => null);
+  const value = useMemo(() => {
+    if (!raw) return initialValue;
     try {
-      window.localStorage.setItem(key, JSON.stringify(next));
+      return JSON.parse(raw) as T;
     } catch {
-      // ignore
+      return initialValue;
     }
-  };
+  }, [raw, initialValue]);
+
+  const setAndStore = useCallback(
+    (next: T | ((prev: T) => T)) => {
+      const resolved = typeof next === 'function' ? (next as (prev: T) => T)(value) : next;
+      if (typeof window === 'undefined') return;
+      try {
+        window.localStorage.setItem(key, JSON.stringify(resolved));
+      } catch {
+        // ignore
+      }
+      window.dispatchEvent(new Event(`local-storage:${key}`));
+    },
+    [key, value]
+  );
 
   return [value, setAndStore];
 }
 
 const DEFAULT_CONDITIONS =
-  'Paiement par virement. En cas de retard de paiement, indemnité forfaitaire de 40 EUR pour frais de recouvrement (article D441-5 du code de commerce).';
+  'Paiement par virement. En cas de retard de paiement, indemnite forfaitaire de 40 EUR pour frais de recouvrement (article D441-5 du code de commerce).';
 
 const FacturePdfApp: React.FC = () => {
   const [emetteur, setEmetteur] = useLocalStorage<Party>(
@@ -860,7 +891,7 @@ const FacturePdfApp: React.FC = () => {
                     className='item-remove-button'
                     onClick={() => removeItem(item.id)}
                   >
-                    ✕
+                    X
                   </button>
                 </div>
               ))}
@@ -954,7 +985,7 @@ const FacturePdfApp: React.FC = () => {
                     value={selectedDraft}
                     onChange={(e) => handleLoadDraft(e.target.value)}
                   >
-                    <option value=''>Choisir un modele…</option>
+                    <option value=''>Choisir un modele</option>
                     {Object.keys(savedDrafts).map((name) => (
                       <option key={name} value={name}>
                         {name}

@@ -9,7 +9,7 @@ function DevIcon() {
     <svg
       viewBox="0 0 32 32"
       aria-hidden="true"
-      className="h-7 w-7 text-teal-300"
+      className="h-7 w-7 text-sky-300"
     >
       <rect
         x="5"
@@ -43,7 +43,7 @@ function ProjectsIcon() {
     <svg
       viewBox="0 0 32 32"
       aria-hidden="true"
-      className="h-7 w-7 text-sky-300"
+      className="h-7 w-7 text-emerald-300"
     >
       <rect
         x="4"
@@ -84,7 +84,7 @@ function GamesIcon() {
     <svg
       viewBox="0 0 32 32"
       aria-hidden="true"
-      className="h-7 w-7 text-emerald-300"
+      className="h-7 w-7 text-cyan-300"
     >
       <rect
         x="6"
@@ -113,7 +113,7 @@ function ToolsIcon() {
     <svg
       viewBox="0 0 32 32"
       aria-hidden="true"
-      className="h-7 w-7 text-teal-200"
+      className="h-7 w-7 text-amber-300"
     >
       <path
         d="M18.5 6.5a4 4 0 0 1 4.7 5.3L20 9.6l-3.4 3.4 2.2 3.9-3.2 3.2-5-5 3.2-3.2 4 2.2 3.4-3.4-2.2-3.4Z"
@@ -140,7 +140,7 @@ function AboutIcon() {
     <svg
       viewBox="0 0 32 32"
       aria-hidden="true"
-      className="h-7 w-7 text-indigo-300"
+      className="h-7 w-7 text-slate-200"
     >
       <circle
         cx="16"
@@ -166,7 +166,7 @@ function ContactIcon() {
     <svg
       viewBox="0 0 32 32"
       aria-hidden="true"
-      className="h-7 w-7 text-cyan-300"
+      className="h-7 w-7 text-sky-200"
     >
       <rect
         x="6"
@@ -200,7 +200,7 @@ const sections = [
     title: "Developer portfolio",
     href: "/developer",
     description:
-      "Full overview of my skills, case studies and experience as a full-stack engineer.",
+      "Case studies, architecture notes, and end-to-end product stories.",
     badge: "Start here",
     icon: DevIcon,
   },
@@ -209,7 +209,7 @@ const sections = [
     title: "Projects",
     href: "/projects",
     description:
-      "Selected real-world apps and experiments, with context on stack and outcomes.",
+      "Selected apps and experiments with context on stack and outcomes.",
     badge: "Case studies",
     icon: ProjectsIcon,
   },
@@ -218,7 +218,7 @@ const sections = [
     title: "Games",
     href: "/games",
     description:
-      "Small web games and playful experiences you can try directly in the browser.",
+      "Playable micro-experiences and interaction studies you can try now.",
     badge: "Play",
     icon: GamesIcon,
   },
@@ -227,7 +227,7 @@ const sections = [
     title: "Tools",
     href: "/tools",
     description:
-      "World clock, invoice generator, QR utilities and more small productivity helpers.",
+      "Utility apps and helpers that remove friction from daily work.",
     badge: "Utilities",
     icon: ToolsIcon,
   },
@@ -236,7 +236,7 @@ const sections = [
     title: "About me",
     href: "/me",
     description:
-      "Background, values and how I approach building products and interfaces.",
+      "Background, values, and how I build products with teams.",
     badge: "Profile",
     icon: AboutIcon,
   },
@@ -245,117 +245,163 @@ const sections = [
     title: "Contact",
     href: "/contact",
     description:
-      "Ways to reach me for freelance work, collaborations or questions.",
+      "Start a project, hire me, or just say hello.",
     badge: "Say hi",
     icon: ContactIcon,
   },
 ];
 
+const focusAreas = [
+  {
+    title: "Product engineering",
+    description:
+      "Design-led full-stack builds that feel fast, clear, and reliable.",
+  },
+  {
+    title: "Playful interfaces",
+    description:
+      "Micro-animations and interactions that make products feel alive.",
+  },
+  {
+    title: "Practical tools",
+    description:
+      "Small utilities that remove friction and keep teams moving.",
+  },
+];
+
 export default function Home() {
   return (
-    <main className="relative min-h-[calc(100vh-5rem)] overflow-hidden bg-slate-950 text-slate-100">
-      <div className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.08),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(168,85,247,0.08),transparent_30%),radial-gradient(circle_at_50%_80%,rgba(249,115,22,0.07),transparent_40%)]" />
-      <div className="pointer-events-none fixed inset-0 -z-10 opacity-20 bg-[linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(180deg,rgba(148,163,184,0.08)_1px,transparent_1px)] bg-[size:60px_60px]" />
-      <div className="pointer-events-none fixed inset-0 -z-30 mix-blend-soft-light">
-        <TealParticles particleCount={80} />
+    <main className="relative min-h-[calc(100vh-5rem)] overflow-hidden text-slate-100">
+      <div className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(circle_at_15%_20%,rgba(56,189,248,0.12),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(20,184,166,0.12),transparent_35%),radial-gradient(circle_at_0%_90%,rgba(245,158,11,0.10),transparent_45%)]" />
+      <div className="pointer-events-none absolute inset-0 -z-10 opacity-30 bg-[linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(180deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:70px_70px]" />
+      <div className="pointer-events-none absolute inset-0 -z-30 mix-blend-soft-light">
+        <TealParticles particleCount={70} />
       </div>
 
-      <section className="relative z-10 mx-auto flex max-w-6xl flex-col gap-12 px-5 pb-16 pt-16 lg:px-8">
-        {/* Hero */}
-        <div className="relative overflow-hidden rounded-3xl border border-slate-800/60 bg-gradient-to-br from-slate-900/80 via-slate-950 to-slate-950 p-6 shadow-2xl ring-1 ring-slate-900/60 lg:p-8">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(45,212,191,0.18),transparent_55%),radial-gradient(circle_at_80%_20%,rgba(129,140,248,0.15),transparent_50%)]" />
-          <div className="relative z-10 grid gap-8">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 rounded-full border border-teal-500/50 bg-slate-900/60 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-teal-200">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-300 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-                Developer portfolio
-              </div>
-              <h1 className="text-3xl font-black leading-tight tracking-tight sm:text-4xl lg:text-5xl">
-                Building playful products, tools{" "}
-                <span className="block text-teal-300">
-                  and interfaces that feel alive.
-                </span>
-              </h1>
-              <p className="max-w-xl text-sm text-slate-200/90 sm:text-base">
-                I&apos;m Anamol Jang Karki, a full-stack developer who enjoys
-                shipping real products, crafting tiny games, and designing small
-                utilities that actually get used.
-              </p>
-              <div className="flex flex-wrap gap-3 pt-1">
-                <Link href="/developer">
-                  <MagneticButton size="md">
-                    View developer portfolio
-                  </MagneticButton>
-                </Link>
+      <section className="relative z-10 mx-auto flex max-w-6xl flex-col gap-16 px-5 pb-20 pt-14 lg:px-8">
+        <div className="grid items-center gap-10">
+          <div className="space-y-6">
+            <div className="reveal inline-flex items-center gap-2 rounded-full border border-slate-700/70 bg-slate-950/70 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-sky-300 shadow-[0_0_10px_rgba(56,189,248,0.7)]" />
+              Design-driven developer
+            </div>
+            <h1 className="reveal reveal-delay-1 text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl font-display">
+              Hi I am Anamol Jang Karki.
+            </h1>
+            <p className="reveal reveal-delay-2 max-w-xl text-base text-slate-200/90 sm:text-lg">
+              I am currently studying 3rd year of bachelor in software engineering: web and AI at EFREI. Please view my{" "}
+              <Link
+                href="/developer"
+                className="font-semibold text-sky-200 underline decoration-sky-300/70 underline-offset-4 transition hover:text-sky-100"
+              >
+                developer portfolio
+              </Link>{" "}
+              for more info.
+            </p>
+            <div className="reveal reveal-delay-3 flex flex-wrap gap-3">
+              <Link href="/developer">
+                <MagneticButton size="lg">
+                  View developer portfolio
+                </MagneticButton>
+              </Link>
+              <Link href="/projects">
+                <MagneticButton size="lg" variant="outline">
+                  Explore projects
+                </MagneticButton>
+              </Link>
+            </div>
+            <div className="reveal reveal-delay-4 flex flex-wrap gap-2 text-xs text-slate-400">
+              {[
+                { href: "/games", label: "Games" },
+                { href: "/tools", label: "Tools" },
+                { href: "/me", label: "About" },
+              ].map((item) => (
                 <Link
-                  href="/projects"
-                  className="inline-flex items-center gap-2 rounded-xl border border-slate-700/70 bg-slate-900/70 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:border-teal-400/60"
+                  key={item.href}
+                  href={item.href}
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-950/60 px-3 py-1 transition hover:border-sky-300/60 hover:text-sky-100"
                 >
-                  Browse projects
-                  <svg
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    className="h-4 w-4"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M6 5h8v8"
-                      stroke="currentColor"
-                      strokeWidth={1.6}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M6 13L14 5"
-                      stroke="currentColor"
-                      strokeWidth={1.6}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <span className="h-1.5 w-1.5 rounded-full bg-sky-300" />
+                  {item.label}
                 </Link>
-                <div className="flex flex-wrap gap-2 text-xs text-slate-400">
-                  <Link
-                    href="/games"
-                    className="inline-flex items-center gap-1 rounded-full bg-slate-900/60 px-3 py-1 transition hover:bg-slate-800/80 hover:text-teal-300"
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-teal-400" />
-                    Games
-                  </Link>
-                  <Link
-                    href="/tools"
-                    className="inline-flex items-center gap-1 rounded-full bg-slate-900/60 px-3 py-1 transition hover:bg-slate-800/80 hover:text-teal-300"
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-teal-400" />
-                    Tools
-                  </Link>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Portfolio sections */}
+        <div className="grid gap-4 md:grid-cols-3">
+          {focusAreas.map((item, index) => (
+            <div
+              key={item.title}
+              className={`reveal reveal-delay-${index + 1} rounded-2xl border border-slate-800/70 bg-slate-950/70 p-5 shadow-[0_18px_40px_rgba(2,6,23,0.5)]`}
+            >
+              <h3 className="text-lg font-semibold text-slate-100">
+                {item.title}
+              </h3>
+              <p className="mt-2 text-sm text-slate-300">
+                {item.description}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.35em] text-slate-400">
+              Portfolio map
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold font-display text-slate-100">
+              Explore the work and stories
+            </h2>
+          </div>
+          <Link
+            href="/developer"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-sky-200 transition hover:text-sky-100"
+          >
+            Start with the developer portfolio
+            <svg
+              viewBox="0 0 20 20"
+              className="h-4 w-4"
+              aria-hidden="true"
+            >
+              <path
+                d="M6 5h8v8"
+                stroke="currentColor"
+                strokeWidth={1.6}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M6 13L14 5"
+                stroke="currentColor"
+                strokeWidth={1.6}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </Link>
+        </div>
+
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {sections.map((section) => {
+          {sections.map((section, index) => {
             const Icon = section.icon;
             return (
               <Link
                 key={section.key}
                 href={section.href}
-                className="group flex h-full flex-col justify-between rounded-2xl border border-slate-800/70 bg-gradient-to-br from-slate-950/90 via-slate-950 to-slate-900/80 p-5 shadow-[0_12px_48px_rgba(0,0,0,0.45)] transition hover:-translate-y-1 hover:border-teal-400/60"
+                className={`group reveal reveal-delay-${(index % 3) + 1} flex h-full flex-col justify-between rounded-2xl border border-slate-800/70 bg-gradient-to-br from-slate-950/90 via-slate-950 to-slate-900/70 p-5 shadow-[0_20px_50px_rgba(2,6,23,0.55)] transition hover:-translate-y-1 hover:border-sky-300/60 hover:shadow-[0_24px_60px_rgba(14,116,144,0.25)]`}
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <div className="text-[10px] uppercase tracking-[0.18em] text-slate-400">
+                      <div className="text-[10px] uppercase tracking-[0.25em] text-slate-400">
                         {section.badge}
                       </div>
                       <h3 className="mt-1 text-lg font-semibold text-white">
                         {section.title}
                       </h3>
                     </div>
-                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-slate-700/60 bg-slate-900/80 text-teal-300">
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-700/60 bg-slate-900/80">
                       <Icon />
                     </span>
                   </div>
@@ -363,7 +409,7 @@ export default function Home() {
                     {section.description}
                   </p>
                 </div>
-                <div className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-teal-200">
+                <div className="mt-5 inline-flex items-center gap-2 text-xs font-semibold text-sky-200">
                   Open
                   <svg
                     viewBox="0 0 20 20"
@@ -391,8 +437,58 @@ export default function Home() {
           })}
         </div>
 
-        <footer className="pt-4 text-center text-xs text-slate-500">
-          © {new Date().getFullYear()} Anamol Jang Karki · Developer portfolio
+        <div className="relative overflow-hidden rounded-3xl border border-slate-800/70 bg-gradient-to-br from-slate-950/90 via-slate-950 to-slate-900/70 p-6 shadow-[0_20px_60px_rgba(2,6,23,0.6)] sm:p-8">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(56,189,248,0.18),transparent_55%),radial-gradient(circle_at_80%_20%,rgba(20,184,166,0.12),transparent_50%)]" />
+          <div className="relative z-10 grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+            <div className="space-y-3">
+              <p className="text-xs uppercase tracking-[0.35em] text-slate-400">
+                Start a build
+              </p>
+              <h2 className="text-2xl font-semibold font-display text-white sm:text-3xl">
+                Design a product people love to use.
+              </h2>
+              <p className="text-sm text-slate-200/80 sm:text-base">
+                Tell me about the product, the audience, and the outcome. I will
+                help you shape the UX, ship clean code, and deliver a polished
+                experience.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col lg:items-start">
+              <Link href="/contact">
+                <MagneticButton size="md">Contact me</MagneticButton>
+              </Link>
+              <Link
+                href="/developer"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-slate-200 transition hover:text-sky-100"
+              >
+                View the full portfolio
+                <svg
+                  viewBox="0 0 20 20"
+                  className="h-4 w-4"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M6 5h8v8"
+                    stroke="currentColor"
+                    strokeWidth={1.6}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M6 13L14 5"
+                    stroke="currentColor"
+                    strokeWidth={1.6}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <footer className="pt-6 text-center text-xs text-slate-400/80">
+          Copyright {new Date().getFullYear()} Anamol Jang Karki. All rights reserved.
         </footer>
       </section>
     </main>

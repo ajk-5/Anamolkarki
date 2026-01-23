@@ -2,7 +2,7 @@
 
 import { motion, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 import type { HTMLMotionProps } from "framer-motion";
-import React, { PropsWithChildren, useEffect, useMemo, useState } from "react";
+import React, { PropsWithChildren, useMemo, useState } from "react";
 
 type Variant = "primary" | "outline";
 type Size = "sm" | "md" | "lg";
@@ -24,19 +24,8 @@ export default function MagneticButton({
   ...rest
 }: Props) {
   const prefersReducedMotion = useReducedMotion();
-  const [isCoarse, setIsCoarse] = useState(false);
   const [ripples, setRipples] = useState<Array<{ x: number; y: number; id: number }>>([]);
   const [rippleId, setRippleId] = useState(0);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        setIsCoarse(window.matchMedia("(pointer: coarse)").matches);
-      } catch {
-        setIsCoarse(false);
-      }
-    }
-  }, []);
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -44,7 +33,7 @@ export default function MagneticButton({
   const springY = useSpring(y, { stiffness: 300, damping: 20, mass: 0.2 });
 
   function handlePointerMove(e: React.PointerEvent<HTMLButtonElement>) {
-    if (isCoarse || prefersReducedMotion) return;
+    if (prefersReducedMotion || e.pointerType !== "mouse") return;
     const rect = e.currentTarget.getBoundingClientRect();
     const dx = e.clientX - (rect.left + rect.width / 2);
     const dy = e.clientY - (rect.top + rect.height / 2);
@@ -85,10 +74,10 @@ export default function MagneticButton({
   const variantClasses = useMemo(() => {
     switch (variant) {
       case "outline":
-        return "bg-transparent border border-teal-300/60 text-teal-200 hover:bg-teal-500/10";
+        return "bg-slate-950/30 border border-slate-700/70 text-slate-100 hover:border-sky-300/60 hover:text-sky-100 hover:bg-slate-900/60";
       case "primary":
       default:
-        return "bg-teal-400 text-slate-900 hover:bg-teal-300";
+        return "bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-300 text-slate-950 hover:brightness-105";
     }
   }, [variant]);
 
@@ -96,19 +85,16 @@ export default function MagneticButton({
     "relative isolate rounded-xl font-semibold no-tap-highlight",
     sizeClasses,
     variantClasses,
-    "transition-colors duration-200 select-none",
+    "transition-all duration-200 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40",
     // tone down heavy shadows on mobile
     "shadow-xl md:shadow-2xl",
     // mobile ergonomics
-    isCoarse ? "w-full md:w-auto min-h-[44px]" : "",
+    "w-full md:w-auto min-h-[44px]",
     disabled ? "opacity-60 cursor-not-allowed" : "",
     className,
   ]
     .filter(Boolean)
     .join(" ");
-
-  const glowInset = isCoarse ? "-inset-2" : "-inset-6";
-  const glowBlur = isCoarse ? "blur-lg" : "blur-2xl";
 
   return (
     <motion.button
@@ -118,13 +104,13 @@ export default function MagneticButton({
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       onPointerDown={handlePointerDown}
-      whileTap={{ scale: isCoarse || prefersReducedMotion ? 0.98 : 0.99 }}
+      whileTap={{ scale: prefersReducedMotion ? 1 : 0.99 }}
       style={{ x: springX, y: springY }}
       className={baseClasses}
     >
       <span className="relative z-10">{children}</span>
       {/* Reduce oversized glow on small screens */}
-      <span className={`pointer-events-none absolute ${glowInset} -z-10 rounded-2xl bg-gradient-to-r from-teal-500/20 via-cyan-500/15 to-fuchsia-500/20 ${glowBlur} md:blur-2xl`} />
+      <span className="pointer-events-none absolute -inset-2 md:-inset-6 -z-10 rounded-2xl bg-gradient-to-r from-sky-500/25 via-cyan-400/20 to-emerald-400/25 blur-lg md:blur-2xl" />
       {/* Ripple container */}
       <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
         {ripples.map((rp) => (

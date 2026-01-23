@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import PageShell from "@/components/PageShell";
 import ProjectsSection from "@/components/ProjectsSection";
 
@@ -75,18 +75,12 @@ const projects: Project[] = [
 ];
 
 export default function ProjectsPage() {
-  const [hueRotation, setHueRotation] = useState(0);
   const projectsRef = useRef<HTMLDivElement>(null!);
-
-  useEffect(() => {
-    const id = setInterval(() => setHueRotation((h) => (h + 1) % 360), 100);
-    return () => clearInterval(id);
-  }, []);
 
   return (
     <main>
       <PageShell>
-        <ProjectsSection projects={projects} hueRotation={hueRotation} projectsRef={projectsRef} />
+        <ProjectsSection projects={projects} projectsRef={projectsRef} />
       </PageShell>
     </main>
   );

@@ -26,7 +26,7 @@ const NavBar: React.FC = () => {
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 p-2">
-      <div className="relative flex items-center justify-between backdrop-blur-sm p-2 rounded-xl shadow-lg border border-yellow-900 max-w-full mx-auto">
+      <div className="relative flex items-center justify-between backdrop-blur-xl p-2 rounded-xl shadow-lg border border-slate-700/70 bg-slate-950/70 max-w-full mx-auto">
         <div className="flex items-center gap-2">
           <button className="md:hidden" onClick={toggleMenu} aria-label="Menu">
             <Image src="/images/menu.svg" alt="menu" width={24} height={24} />
@@ -39,7 +39,7 @@ const NavBar: React.FC = () => {
               width={50}
               height={50}
             />
-            <h1 className="hidden md:inline text-base md:text-xl lg:text-4xl font-semibold text-blue-300">
+            <h1 className="hidden md:inline text-base md:text-xl lg:text-4xl font-semibold text-slate-100">
               ANAMOL JANG KARKI
             </h1>
           </Link>
@@ -47,14 +47,14 @@ const NavBar: React.FC = () => {
 
         <ul className="hidden md:flex items-center space-x-4 mx-auto">
           <li
-            className="text-xs md:text-sm lg:text-base text-teal-800 relative flex items-center"
+            className="text-xs md:text-sm lg:text-base text-slate-300 relative flex items-center"
             onMouseEnter={() => setIsDropdownOpen(true)}
             onMouseLeave={() => setIsDropdownOpen(false)}
           >
             Portfolio en tant que
             <div className="relative ml-2">
               <span
-                className="inline-flex items-center justify-between gap-2 px-2 py-1 bg-teal-600/10 border-2 border-teal-400 rounded-lg shadow-md text-xs md:text-sm lg:text-base text-teal-800 transition duration-300 cursor-pointer"
+                className="inline-flex items-center justify-between gap-2 px-2 py-1 bg-slate-950/70 border border-slate-700/70 rounded-lg shadow-md text-xs md:text-sm lg:text-base text-slate-200 transition duration-300 cursor-pointer"
               >
                 {selectedRole}
                 <motion.div
@@ -67,7 +67,7 @@ const NavBar: React.FC = () => {
                     height="16"
                     viewBox="0 0 24 24"
                     fill="none"
-                    stroke="#0f766e"
+                    stroke="currentColor"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -79,12 +79,12 @@ const NavBar: React.FC = () => {
 
               {/* Dropdown Menu */}
               <ul
-                className={`absolute top-full left-0 mt-1 bg-white/70 backdrop-blur-sm border border-teal-400 rounded-md shadow-lg transition-all duration-300 ${
+                className={`absolute top-full left-0 mt-1 bg-slate-950/90 backdrop-blur-sm border border-slate-700/70 rounded-md shadow-lg transition-all duration-300 ${
                   isDropdownOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-0"
                 } origin-top`}
               >
                 {dropdownItems.map((item, index) => (
-                  <li key={index} className="text-xs md:text-sm text-teal-800 hover:bg-teal-600/30 p-1">
+                  <li key={index} className="text-xs md:text-sm text-slate-200 hover:bg-white/5 p-1">
                     <Link href={item.href} className="block w-full text-center">
                       {item.label}
                     </Link>
@@ -96,7 +96,7 @@ const NavBar: React.FC = () => {
           <li>
             <Link
               href="/tools"
-              className="px-3 py-1 text-xs md:text-sm lg:text-base text-teal-800 hover:text-teal-900 bg-teal-600/10 border-2 border-teal-400 rounded-lg shadow-md transition"
+              className="btn-outline"
             >
               Tools
             </Link>
@@ -104,7 +104,7 @@ const NavBar: React.FC = () => {
           <li>
             <Link
               href="/games"
-              className="px-3 py-1 text-xs md:text-sm lg:text-base text-teal-800 hover:text-teal-900 bg-teal-600/10 border-2 border-teal-400 rounded-lg shadow-md transition"
+              className="btn-outline"
             >
               Games
             </Link>
@@ -112,7 +112,7 @@ const NavBar: React.FC = () => {
           <li>
             <Link
               href="/contact"
-              className="px-3 py-1 text-xs md:text-sm lg:text-base text-slate-900 bg-teal-400/90 hover:bg-teal-300 border-2 border-teal-500 rounded-lg shadow-md transition font-semibold"
+              className="btn-primary"
             >
               Contact Me
             </Link>

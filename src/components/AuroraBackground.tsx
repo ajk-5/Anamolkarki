@@ -12,7 +12,7 @@ export default function AuroraBackground() {
           left: "-5%",
           width: 480,
           height: 480,
-          background: "radial-gradient(circle at 30% 30%, rgba(20,184,166,.55), transparent 60%)",
+          background: "radial-gradient(circle at 30% 30%, rgba(56,189,248,0.45), transparent 60%)",
         }}
       />
       <div
@@ -22,7 +22,7 @@ export default function AuroraBackground() {
           left: "10%",
           width: 520,
           height: 520,
-          background: "radial-gradient(circle at 70% 40%, rgba(59,130,246,.45), transparent 60%)",
+          background: "radial-gradient(circle at 70% 40%, rgba(34,211,238,0.35), transparent 60%)",
         }}
       />
       <div
@@ -32,7 +32,7 @@ export default function AuroraBackground() {
           right: "-10%",
           width: 560,
           height: 560,
-          background: "radial-gradient(circle at 40% 60%, rgba(236,72,153,.40), transparent 60%)",
+          background: "radial-gradient(circle at 40% 60%, rgba(245,158,11,0.28), transparent 60%)",
         }}
       />
       <div
@@ -42,10 +42,9 @@ export default function AuroraBackground() {
           right: "5%",
           width: 420,
           height: 420,
-          background: "radial-gradient(circle at 50% 50%, rgba(16,185,129,.40), transparent 60%)",
+          background: "radial-gradient(circle at 50% 50%, rgba(16,185,129,0.32), transparent 60%)",
         }}
       />
     </div>
   );
 }
-

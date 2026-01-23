@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import TealParticles from "@/components/TealParticle";
 import PageShell from "@/components/PageShell";
@@ -35,6 +35,7 @@ interface Experience {
 interface Education {
   title: string;
   institution: string;
+  institutionUrl?: string;
   period: string;
   description: string[];
 }
@@ -185,9 +186,19 @@ const experiences: Experience[] = [
 
 const education: Education[] = [
   {
+    title: "BACHELOR INFORMATIQUE (BAC+3 WEB & AI)",
+    institution: "EFREI",
+    institutionUrl: "https://www.efrei.fr/",
+    period: "(2026 - PRESENT)",
+    description: [
+      "Bachelor en Ingenierie Logicielle",
+      "Parcours Web et Intelligence Artificielle",
+    ],
+  },
+  {
     title: "BACHELOR INFORMATIQUE",
     institution: "École d'ingénieur ESIEA Paris",
-    period: "(2023 - 2027)",
+    period: "(2023 - 2025)",
     description: [
       "Bachelor en Ingénierie Logicielle",
       "Développeur fullstack web/mobile",
@@ -248,7 +259,7 @@ const badgeSVG = (label: string, bg = "#0ea5a4", fg = "#0b1324") => {
   return `
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58" role="img" aria-label="${label}">
     <rect x="1" y="1" width="54" height="54" rx="12" fill="${bg}" stroke="#0b1324" stroke-width="2"/>
-    <text x="50%" y="52%" text-anchor="middle" dominant-baseline="middle" font-family="Inter, system-ui, Arial" font-size="16" font-weight="700" fill="${fg}">
+    <text x="50%" y="52%" text-anchor="middle" dominant-baseline="middle" font-family="Space Grotesk, system-ui, Arial" font-size="16" font-weight="700" fill="${fg}">
       ${label}
     </text>
   </svg>`;
@@ -320,15 +331,15 @@ const TECH = {
 
 function TechCard({ item }: { item: TechItem }) {
   return (
-    <div className="group flex flex-col items-center justify-center gap-2 rounded-2xl border border-slate-200 p-4 bg-white/70 backdrop-blur shadow-sm hover:shadow-md transition">
+    <div className="card-surface flex flex-col items-center justify-center gap-2 p-4 transition hover:-translate-y-1 hover:border-sky-300/60">
       <div
         className="svg-box w-14 h-14"
         dangerouslySetInnerHTML={{ __html: item.icon }}
         aria-hidden
       />
       <div className="text-center">
-        <div className="text-sm font-semibold text-slate-800">{item.name}</div>
-        <div className="text-[11px] text-slate-500">{item.subtitle}</div>
+        <div className="text-sm font-semibold text-slate-100">{item.name}</div>
+        <div className="text-[11px] text-slate-400">{item.subtitle}</div>
       </div>
     </div>
   );
@@ -337,7 +348,7 @@ function TechCard({ item }: { item: TechItem }) {
 type TabKey = "Langages" | "Frameworks" | "Bases de données" | "OS" | "Outils";
 const TAB_KEYS: TabKey[] = ["Langages", "Frameworks", "Bases de données", "OS", "Outils"];
 
-function TechStackSection({ hueRotation }: { hueRotation: number }) {
+function TechStackSection() {
   const [active, setActive] = useState<TabKey>("Langages");
 
   const dataByTab: Record<TabKey, TechItem[]> = {
@@ -349,15 +360,9 @@ function TechStackSection({ hueRotation }: { hueRotation: number }) {
   };
 
   return (
-    <section className="relative py-16">
+    <section className="relative py-12">
       <div className="mx-auto max-w-6xl px-4">
-        <h2
-          className="mb-6 text-2xl md:text-3xl font-extrabold tracking-tight"
-          style={{
-            color: `hsl(${hueRotation}, 35%, 25%)`,
-            textShadow: "0 0 10px rgba(45,212,191,0.15)",
-          }}
-        >
+        <h2 className="mb-6 text-2xl md:text-3xl font-semibold tracking-tight text-slate-100 font-display">
           Stack technique
         </h2>
 
@@ -368,10 +373,8 @@ function TechStackSection({ hueRotation }: { hueRotation: number }) {
               key={k}
               onClick={() => setActive(k)}
               className={[
-                "rounded-full px-4 py-2 text-sm font-medium border transition",
-                active === k
-                  ? "bg-teal-600 text-white border-teal-700"
-                  : "bg-white text-slate-700 border-slate-200 hover:border-teal-300 hover:text-teal-700",
+                "text-xs uppercase tracking-[0.2em]",
+                active === k ? "btn-primary" : "btn-outline",
               ].join(" ")}
             >
               {k}
@@ -393,7 +396,6 @@ function TechStackSection({ hueRotation }: { hueRotation: number }) {
 /* ------------------ PAGE ------------------ */
 
 export default function Home() {
-  const [hueRotation, setHueRotation] = useState(0);
   const introRef = useRef<HTMLDivElement>(null!);
   const projectsRef = useRef<HTMLDivElement>(null!);
   const experiencesRef = useRef<HTMLDivElement>(null!);
@@ -402,37 +404,29 @@ export default function Home() {
   const contactRef = useRef<HTMLDivElement>(null!);
   const cvRef = useRef<HTMLDivElement>(null!);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setHueRotation((prev) => (prev + 1) % 360);
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-slate-100">
-      <div className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.08),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(168,85,247,0.08),transparent_30%),radial-gradient(circle_at_50%_80%,rgba(249,115,22,0.07),transparent_40%)]" />
-      <div className="pointer-events-none fixed inset-0 -z-10 opacity-20 bg-[linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(180deg,rgba(148,163,184,0.08)_1px,transparent_1px)] bg-[size:60px_60px]" />
+    <div className="relative min-h-screen overflow-x-hidden text-slate-100">
+      <div className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(circle_at_15%_20%,rgba(56,189,248,0.12),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(20,184,166,0.12),transparent_35%),radial-gradient(circle_at_0%_90%,rgba(245,158,11,0.08),transparent_45%)]" />
+      <div className="pointer-events-none fixed inset-0 -z-10 opacity-25 bg-[linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(180deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:70px_70px]" />
       <div className="pointer-events-none fixed inset-0 -z-30 mix-blend-soft-light">
-        <TealParticles particleCount={120} />
+        <TealParticles particleCount={90} />
       </div>
       <div className="relative z-10">
         {/* Hero banner */}
         <section className="mx-auto mb-8 max-w-6xl px-4">
-          <div className="relative overflow-hidden rounded-3xl border border-slate-800/60 bg-gradient-to-br from-slate-900/70 via-slate-900/40 to-slate-950 p-6 shadow-2xl ring-1 ring-slate-800/40">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(34,211,238,0.1),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(168,85,247,0.1),transparent_35%)]" />
+          <div className="relative overflow-hidden rounded-3xl border border-slate-800/70 bg-slate-950/70 p-6 shadow-2xl">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(56,189,248,0.16),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(34,211,238,0.12),transparent_40%)]" />
             <div className="relative z-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
               <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-teal-400/30 bg-white/10 px-3 py-1 text-xs text-teal-200">
-                  <span className="inline-block h-2 w-2 rounded-full bg-teal-400 animate-float" />
+                <div className="inline-flex items-center gap-2 rounded-full border border-slate-700/70 bg-slate-950/70 px-3 py-1 text-xs uppercase tracking-[0.2em] text-slate-300">
+                  <span className="inline-block h-2 w-2 rounded-full bg-sky-300 animate-float" />
                   Full-Stack Developer | Web & Mobile
                 </div>
-                <h1 className="mt-3 text-3xl md:text-4xl font-extrabold tracking-tight">
-                  <span className="bg-gradient-to-r from-teal-300 via-cyan-200 to-fuchsia-200 bg-clip-text text-transparent">
-                    Crafting fast, elegant user experiences
-                  </span>
+                <h1 className="mt-3 text-3xl md:text-4xl font-semibold tracking-tight font-display">
+                  Crafting fast, elegant
+                  <span className="block text-sky-200">user experiences</span>
                 </h1>
-                <p className="mt-2 max-w-2xl text-slate-200/90">
+                <p className="mt-2 max-w-2xl text-slate-300">
                   Next.js, ASP.NET, React Native, PostgreSQL, and more. Explore my work, stack, and experiences below.
                 </p>
               </div>
@@ -441,7 +435,7 @@ export default function Home() {
                   href="/cv/cv_ANAMOL_KARKI.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-xl border border-slate-600 px-5 py-3 text-slate-100 transition hover:-translate-y-0.5 hover:bg-white/10"
+                  className="btn-outline"
                 >
                   View CV
                 </a>
@@ -456,33 +450,32 @@ export default function Home() {
 
         <div id="intro" className="scroll-mt-24" />
         <PageShell className="mb-8">
-          <IntroSection intro={intro} hueRotation={hueRotation} introRef={introRef} />
+          <IntroSection intro={intro} introRef={introRef} />
         </PageShell>
         <div id="cv" className="scroll-mt-24" />
-        <PageShell className="mb-8"><CVSection hueRotation={hueRotation} cvRef={cvRef} /></PageShell>
+        <PageShell className="mb-8"><CVSection cvRef={cvRef} /></PageShell>
         <div id="projects" className="scroll-mt-24" />
-        <PageShell className="mb-8"><ProjectsSection projects={projects} hueRotation={hueRotation} projectsRef={projectsRef} /></PageShell>
+        <PageShell className="mb-8"><ProjectsSection projects={projects} projectsRef={projectsRef} /></PageShell>
         <div id="experiences" className="scroll-mt-24" />
         <PageShell className="mb-8">
           <ExperiencesSection
             experiences={experiences}
-            hueRotation={hueRotation}
             experiencesRef={experiencesRef}
           />
         </PageShell>
         <div id="education" className="scroll-mt-24" />
-        <PageShell className="mb-8"><EducationSection education={education} hueRotation={hueRotation} educationRef={educationRef} /></PageShell>
+        <PageShell className="mb-8"><EducationSection education={education} educationRef={educationRef} /></PageShell>
 
         <div id="skills" className="scroll-mt-24" />
         <PageShell className="mb-8" >
           <div ref={skillsRef} className="scroll-mt-24">
-            <SkillsSection skills={skills} hueRotation={hueRotation} skillsRef={skillsRef} />
-            <TechStackSection hueRotation={hueRotation} />
+            <SkillsSection skills={skills} skillsRef={skillsRef} />
+            <TechStackSection />
           </div>
         </PageShell>
 
         <div id="contact" className="scroll-mt-24" />
-        <PageShell className="mb-8"><ContactSection hueRotation={hueRotation} contactRef={contactRef} /></PageShell>
+        <PageShell className="mb-8"><ContactSection contactRef={contactRef} /></PageShell>
       </div>
 
       <style jsx global>{`

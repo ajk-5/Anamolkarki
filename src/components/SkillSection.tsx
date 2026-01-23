@@ -17,26 +17,20 @@ interface Skills {
 
 interface SkillsSectionProps {
   skills: Skills;
-  hueRotation: number;
   skillsRef: React.RefObject<HTMLDivElement>;
 }
 
-const SkillsSection: React.FC<SkillsSectionProps> = ({ skills, hueRotation, skillsRef }) => {
+const SkillsSection: React.FC<SkillsSectionProps> = ({ skills, skillsRef }) => {
   const [selectedSkill, setSelectedSkill] = useState<number | null>(null);
 
-  const gradientStyle = {
-    filter: `hue-rotate(${hueRotation}deg)`,
-    transition: "filter 0.5s ease-in-out",
-  };
-
   return (
-    <section ref={skillsRef} className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10 bg-black text-white font-[Futura, sans-serif]">
+    <section ref={skillsRef} className="py-12 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
       <MotionDiv
-        className="text-xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-6xl font-extrabold text-center mb-8 uppercase tracking-wide drop-shadow-md transform perspective-1000 translate-z-10"
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.2, type: "spring", stiffness: 50 }}
-        style={gradientStyle}
+        className="text-2xl sm:text-4xl md:text-5xl font-semibold text-center mb-8 text-slate-100 uppercase tracking-[0.3em] font-display"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.4 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
       >
         COMPÉTENCES
       </MotionDiv>
@@ -44,14 +38,14 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({ skills, hueRotation, skil
         {skills.soft.map((skill, index) => (
           <motion.div
             key={index}
-            className={`relative flex flex-col items-center p-4 w- md:w-80  shadow-md cursor-pointer transition-all duration-300`}
+            className="card-surface w-full max-w-md cursor-pointer p-4 transition-all duration-300"
             onClick={() => setSelectedSkill(selectedSkill === index ? null : index)}
             onHoverStart={() => setSelectedSkill(selectedSkill === index ? null : index)}
             onHoverEnd={() => setSelectedSkill(null)}
             initial={{ scale: 1 }}
             whileHover={{ scale: 1.05 }}
           >
-            <div className="w-full flex items-center justify-between text-white">
+            <div className="w-full flex items-center justify-between text-slate-100">
               <div className="text-lg flex items-center gap-2">
                 <span dangerouslySetInnerHTML={{ __html: skill.icon }} />
                 {skill.name}
@@ -63,7 +57,7 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({ skills, hueRotation, skil
                   height="16"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="white"
+                  stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -74,7 +68,7 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({ skills, hueRotation, skil
             </div>
             {selectedSkill === index && (
               <motion.p
-                className="mt-2 text-sm text-gray-300 px-2"
+                className="mt-2 text-sm text-slate-300 px-2"
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
@@ -84,11 +78,13 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({ skills, hueRotation, skil
             )}
           </motion.div>
         ))}
-         <MotionDiv className="p-6 border border-violet-300 rounded-lg shadow-lg hover:shadow-xl transition-all duration-500 backdrop-blur-sm w-3/4 md:w-2/3 lg:w-1/2">
-          <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-indigo-300 mb-3 uppercase tracking-wider text-center">OUTILS</h3>
-          <div className="flex flex-row flex-wrap p-1 items-center space-y-4">
+         <MotionDiv className="card-surface w-full max-w-3xl p-6">
+          <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-slate-100 mb-3 uppercase tracking-wider text-center">
+            OUTILS
+          </h3>
+          <div className="flex flex-row flex-wrap p-1 items-center gap-3">
             {skills.tools.map((tool, index) => (
-              <div key={index} className="p-4 bg-white/10 rounded-lg m-3 shadow-md flex items-center gap-2 text-violet-300">
+              <div key={index} className="rounded-xl border border-slate-800/70 bg-slate-950/70 px-4 py-3 shadow-md flex items-center gap-2 text-slate-200">
                 <span dangerouslySetInnerHTML={{ __html: tool.icon }} />
                 {tool.name}
               </div>

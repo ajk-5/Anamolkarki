@@ -19,8 +19,8 @@
 }
 
 .item {
-  border: 1px solid rgba(45,212,191,0.35);
-  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(2, 6, 23, 0.6);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   padding: 0.9rem;
@@ -32,7 +32,7 @@
 
 .item:hover {
   transform: translateY(-2px);
-  border-color: rgba(45,212,191,0.55);
+  border-color: rgba(56, 189, 248, 0.55);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
 }
 
@@ -46,7 +46,7 @@
   width: 100%;
 }
 .blockLink:focus-visible {
-  outline: 2px dashed rgba(45,212,191,0.6);
+  outline: 2px dashed rgba(56, 189, 248, 0.6);
   outline-offset: 2px;
 }
 
@@ -56,8 +56,8 @@
   border-radius: 14px;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, rgba(45,212,191,0.2), rgba(59,130,246,0.25));
-  color: #2dd4bf;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(34, 211, 238, 0.2));
+  color: #38bdf8;
   flex-shrink: 0;
 }
 
@@ -71,11 +71,11 @@
 .title {
   font-weight: 700;
   font-size: 1rem;
-  color: #e5e7eb;
+  color: #e2e8f0;
 }
 
 .desc {
-  color: #cbd5e1;
+  color: #94a3b8;
   font-size: 0.9rem;
   line-height: 1.35;
 }

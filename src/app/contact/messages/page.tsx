@@ -25,14 +25,16 @@ export default function GmailMessagesPage() {
   }, []);
 
   return (
-    <main className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Gmail Messages</h1>
-      {error && <p>{error}</p>}
-      <ul className="space-y-2">
+    <main className="mx-auto w-full max-w-4xl px-4 pb-16 pt-14">
+      <h1 className="text-2xl font-semibold text-slate-100 font-display mb-4">
+        Gmail Messages
+      </h1>
+      {error && <p className="text-sm text-rose-200">{error}</p>}
+      <ul className="space-y-3">
         {messages.map((m) => (
-          <li key={m.id} className="border p-2 rounded">
-            <p className="font-semibold">{m.subject}</p>
-            <p>{m.snippet}</p>
+          <li key={m.id} className="card-surface p-4">
+            <p className="text-sm font-semibold text-slate-100">{m.subject}</p>
+            <p className="text-sm text-slate-300">{m.snippet}</p>
           </li>
         ))}
       </ul>

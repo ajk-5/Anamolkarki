@@ -33,8 +33,8 @@ export default function TiltCard({ children, className = "", glow = true }: Prop
       style={{ transform }}
       className={[
         "relative will-change-transform transition-transform duration-150",
-        "rounded-2xl border border-teal-500/20 bg-white/5 backdrop-blur-md shadow-xl",
-        glow ? "hover:shadow-teal-500/20 hover:shadow-[0_20px_60px]" : "",
+        "card-surface",
+        glow ? "hover:shadow-2xl hover:-translate-y-1" : "",
         className,
       ].join(" ")}
     >
@@ -46,4 +46,3 @@ export default function TiltCard({ children, className = "", glow = true }: Prop
     </div>
   );
 }
-

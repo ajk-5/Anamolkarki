@@ -13,7 +13,6 @@ interface NavSidebarProps {
   skillsRef: React.RefObject<HTMLDivElement>;
   contactRef: React.RefObject<HTMLDivElement>;
   cvRef: React.RefObject<HTMLDivElement>;
-  hueRotation: number;
 }
 
 const NavSidebar: React.FC<NavSidebarProps> = ({
@@ -25,37 +24,30 @@ const NavSidebar: React.FC<NavSidebarProps> = ({
   skillsRef,
   contactRef,
   cvRef,
-  hueRotation,
 }) => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
   const toggleSidebar = () => setIsSidebarVisible(!isSidebarVisible);
 
-  const gradientStyle = {
-    filter: `hue-rotate(${hueRotation}deg)`,
-    transition: "filter 0.5s ease-in-out",
-  };
-
   return (
     <>
       <button
         onClick={toggleSidebar}
-        className="fixed top-1/2 right-4 z-[100] bg-purple-600 text-white p-2  hover:bg-purple-700 transition-all duration-300 shadow-lg"
+        className="btn-icon fixed top-1/2 right-4 z-[100]"
       >
         {isSidebarVisible ? "✖" : "☰"}
       </button>
 
       <div
-        className={`fixed   botom-0 right-0 w-64 h-full bg-black text-white flex flex-col items-center py-12 transition-transform duration-300 shadow-lg z-50 ${
+        className={`fixed bottom-0 right-0 w-64 h-full bg-slate-950/95 text-slate-100 border-l border-slate-800/70 flex flex-col items-center py-12 transition-transform duration-300 shadow-2xl z-50 ${
           isSidebarVisible ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <MotionDiv
-          className="text-lg font-bold text-purple-400 mb-8 text-center"
+          className="text-lg font-semibold text-slate-100 mb-8 text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
-          style={gradientStyle}
         >
                <Image
                  className="w-[40px] md:w-[50px] lg:w-[60px] h-auto"
@@ -68,13 +60,13 @@ const NavSidebar: React.FC<NavSidebarProps> = ({
         </MotionDiv>
 
         <nav className="flex flex-col space-y-6 text-lg text-center">
-          <button onClick={() => scrollToSection(introRef)} className="text-white hover:text-purple-400 transition-colors">🏠 INTRO</button>
-          <button onClick={() => scrollToSection(cvRef)} className="text-white hover:text-purple-400 transition-colors">🗎 CV</button>
-          <button onClick={() => scrollToSection(projectsRef)} className="text-white hover:text-purple-400 transition-colors">📑 PROJETS</button>
-          <button onClick={() => scrollToSection(experiencesRef)} className="text-white hover:text-purple-400 transition-colors">💼 EXPÉRIENCES</button>
-          <button onClick={() => scrollToSection(educationRef)} className="text-white hover:text-purple-400 transition-colors">🎓 ÉDUCATION</button>
-          <button onClick={() => scrollToSection(skillsRef)} className="text-white hover:text-purple-400 transition-colors">🛠️ COMPÉTENCES</button>
-          <button onClick={() => scrollToSection(contactRef)} className="text-white hover:text-purple-400 transition-colors">📞 CONTACT</button>
+          <button onClick={() => scrollToSection(introRef)} className="text-slate-200 hover:text-sky-200 transition-colors">🏠 INTRO</button>
+          <button onClick={() => scrollToSection(cvRef)} className="text-slate-200 hover:text-sky-200 transition-colors">🗎 CV</button>
+          <button onClick={() => scrollToSection(projectsRef)} className="text-slate-200 hover:text-sky-200 transition-colors">📑 PROJETS</button>
+          <button onClick={() => scrollToSection(experiencesRef)} className="text-slate-200 hover:text-sky-200 transition-colors">💼 EXPÉRIENCES</button>
+          <button onClick={() => scrollToSection(educationRef)} className="text-slate-200 hover:text-sky-200 transition-colors">🎓 ÉDUCATION</button>
+          <button onClick={() => scrollToSection(skillsRef)} className="text-slate-200 hover:text-sky-200 transition-colors">🛠️ COMPÉTENCES</button>
+          <button onClick={() => scrollToSection(contactRef)} className="text-slate-200 hover:text-sky-200 transition-colors">📞 CONTACT</button>
         </nav>
       </div>
     </>

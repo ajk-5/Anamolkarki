@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import styles from "./2048Game.module.css";
 
 type Board = number[][];
@@ -9,6 +9,25 @@ type Direction = "left" | "right" | "up" | "down";
 const SIZE = 4;
 const TARGET_MERGES = 2048;
 const LOCAL_BEST_KEY = "merge2048_best";
+
+function hashSeed(value: string) {
+  let hash = 2166136261;
+  for (let i = 0; i < value.length; i += 1) {
+    hash ^= value.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+function createRng(seed: number) {
+  let t = seed >>> 0;
+  return () => {
+    t += 0x6d2b79f5;
+    let r = Math.imul(t ^ (t >>> 15), 1 | t);
+    r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+  };
+}
 
 /* --------------------------- Board utilities --------------------------- */
 function createEmptyBoard(): Board {
@@ -26,11 +45,11 @@ function getEmptyCells(b: Board): Array<[number, number]> {
   }
   return cells;
 }
-function addRandomTile(b: Board): Board {
+function addRandomTile(b: Board, rng: () => number = Math.random): Board {
   const empty = getEmptyCells(b);
   if (!empty.length) return b;
-  const [r, c] = empty[Math.floor(Math.random() * empty.length)];
-  b[r][c] = Math.random() < 0.9 ? 2 : 4;
+  const [r, c] = empty[Math.floor(rng() * empty.length)];
+  b[r][c] = rng() < 0.9 ? 2 : 4;
   return b;
 }
 function transpose(b: Board): Board {
@@ -141,17 +160,105 @@ function boardsEqual(a: Board, b: Board) {
   return true;
 }
 
+function useMediaQuery(query: string) {
+  const subscribe = useCallback(
+    (callback: () => void) => {
+      if (typeof window === "undefined" || !window.matchMedia) return () => {};
+      const media = window.matchMedia(query);
+      const onChange = () => callback();
+      if ("addEventListener" in media) {
+        media.addEventListener("change", onChange);
+      } else {
+        media.addListener(onChange);
+      }
+      return () => {
+        if ("removeEventListener" in media) {
+          media.removeEventListener("change", onChange);
+        } else {
+          media.removeListener(onChange);
+        }
+      };
+    },
+    [query]
+  );
+
+  const getSnapshot = useCallback(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return false;
+    return window.matchMedia(query).matches;
+  }, [query]);
+
+  return useSyncExternalStore(subscribe, getSnapshot, () => false);
+}
+
+function useLocalStorageNumber(key: string, fallback: number) {
+  const subscribe = useCallback(
+    (callback: () => void) => {
+      if (typeof window === "undefined") return () => {};
+      const storageEvent = `local-storage:${key}`;
+      const onStorage = (event: StorageEvent) => {
+        if (event.key === key) callback();
+      };
+      const onCustom = () => callback();
+      window.addEventListener("storage", onStorage);
+      window.addEventListener(storageEvent, onCustom);
+      return () => {
+        window.removeEventListener("storage", onStorage);
+        window.removeEventListener(storageEvent, onCustom);
+      };
+    },
+    [key]
+  );
+
+  const getSnapshot = useCallback(() => {
+    if (typeof window === "undefined") return fallback;
+    try {
+      const raw = localStorage.getItem(key);
+      const parsed = raw ? Number.parseInt(raw, 10) : Number.NaN;
+      return Number.isFinite(parsed) ? parsed : fallback;
+    } catch {
+      return fallback;
+    }
+  }, [key, fallback]);
+
+  const value = useSyncExternalStore(subscribe, getSnapshot, () => fallback);
+  const setValue = useCallback(
+    (next: number) => {
+      if (typeof window === "undefined") return;
+      try {
+        localStorage.setItem(key, String(next));
+      } catch {
+        // ignore
+      }
+      window.dispatchEvent(new Event(`local-storage:${key}`));
+    },
+    [key]
+  );
+
+  return [value, setValue] as const;
+}
+
 /* ------------------------------ Component ------------------------------ */
 export default function Game() {
-  // IMPORTANT: deterministic initial render (no random, no localStorage)
-  const [locked, setLocked] = useState(false);
-  const [board, setBoard] = useState<Board>(() => createEmptyBoard());
+  // Deterministic initial render (seeded board + local storage sync)
+  const seededId = useId();
+  const seededBoard = useMemo(() => {
+    const rng = createRng(hashSeed(seededId));
+    const b = createEmptyBoard();
+    addRandomTile(b, rng);
+    addRandomTile(b, rng);
+    return b;
+  }, [seededId]);
+
+  const [board, setBoard] = useState<Board>(() => cloneBoard(seededBoard));
   const [score, setScore] = useState(0);
-  const [best, setBest] = useState<number>(0);
+  const [storedBest, setStoredBest] = useLocalStorageNumber(LOCAL_BEST_KEY, 0);
   const [merges, setMerges] = useState(0);
   const [moves, setMoves] = useState(0);
-  const [gameOver, setGameOver] = useState(false);
-  const [goalReached, setGoalReached] = useState(false);
+  const locked = useMediaQuery("(max-width: 900px)");
+
+  const best = Math.max(score, storedBest);
+  const goalReached = merges >= TARGET_MERGES;
+  const gameOver = !goalReached && !hasMoves(board);
 
   const historyRef = useRef<
     { board: Board; score: number; merges: number; moves: number }[]
@@ -161,37 +268,9 @@ export default function Game() {
   const boardRef = useRef<HTMLDivElement | null>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
 
-  // Load best + seed board ONLY on client (post-hydration)
+  // Focus for keyboard play
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(LOCAL_BEST_KEY);
-      if (raw) setBest(parseInt(raw, 10) || 0);
-    } catch {
-      // ignore
-    }
-
-    setBoard((prev) => {
-      // If HMR/navigation kept a board, keep it
-      const prevFlat = flatten(prev);
-      if (prevFlat.some((v) => v !== 0)) return prev;
-      const b = createEmptyBoard();
-      addRandomTile(b);
-      addRandomTile(b);
-      return b;
-    });
-
-    // Focus for keyboard play
     requestAnimationFrame(() => wrapperRef.current?.focus());
-  }, []);
-
-  // Decide whether to use the 'locked' fixed layout (mobile) or normal flow (desktop)
-  useEffect(() => {
-    const update = () => {
-      setLocked(window.innerWidth <= 900);
-    };
-    update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
   }, []);
 
   const pushHistory = useCallback(() => {
@@ -212,8 +291,6 @@ export default function Game() {
     setScore(0);
     setMerges(0);
     setMoves(0);
-    setGameOver(false);
-    setGoalReached(false);
     historyRef.current = [];
     requestAnimationFrame(() => wrapperRef.current?.focus());
   }, []);
@@ -241,12 +318,16 @@ export default function Game() {
       pushHistory();
 
       addRandomTile(res.newBoard);
+      const nextScore = score + res.scoreGained;
+      const nextMerges = merges + res.merges;
+      const nextMoves = moves + 1;
       setBoard(res.newBoard);
-      setScore((s) => s + res.scoreGained);
-      setMerges((m) => m + res.merges);
-      setMoves((mv) => mv + 1);
+      setScore(nextScore);
+      setMerges(nextMerges);
+      setMoves(nextMoves);
+      if (nextScore > storedBest) setStoredBest(nextScore);
     },
-    [board, gameOver, goalReached, pushHistory]
+    [board, gameOver, goalReached, merges, moves, pushHistory, score, storedBest, setStoredBest]
   );
 
   // Keyboard
@@ -294,18 +375,6 @@ export default function Game() {
     }
     touchStart.current = null;
   };
-
-  // Persist best on client when score beats it
-  useEffect(() => {
-    if (score > best) {
-      setBest(score);
-      try {
-        localStorage.setItem(LOCAL_BEST_KEY, String(score));
-      } catch {
-        // ignore
-      }
-    }
-  }, [score, best]);
 
   // Measure and fit the board to available viewport space between site header and footer
   useEffect(() => {
@@ -372,7 +441,7 @@ export default function Game() {
     const onOrientation = () => { lockSizeRef.current = false; raf(); };
     window.addEventListener('resize', onResize);
     window.addEventListener('orientationchange', onOrientation);
-    // Visual viewport changes (mobile address bar) — also respect lock
+    // Visual viewport changes (mobile address bar) - also respect lock
     const vv = window.visualViewport;
     const onVvResize = () => { if (!lockSizeRef.current) raf(); };
     vv?.addEventListener('resize', onVvResize);
@@ -438,12 +507,6 @@ export default function Game() {
       ro?.disconnect();
     };
   }, [locked]);
-
-  // End conditions
-  useEffect(() => {
-    if (merges >= TARGET_MERGES && !goalReached) setGoalReached(true);
-    else if (!hasMoves(board) && !gameOver) setGameOver(true);
-  }, [board, merges, goalReached, gameOver]);
 
   // Dynamic lighting / 3D tilt (pointer)
   const handlePointerMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -538,7 +601,7 @@ export default function Game() {
         <div className={styles.overlay} role="dialog" aria-modal="true">
           <div className={styles.overlayCard}>
             <h2 className={styles.overlayTitle}>
-              {goalReached ? "Goal reached 🎉" : "No more moves 😵"}
+              {goalReached ? "Goal reached" : "No more moves"}
             </h2>
             <p className={styles.overlayText}>
               {goalReached

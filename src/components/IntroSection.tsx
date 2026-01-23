@@ -12,66 +12,57 @@ interface Intro {
 
 interface IntroSectionProps {
   intro: Intro;
-  hueRotation: number;
   introRef: React.RefObject<HTMLDivElement>;
 }
 
-const IntroSection: React.FC<IntroSectionProps> = ({ intro, hueRotation, introRef }) => {
-  const gradientStyle = {
-    filter: `hue-rotate(${hueRotation}deg)`,
-    transition: "filter 0.5s ease-in-out",
-  };
-
+const IntroSection: React.FC<IntroSectionProps> = ({ intro, introRef }) => {
   return (
-    <div ref={introRef} className="flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
-      <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-4xl gap-6 relative">
-        <h1
-          className="absolute top-8 text-3xl sm:text-3xl md:text-3xl lg:text-4xl 2xl:text-4xl font-extrabold tracking-wider uppercase bg-clip-text bg-violet-300 z-30 md:hidden"
-          style={gradientStyle}
-        >
-          {intro.name}
-        </h1>
+    <section ref={introRef} className="py-10">
+      <div className="grid items-center gap-8 md:grid-cols-[1.2fr_0.8fr]">
         <MotionDiv
-          className="text-center max-w-2xl mt-16 md:mt-0"
-          initial={{ opacity: 0, scale: 0.2, y: -150 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 1.8, ease: "easeOut", type: "spring", stiffness: 70 }}
+          className="space-y-4 text-center md:text-left"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <MotionDiv
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl 2xl:text-5xl font-bold text-teal-300 mt-4"
-            initial={{ opacity: 0, y: 80 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.4, ease: "easeOut" }}
-            style={gradientStyle}
-          >
+          <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+            Profil
+          </p>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold font-display text-slate-100">
+            {intro.name}
+          </h1>
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-sky-200">
             {intro.title}
-          </MotionDiv>
-          <p className="text-xs sm:text-sm md:text-base lg:text-lg 2xl:text-lg italic mt-3 max-w-2xl mx-auto text-violet-400">{intro.objective}</p>
-          <ul className="text-[10px] sm:text-xs md:text-sm lg:text-base 2xl:text-base mt-3 max-w-3xl mx-auto text-indigo-300 list-disc list-inside">
+          </h2>
+          <p className="text-sm sm:text-base italic text-slate-300">
+            {intro.objective}
+          </p>
+          <ul className="space-y-1 text-xs sm:text-sm lg:text-base text-slate-300 list-disc list-inside">
             {intro.description.map((item, index) => (
               <li key={index}>{item}</li>
             ))}
           </ul>
         </MotionDiv>
         <MotionDiv
-          className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-64 lg:h-64 2xl:w-48 2xl:h-48 rounded-full border-[6px] border-blue-900 shadow-lg"
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, delay: 0.8, ease: "easeOut" }}
-          whileHover={{ scale: 1.05 }}
-          style={{ borderColor: `hsl(${(hueRotation + 90) % 360}, 80%, 50%)` }}
+          className="mx-auto w-40 h-40 sm:w-48 sm:h-48 lg:w-64 lg:h-64 rounded-full border border-slate-700/70 bg-slate-950/60 shadow-2xl overflow-hidden"
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          whileHover={{ scale: 1.03 }}
         >
           <Image
             src="/images/me.jpg"
             alt="Anamol Jang Karki"
             width={584}
             height={584}
-            className="object-cover rounded-full w-full h-full"
+            className="object-cover w-full h-full"
             priority
           />
         </MotionDiv>
       </div>
-    </div>
+    </section>
   );
 };
 

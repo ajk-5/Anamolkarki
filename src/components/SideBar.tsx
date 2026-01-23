@@ -69,7 +69,7 @@ export default function SideBar() {
         {/* Bar */}
         <nav
           className={[
-            "h-full rounded-2xl border border-teal-500/30 bg-white/10 backdrop-blur-xl shadow-xl",
+            "h-full rounded-2xl border border-slate-700/60 bg-slate-950/60 backdrop-blur-xl shadow-2xl",
             "transition-all duration-300 flex flex-col items-stretch overflow-hidden",
             widthClass,
           ].join(" ")}
@@ -86,8 +86,8 @@ export default function SideBar() {
                   className={[
                     "flex items-center gap-3 px-2 py-2 rounded-lg text-sm mb-1",
                     active
-                      ? "bg-teal-500/80 text-slate-900 font-semibold"
-                      : "text-teal-100 hover:bg-white/10",
+                      ? "bg-gradient-to-r from-sky-300/90 to-emerald-300/80 text-slate-950 font-semibold shadow-lg"
+                      : "text-slate-200 hover:bg-white/5 hover:text-white",
                   ].join(" ")}
                 >
                   <Label className="w-5 h-5" />
@@ -110,9 +110,9 @@ export default function SideBar() {
                   <a
                     key={s.href}
                     href={s.href}
-                    className="flex items-center gap-3 px-2 py-2 rounded-lg text-sm mb-1 text-teal-100 hover:bg-white/10"
+                    className="flex items-center gap-3 px-2 py-2 rounded-lg text-sm mb-1 text-slate-200 hover:bg-white/5 hover:text-white"
                   >
-                    <span className="w-5 h-5 rounded-full border border-teal-400/60" />
+                    <span className="w-5 h-5 rounded-full border border-slate-600/60" />
                     <span className="truncate hidden group-hover:inline">{s.label}</span>
                   </a>
                 ))}
@@ -132,9 +132,9 @@ export default function SideBar() {
                   <a
                     key={s.href}
                     href={s.href}
-                    className="flex items-center gap-3 px-2 py-2 rounded-lg text-sm mb-1 text-teal-100 hover:bg-white/10"
+                    className="flex items-center gap-3 px-2 py-2 rounded-lg text-sm mb-1 text-slate-200 hover:bg-white/5 hover:text-white"
                   >
-                    <span className="w-5 h-5 rounded-full border border-teal-400/60" />
+                    <span className="w-5 h-5 rounded-full border border-slate-600/60" />
                     <span className="truncate hidden group-hover:inline">{s.label}</span>
                   </a>
                 ))}
@@ -145,7 +145,7 @@ export default function SideBar() {
           <div className="mt-auto p-2 space-y-2">
             <Link
               href="/contact"
-              className="block text-center px-2 py-2 rounded-lg bg-teal-400/90 text-slate-900 font-semibold hover:bg-teal-300 transition"
+              className="block text-center px-2 py-2 rounded-lg bg-gradient-to-r from-sky-400 to-emerald-300 text-slate-950 font-semibold hover:brightness-110 transition"
             >
               <span className="hidden group-hover:inline">Contact Me</span>
               <Icon.Briefcase className="w-5 h-5 mx-auto group-hover:hidden" />

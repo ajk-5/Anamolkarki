@@ -1,773 +1,803 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
-import type { PDFPage, RGB } from 'pdf-lib';
-import styles from './PdfSigner.module.css';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import type { PageViewport, PDFDocumentProxy, RenderTask } from 'pdfjs-dist';
+import * as pdfjs from 'pdfjs-dist/legacy/build/pdf';
+import workerSrc from 'pdfjs-dist/legacy/build/pdf.worker.min.js?url';
+import { PDFDocument } from 'pdf-lib';
 
-type MarkKind = 'text' | 'signature';
+const GWO = pdfjs.GlobalWorkerOptions;
+if (GWO && !GWO.workerSrc) {
+  GWO.workerSrc = workerSrc;
+}
 
-interface Mark {
+type UiError = { title: string; detail?: string };
+
+type Placement = {
   id: string;
-  pageIndex: number;
-  xPercent: number; // 0..1 in preview space
-  yPercent: number; // 0..1 in preview space
-  value: string;
-  kind: MarkKind;
-}
-
-interface SignaturePoint {
-  xPercent: number;
-  yPercent: number;
-}
-
-interface SignatureStroke {
-  pageIndex: number;
-  points: SignaturePoint[];
-  color: string;
-  width: number;
-}
-
-type PDFPageWithLine = PDFPage & {
-  drawLine?: (options: {
-    start: { x: number; y: number };
-    end: { x: number; y: number };
-    thickness?: number;
-    color?: RGB;
-  }) => void;
+  pageNumber: number;
+  xPdf: number;
+  yPdf: number;
+  wPdf: number;
+  hPdf: number;
 };
 
-const createId = () => {
-  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
-    return crypto.randomUUID();
+type DragMode =
+  | { kind: 'none' }
+  | {
+      kind: 'move';
+      id: string;
+      startVx: number;
+      startVy: number;
+      startX: number;
+      startY: number;
+    }
+  | {
+      kind: 'resize';
+      id: string;
+      startVx: number;
+      startVy: number;
+      startW: number;
+      startH: number;
+    };
+
+function safeId() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    try {
+      return crypto.randomUUID();
+    } catch {
+      // ignore
+    }
   }
-  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  return `id_${Math.random().toString(16).slice(2)}_${Date.now().toString(16)}`;
+}
+
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error) return error.message;
+  if (typeof error === 'string') return error;
+  return String(error);
+}
+
+function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n));
+}
+
+function dataUrlToUint8Array(dataUrl: string): Uint8Array {
+  const comma = dataUrl.indexOf(',');
+  if (comma < 0) throw new Error('Invalid data URL');
+  const b64 = dataUrl.slice(comma + 1);
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let index = 0; index < bin.length; index += 1) bytes[index] = bin.charCodeAt(index);
+  return bytes;
+}
+
+async function svgTextToPng(
+  text: string,
+  w = 720,
+  h = 240,
+  fontFamily = 'cursive'
+): Promise<string> {
+  const escaped = text
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+  <rect width="100%" height="100%" fill="transparent"/>
+  <text x="${Math.round(w * 0.06)}" y="${Math.round(h * 0.7)}" font-family="${fontFamily}, cursive" font-size="${Math.round(
+    h * 0.58
+  )}" fill="#111" style="font-weight: 500; letter-spacing: 0.5px;">${escaped}</text>
+</svg>`;
+
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const i = new Image();
+    i.onload = () => resolve(i);
+    i.onerror = () => reject(new Error('Failed to render typed signature'));
+    i.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+  });
+
+  const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(w * dpr);
+  canvas.height = Math.round(h * dpr);
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('No canvas context');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  ctx.drawImage(img, 0, 0, w, h);
+  return canvas.toDataURL('image/png');
+}
+
+function Icon({ children }: { children: React.ReactNode }) {
+  return <span className="ic">{children}</span>;
+}
+
+const Icons = {
+  Upload: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <path d="M7 10l5-5 5 5" />
+      <path d="M12 5v14" />
+    </svg>
+  ),
+  Download: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <path d="M7 10l5 5 5-5" />
+      <path d="M12 15V3" />
+    </svg>
+  ),
+  Pen: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
+    </svg>
+  ),
+  Minus: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M5 12h14" />
+    </svg>
+  ),
+  Plus: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M12 5v14" />
+      <path d="M5 12h14" />
+    </svg>
+  ),
+  Left: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  ),
+  Right: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M9 18l6-6-6-6" />
+    </svg>
+  ),
+  Trash: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M3 6h18" />
+      <path d="M8 6V4h8v2" />
+      <path d="M19 6l-1 14H6L5 6" />
+      <path d="M10 11v6" />
+      <path d="M14 11v6" />
+    </svg>
+  ),
+  X: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M18 6L6 18" />
+      <path d="M6 6l12 12" />
+    </svg>
+  ),
 };
 
-const PdfSignerApp: React.FC = () => {
-  const [basePdfBytes, setBasePdfBytes] = useState<Uint8Array | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [pageCount, setPageCount] = useState<number>(0);
-  const [activePage, setActivePage] = useState<number>(0);
-  const [pageSizes, setPageSizes] = useState<
-    { width: number; height: number }[]
-  >([]);
-  const [marks, setMarks] = useState<Mark[]>([]);
-  const [mode, setMode] = useState<MarkKind>('text');
-  const [focusedId, setFocusedId] = useState<string | null>(null);
-  const [textColor, setTextColor] = useState<string>('#000000');
-  const [strokeColor, setStrokeColor] = useState<string>('#000000');
-  const [textSize, setTextSize] = useState<number>(12);
-  // Normalized stroke thickness in [0, 0.02] relative to page height
-  const [strokeWidth, setStrokeWidth] = useState<number>(0.004);
-  const [strokes, setStrokes] = useState<SignatureStroke[]>([]);
-  const [currentStroke, setCurrentStroke] = useState<SignatureStroke | null>(
-    null
+function Btn(
+  props: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+    variant?: 'primary' | 'ghost' | 'danger';
+  }
+) {
+  const { variant = 'ghost', className, ...rest } = props;
+  return (
+    <button
+      {...rest}
+      type={props.type ?? 'button'}
+      className={`btn ${variant} ${className || ''}`.trim()}
+    />
   );
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
+}
 
-  const overlayRef = useRef<HTMLDivElement | null>(null);
+export default function PdfSignerApp() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const stageRef = useRef<HTMLDivElement | null>(null);
+  const pdfCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  const [err, setErr] = useState<UiError | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const [pdfBytes, setPdfBytes] = useState<Uint8Array | null>(null);
+  const [pdfName, setPdfName] = useState('');
+  const [pdfDoc, setPdfDoc] = useState<PDFDocumentProxy | null>(null);
+  const [numPages, setNumPages] = useState(0);
+  const [page, setPage] = useState(1);
+  const [zoom, setZoom] = useState(1.15);
+
+  const viewportRef = useRef<PageViewport | null>(null);
+  const renderTaskRef = useRef<RenderTask | null>(null);
+
+  const [pagePx, setPagePx] = useState({ w: 0, h: 0 });
+
+  const [sigPng, setSigPng] = useState<string | null>(null);
+  const [sigAspect, setSigAspect] = useState(3.0);
+  const [mode, setMode] = useState<'view' | 'place'>('view');
+
+  const [placements, setPlacements] = useState<Placement[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const drag = useRef<DragMode>({ kind: 'none' });
+
+  const current = useMemo(
+    () => placements.filter((p) => p.pageNumber === page),
+    [placements, page]
+  );
 
   useEffect(() => {
-    return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMode('view');
+        setSelectedId(null);
+      }
+      if ((event.key === 'Delete' || event.key === 'Backspace') && selectedId) {
+        setPlacements((prev) => prev.filter((p) => p.id !== selectedId));
+        setSelectedId(null);
       }
     };
-  }, [previewUrl]);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selectedId]);
 
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const pickFile = () => fileInputRef.current?.click();
+
+  async function loadFile(file: File) {
+    setErr(null);
+    setLoading(true);
+    setMode('view');
+    setSelectedId(null);
+
+    if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+      setLoading(false);
+      setErr({ title: 'Not a PDF', detail: 'Please choose a .pdf file.' });
+      return;
+    }
+
+    if (file.size > 80 * 1024 * 1024) {
+      setLoading(false);
+      setErr({ title: 'PDF is too large', detail: 'Try a smaller file.' });
+      return;
+    }
+
+    try {
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      try {
+        await pdfDoc?.destroy();
+      } catch {
+        // ignore
+      }
+
+      const task = pdfjs.getDocument({ data: bytes });
+      const doc = await task.promise;
+
+      setPdfBytes(bytes);
+      setPdfName(file.name);
+      setPdfDoc(doc);
+      setNumPages(doc.numPages);
+      setPage(1);
+      setZoom(1.15);
+      setPlacements([]);
+    } catch (errorUnknown: unknown) {
+      setErr({ title: 'Could not open PDF', detail: getErrorMessage(errorUnknown) });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    event.target.value = '';
+    if (file) loadFile(file);
+  };
 
-    if (file.type !== 'application/pdf') {
-      alert('Please choose a PDF file.');
-      return;
-    }
+  const onDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files?.[0];
+    if (file) loadFile(file);
+  };
 
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      const pdfDoc = await PDFDocument.load(arrayBuffer);
-      const pages = pdfDoc.getPageCount();
+  const onDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+  };
 
-      setBasePdfBytes(new Uint8Array(arrayBuffer));
-      setPageCount(pages);
+  useEffect(() => {
+    let cancelled = false;
 
-       // Capture actual PDF page sizes so the on-screen aspect ratio
-       // matches what we will use when writing into the PDF.
-      const sizes: { width: number; height: number }[] = [];
-      for (let index = 0; index < pages; index += 1) {
-        const page = pdfDoc.getPage(index);
-        const { width, height } = page.getSize();
-        sizes.push({ width, height });
+    const run = async () => {
+      if (!pdfDoc) return;
+      const canvas = pdfCanvasRef.current;
+      if (!canvas) return;
+
+      setLoading(true);
+      setErr(null);
+
+      try {
+        renderTaskRef.current?.cancel?.();
+      } catch {
+        // ignore
       }
-      setPageSizes(sizes);
 
-      setActivePage(0); // first page by default
-      setMarks([]);
-      setStrokes([]);
-      setCurrentStroke(null);
+      try {
+        const p = await pdfDoc.getPage(page);
+        if (cancelled) return;
 
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-    } catch (error) {
-      console.error(error);
-      alert('Unable to read this PDF. Please try another file.');
-    }
-  };
-
-  const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
-
-  const getRelativePoint = (
-    event: React.MouseEvent<HTMLDivElement>
-  ): SignaturePoint | null => {
-    if (!overlayRef.current) return null;
-    const rect = overlayRef.current.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width;
-    const y = (event.clientY - rect.top) / rect.height;
-    return {
-      xPercent: clamp01(x),
-      yPercent: clamp01(y),
-    };
-  };
-
-  const handleOverlayMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!basePdfBytes) return;
-
-    const target = event.target as HTMLElement;
-    if (target.closest('input, textarea, button')) {
-      return;
-    }
-
-    const point = getRelativePoint(event);
-    if (!point) return;
-
-    if (mode === 'text') {
-      const id = createId();
-      const mark: Mark = {
-        id,
-        pageIndex: activePage,
-        xPercent: point.xPercent,
-        yPercent: point.yPercent,
-        value: 'Your text here',
-        kind: 'text',
-      };
-      setMarks((prev) => [...prev, mark]);
-      setFocusedId(id);
-      return;
-    }
-
-    if (mode === 'signature') {
-      event.preventDefault();
-      const newStroke: SignatureStroke = {
-        pageIndex: activePage,
-        points: [point],
-        color: strokeColor,
-        width: strokeWidth,
-      };
-      setCurrentStroke(newStroke);
-      setIsDrawing(true);
-    }
-  };
-
-  const handleOverlayMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDrawing || mode !== 'signature') return;
-
-    const point = getRelativePoint(event);
-    if (!point) return;
-
-    setCurrentStroke((prev) =>
-      prev ? { ...prev, points: [...prev.points, point] } : prev
-    );
-  };
-
-  const finishStroke = () => {
-    if (!isDrawing || !currentStroke || currentStroke.points.length < 2) {
-      setIsDrawing(false);
-      setCurrentStroke(null);
-      return;
-    }
-    setStrokes((prev) => [...prev, currentStroke]);
-    setIsDrawing(false);
-    setCurrentStroke(null);
-  };
-
-  const handleOverlayMouseUp = () => {
-    if (mode !== 'signature') return;
-    finishStroke();
-  };
-
-  const handleOverlayMouseLeave = () => {
-    if (mode !== 'signature') return;
-    finishStroke();
-  };
-
-  const handleMarkChange = (id: string, value: string) => {
-    setMarks((prev) => prev.map((mark) => (mark.id === id ? { ...mark, value } : mark)));
-  };
-
-  const handleRemoveMark = (id: string) => {
-    setMarks((prev) => prev.filter((m) => m.id !== id));
-  };
-
-  const handleClearMarks = () => {
-    if (!marks.length && !strokes.length) return;
-    const ok = window.confirm('Remove all annotations from this PDF?');
-    if (!ok) return;
-    setMarks([]);
-    setStrokes([]);
-    setCurrentStroke(null);
-    setIsDrawing(false);
-  };
-
-  const hexToRgb = (hex: string) => {
-    const normalized = hex.trim();
-    const value =
-      normalized[0] === '#'
-        ? normalized.slice(1)
-        : normalized;
-
-    if (value.length !== 6) return null;
-    const r = Number.parseInt(value.slice(0, 2), 16);
-    const g = Number.parseInt(value.slice(2, 4), 16);
-    const b = Number.parseInt(value.slice(4, 6), 16);
-
-    if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return null;
-    return rgb(r / 255, g / 255, b / 255);
-  };
-
-  const handleDownload = async () => {
-    if (!basePdfBytes) {
-      alert('Upload a PDF first.');
-      return;
-    }
-
-    if (!marks.length) {
-      const ok = window.confirm(
-        'No text or signatures have been placed. Download original PDF?'
-      );
-      if (!ok) return;
-    }
-
-    try {
-      setIsDownloading(true);
-      const pdfDoc = await PDFDocument.load(basePdfBytes);
-      const fontNormal = await pdfDoc.embedFont(StandardFonts.Helvetica);
-      const fontSignature = await pdfDoc.embedFont(
-        StandardFonts.HelveticaOblique
-      );
-
-      const pages = pdfDoc.getPages();
-
-      const textColorRgb = hexToRgb(textColor) ?? rgb(0, 0, 0);
-
-      // Draw typed annotations (text) - top-left anchored like the overlay
-      marks.forEach((mark) => {
-        const page = pages[mark.pageIndex] || pages[0];
-        const { width, height } = page.getSize();
-
-        const x = mark.xPercent * width;
-
-        const value = (mark.value || '').trim();
-        if (!value) return;
-
-        const font = mark.kind === 'signature' ? fontSignature : fontNormal;
-        const size = mark.kind === 'signature' ? textSize : textSize;
-
-        // mark.yPercent is the top edge of the box in overlay space (0 at top)
-        const yTop = height * (1 - mark.yPercent);
-        const baselineY = yTop - size;
-
-        page.drawText(value, {
-          x,
-          y: baselineY,
-          size,
-          font,
-          color: textColorRgb,
+        const viewport = p.getViewport({
+          scale: zoom,
+          rotation: p.rotate || 0,
         });
-      });
+        viewportRef.current = viewport;
+        setPagePx({ w: Math.round(viewport.width), h: Math.round(viewport.height) });
 
-      // Draw pencil signatures as vector strokes
-      strokes.forEach((stroke) => {
-        const page = (pages[stroke.pageIndex] || pages[0]) as PDFPageWithLine;
-        const { width, height } = page.getSize();
-        const strokeRgb = hexToRgb(stroke.color) ?? rgb(0, 0, 0);
+        const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+        canvas.style.width = `${Math.round(viewport.width)}px`;
+        canvas.style.height = `${Math.round(viewport.height)}px`;
+        canvas.width = Math.round(viewport.width * dpr);
+        canvas.height = Math.round(viewport.height * dpr);
 
-        for (let index = 1; index < stroke.points.length; index += 1) {
-          const previous = stroke.points[index - 1];
-          const current = stroke.points[index];
+        const ctx = canvas.getContext('2d', { alpha: false });
+        if (!ctx) throw new Error('No canvas context');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, viewport.width, viewport.height);
 
-          const startX = previous.xPercent * width;
-          const startY = height * (1 - previous.yPercent);
-          const endX = current.xPercent * width;
-          const endY = height * (1 - current.yPercent);
-
-          if (typeof page.drawLine === 'function') {
-            page.drawLine({
-              start: { x: startX, y: startY },
-              end: { x: endX, y: endY },
-              thickness: stroke.width * height,
-              color: strokeRgb,
-            });
-          } else {
-            // Fallback: approximate by drawing very short text segments if drawLine is unavailable.
-            page.drawText('.', {
-              x: startX,
-              y: startY,
-              size: stroke.width * height,
-              font: fontNormal,
-              color: strokeRgb,
-            });
-          }
+        const task = p.render({ canvasContext: ctx, viewport });
+        renderTaskRef.current = task;
+        await task.promise;
+      } catch (errorUnknown: unknown) {
+        const isCancelled =
+          errorUnknown instanceof Error && errorUnknown.name === 'RenderingCancelledException';
+        if (!isCancelled) {
+          setErr({
+            title: 'Failed to render page',
+            detail: getErrorMessage(errorUnknown),
+          });
         }
-      });
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
 
-      const pdfBytes = await pdfDoc.save();
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    run();
+    return () => {
+      cancelled = true;
+      try {
+        renderTaskRef.current?.cancel?.();
+      } catch {
+        // ignore
+      }
+    };
+  }, [pdfDoc, page, zoom]);
+
+  function stageToPdf(vx: number, vy: number) {
+    const vp = viewportRef.current;
+    if (!vp) return null;
+    const [x, y] = vp.convertToPdfPoint(vx, vy);
+    return { x, y };
+  }
+
+  function pdfToStage(xPdf: number, yPdf: number) {
+    const vp = viewportRef.current;
+    if (!vp) return null;
+    const [x, y] = vp.convertToViewportPoint(xPdf, yPdf);
+    return { x, y };
+  }
+
+  function placementRect(p: Placement) {
+    const tl = pdfToStage(p.xPdf, p.yPdf);
+    const tr = pdfToStage(p.xPdf + p.wPdf, p.yPdf);
+    const bl = pdfToStage(p.xPdf, p.yPdf - p.hPdf);
+    if (!tl || !tr || !bl) return null;
+    return { left: tl.x, top: tl.y, width: tr.x - tl.x, height: bl.y - tl.y };
+  }
+
+  const onStageClick = (event: React.MouseEvent) => {
+    if (mode !== 'place') return;
+    if (!sigPng) {
+      setErr({ title: 'No signature', detail: 'Create a signature first.' });
+      return;
+    }
+    const vp = viewportRef.current;
+    const stage = stageRef.current;
+    if (!vp || !stage) return;
+
+    const rect = stage.getBoundingClientRect();
+    const vx = event.clientX - rect.left;
+    const vy = event.clientY - rect.top;
+
+    const wPx = clamp(vp.width * 0.28, 120, 320);
+    const hPx = wPx / Math.max(0.8, sigAspect);
+
+    const pdfTL = stageToPdf(vx, vy);
+    if (!pdfTL) return;
+
+    const pdfTR = stageToPdf(vx + wPx, vy) || pdfTL;
+    const pdfBL = stageToPdf(vx, vy + hPx) || pdfTL;
+
+    const newPlacement: Placement = {
+      id: safeId(),
+      pageNumber: page,
+      xPdf: pdfTL.x,
+      yPdf: pdfTL.y,
+      wPdf: Math.abs(pdfTR.x - pdfTL.x) || 120,
+      hPdf: Math.abs(pdfTL.y - pdfBL.y) || 40,
+    };
+
+    setPlacements((prev) => [...prev, newPlacement]);
+    setSelectedId(newPlacement.id);
+  };
+
+  const beginMove = (event: React.PointerEvent, p: Placement) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const stage = stageRef.current;
+    if (!stage) return;
+    const rect = stage.getBoundingClientRect();
+    const vx = event.clientX - rect.left;
+    const vy = event.clientY - rect.top;
+    drag.current = {
+      kind: 'move',
+      id: p.id,
+      startVx: vx,
+      startVy: vy,
+      startX: p.xPdf,
+      startY: p.yPdf,
+    };
+    try {
+      (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+    } catch {
+      // ignore
+    }
+    setSelectedId(p.id);
+  };
+
+  const beginResize = (event: React.PointerEvent, p: Placement) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const stage = stageRef.current;
+    if (!stage) return;
+    const rect = stage.getBoundingClientRect();
+    const vx = event.clientX - rect.left;
+    const vy = event.clientY - rect.top;
+    drag.current = {
+      kind: 'resize',
+      id: p.id,
+      startVx: vx,
+      startVy: vy,
+      startW: p.wPdf,
+      startH: p.hPdf,
+    };
+    try {
+      (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+    } catch {
+      // ignore
+    }
+    setSelectedId(p.id);
+  };
+
+  const onStagePointerMove = (event: React.PointerEvent) => {
+    const d = drag.current;
+    if (d.kind === 'none') return;
+
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const rect = stage.getBoundingClientRect();
+    const vx = event.clientX - rect.left;
+    const vy = event.clientY - rect.top;
+
+    if (d.kind === 'move') {
+      const dx = vx - d.startVx;
+      const dy = vy - d.startVy;
+
+      const a = stageToPdf(0, 0);
+      const b = stageToPdf(dx, dy);
+      if (!a || !b) return;
+      const dxPdf = b.x - a.x;
+      const dyPdf = b.y - a.y;
+
+      setPlacements((prev) =>
+        prev.map((p) =>
+          p.id === d.id ? { ...p, xPdf: d.startX + dxPdf, yPdf: d.startY + dyPdf } : p
+        )
+      );
+    }
+
+    if (d.kind === 'resize') {
+      const ddx = vx - d.startVx;
+
+      const a = stageToPdf(0, 0);
+      const b = stageToPdf(ddx, 0);
+      if (!a || !b) return;
+      const dWPdf = b.x - a.x;
+
+      setPlacements((prev) =>
+        prev.map((p) => {
+          if (p.id !== d.id) return p;
+          const newW = Math.max(20, d.startW + dWPdf);
+          const newH = Math.max(10, newW / Math.max(0.8, sigAspect));
+          return { ...p, wPdf: newW, hPdf: newH };
+        })
+      );
+    }
+  };
+
+  const onStagePointerUp = (event: React.PointerEvent) => {
+    if (drag.current.kind === 'none') return;
+    drag.current = { kind: 'none' };
+    try {
+      (event.currentTarget as HTMLElement).releasePointerCapture(event.pointerId);
+    } catch {
+      // ignore
+    }
+  };
+
+  const deleteSelected = () => {
+    if (!selectedId) return;
+    setPlacements((prev) => prev.filter((p) => p.id !== selectedId));
+    setSelectedId(null);
+  };
+
+  const exportPdf = async () => {
+    setErr(null);
+    if (!pdfBytes) {
+      setErr({ title: 'No PDF loaded', detail: 'Open a PDF first.' });
+      return;
+    }
+    if (!sigPng) {
+      setErr({ title: 'No signature', detail: 'Create a signature first.' });
+      return;
+    }
+    if (placements.length === 0) {
+      setErr({ title: 'Nothing to export', detail: 'Place at least one signature.' });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const doc = await PDFDocument.load(pdfBytes);
+      const pngBytes = dataUrlToUint8Array(sigPng);
+      const sigImg = await doc.embedPng(pngBytes);
+
+      const pages = doc.getPages();
+      for (const p of placements) {
+        const pageObj = pages[p.pageNumber - 1];
+        if (!pageObj) continue;
+        pageObj.drawImage(sigImg, {
+          x: p.xPdf,
+          y: p.yPdf - p.hPdf,
+          width: p.wPdf,
+          height: p.hPdf,
+          opacity: 1,
+        });
+      }
+
+      const outBytes = await doc.save({ useObjectStreams: true });
+      const blob = new Blob([outBytes], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
 
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'signed-document.pdf';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const a = document.createElement('a');
+      a.href = url;
+      const base = pdfName?.replace(/\.pdf$/i, '') || 'document';
+      a.download = `${base}-signed.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
 
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error(error);
-      alert('Something went wrong while generating the PDF.');
+      setTimeout(() => URL.revokeObjectURL(url), 10_000);
+    } catch (errorUnknown: unknown) {
+      setErr({ title: 'Export failed', detail: getErrorMessage(errorUnknown) });
     } finally {
-      setIsDownloading(false);
+      setLoading(false);
     }
-  };
-
-  const marksForActivePage = marks.filter((m) => m.pageIndex === activePage);
-  const strokesForActivePage = strokes.filter(
-    (stroke) => stroke.pageIndex === activePage
-  );
-  const activePageSize = pageSizes[activePage];
-  const pageSrc =
-    previewUrl && pageCount > 0
-      ? `${previewUrl}#page=${activePage + 1}`
-      : previewUrl;
-
-  const goToPage = (nextIndex: number) => {
-    if (nextIndex < 0 || nextIndex >= pageCount) return;
-    setActivePage(nextIndex);
-    setFocusedId(null);
   };
 
   return (
-    <div className={styles.root}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>PDF Signer &amp; Writer</h1>
-        <p className={styles.subtitle}>
-          Upload a PDF, click anywhere to add text or a typed signature, then
-          download a new PDF where your additions remain fully selectable.
-        </p>
-      </div>
+    <div className="app" onDrop={onDrop} onDragOver={onDragOver}>
+      <header className="bar">
+        <div className="brand">
+          <div className="logo">PDF</div>
+          <div>
+            <div className="bt">PDF Signer</div>
+            <div className="bs">multi-page - canvas - client-side</div>
+          </div>
+        </div>
 
-      <div className={styles.layout}>
-        <section className={`${styles.panel} ${styles.previewPanel}`}>
+        <div className="row">
           <input
             ref={fileInputRef}
             type="file"
-            accept="application/pdf"
-            onChange={handleFileChange}
-            className={styles.fileInputHidden}
+            accept="application/pdf,.pdf"
+            onChange={onFileChange}
+            style={{ display: 'none' }}
           />
 
-          <div className={styles.topToolbar}>
-            <div className={styles.toolbarRowMain}>
-              <button
-                type="button"
-                className={styles.toolbarButton}
-                onClick={() => goToPage(activePage - 1)}
-                disabled={!basePdfBytes || activePage <= 0}
-                title="Previous page"
-              >
-                <svg
-                  className={styles.toolbarIcon}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M14.7 6.7 13.3 5.3 6.6 12l6.7 6.7 1.4-1.4L9.4 12l5.3-5.3z"
-                    fill="currentColor"
-                  />
-                </svg>
-                <span className={styles.toolbarLabel}>Prev</span>
-              </button>
+          <Btn onClick={pickFile}>
+            <Icon>{Icons.Upload}</Icon> PDF
+          </Btn>
 
-              <button
-                type="button"
-                className={styles.toolbarButton}
-                onClick={() => goToPage(activePage + 1)}
-                disabled={!basePdfBytes || activePage >= pageCount - 1}
-                title="Next page"
-              >
-                <svg
-                  className={styles.toolbarIcon}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="m9.3 6.7 1.4-1.4 6.7 6.7-6.7 6.7-1.4-1.4L14.6 12 9.3 6.7z"
-                    fill="currentColor"
-                  />
-                </svg>
-                <span className={styles.toolbarLabel}>Next</span>
-              </button>
+          <Btn
+            onClick={async () => {
+              const name = window.prompt('Type your name for a quick signature:', 'Your Name');
+              if (!name) return;
+              const png = await svgTextToPng(name);
+              setSigPng(png);
+              setSigAspect(720 / 240);
+            }}
+          >
+            <Icon>{Icons.Pen}</Icon> Quick signature
+          </Btn>
 
-              <button
-                type="button"
-                className={styles.toolbarButton}
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <svg
-                  className={styles.toolbarIcon}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M4 4h7l3 3h6v13H4V4zm2 2v11h12V9h-5.5L9.5 6H6z"
-                    fill="currentColor"
-                  />
-                </svg>
-                <span className={styles.toolbarLabel}>
-                  {basePdfBytes ? 'Change PDF' : 'Open PDF'}
-                </span>
-              </button>
+          <Btn
+            variant={mode === 'place' ? 'primary' : 'ghost'}
+            onClick={() => setMode((m) => (m === 'place' ? 'view' : 'place'))}
+            disabled={!pdfDoc}
+          >
+            Place
+          </Btn>
 
-              <button
-                type="button"
-                className={`${styles.toolbarButton} ${
-                  mode === 'text' ? styles.toolbarButtonActive : ''
-                }`}
-                onClick={() => setMode('text')}
-                disabled={!basePdfBytes}
-              >
-                <svg
-                  className={styles.toolbarIcon}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M5 5h14v3h-2.5v11h-3V8H10v11H7V8H5V5z"
-                    fill="currentColor"
-                  />
-                </svg>
-                <span className={styles.toolbarLabel}>Text</span>
-              </button>
+          <div className="sep" />
 
-              <button
-                type="button"
-                className={`${styles.toolbarButton} ${
-                  mode === 'signature' ? styles.toolbarButtonActive : ''
-                }`}
-                onClick={() => setMode('signature')}
-                disabled={!basePdfBytes}
-              >
-                <svg
-                  className={styles.toolbarIcon}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M3 17.25c2.5-2 4-3 5.5-3 1.5 0 2 1 3 1s1.5-1 3-1c1.4 0 2.9.8 4.5 2.25V20c-1.6-1.45-3.1-2.25-4.5-2.25-1.5 0-2 .95-3 0.95s-1.5-.95-3-.95c-1.5 0-3 .8-5.5 2.25v-2.75z"
-                    fill="currentColor"
-                  />
-                </svg>
-                <span className={styles.toolbarLabel}>Signature</span>
-              </button>
+          <Btn
+            onClick={() =>
+              setZoom((z) => clamp(Number((z - 0.15).toFixed(2)), 0.4, 3))
+            }
+            disabled={!pdfDoc}
+          >
+            <Icon>{Icons.Minus}</Icon>
+          </Btn>
+          <span className="pill">{Math.round(zoom * 100)}%</span>
+          <Btn
+            onClick={() =>
+              setZoom((z) => clamp(Number((z + 0.15).toFixed(2)), 0.4, 3))
+            }
+            disabled={!pdfDoc}
+          >
+            <Icon>{Icons.Plus}</Icon>
+          </Btn>
 
-              <button
-                type="button"
-                className={styles.toolbarButton}
-                onClick={handleClearMarks}
-                disabled={!basePdfBytes || (!marks.length && !strokes.length)}
-              >
-                <svg
-                  className={styles.toolbarIcon}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M5 5h14v2H5V5zm2.5 4h9L15 18H9L7.5 9z"
-                    fill="currentColor"
-                  />
-                </svg>
-                <span className={styles.toolbarLabel}>Clear</span>
-              </button>
+          <div className="sep" />
 
-              <button
-                type="button"
-                className={styles.toolbarButton}
-                onClick={handleDownload}
-                disabled={isDownloading || !basePdfBytes}
+          <Btn variant="primary" onClick={exportPdf} disabled={!pdfDoc || !sigPng || placements.length === 0}>
+            <Icon>{Icons.Download}</Icon> Export
+          </Btn>
+        </div>
+      </header>
+
+      <main className="body">
+        <aside className="side">
+          <div className="sec">
+            <div className="h">Document</div>
+            <div className="muted">{pdfDoc ? pdfName : 'No PDF'}</div>
+          </div>
+
+          <div className="sec">
+            <div className="h">Pages</div>
+            <div className="row" style={{ justifyContent: 'space-between' }}>
+              <Btn
+                onClick={() => setPage((p) => clamp(p - 1, 1, numPages))}
+                disabled={!pdfDoc || page <= 1}
               >
-                <svg
-                  className={styles.toolbarIcon}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M11 3h2v9l3.5-3.5 1.4 1.4L12 15.3 6.1 9.9 7.5 8.5 11 12V3zm-6 14h14v2H5v-2z"
-                    fill="currentColor"
-                  />
-                </svg>
-                <span className={styles.toolbarLabel}>Download</span>
-              </button>
+                <Icon>{Icons.Left}</Icon>
+              </Btn>
+              <span className="pill">
+                {pdfDoc ? (
+                  <>
+                    <b>{page}</b> / {numPages}
+                  </>
+                ) : (
+                  'N/A'
+                )}
+              </span>
+              <Btn
+                onClick={() => setPage((p) => clamp(p + 1, 1, numPages))}
+                disabled={!pdfDoc || page >= numPages}
+              >
+                <Icon>{Icons.Right}</Icon>
+              </Btn>
             </div>
+          </div>
 
-            <div className={styles.toolbarRowSecondary}>
-              {pageCount > 1 && (
-                <div className={styles.toolbarControl}>
-                  <svg
-                    className={styles.toolbarIconSmall}
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M6 4h9l5 5v11H6V4zm9 1.5V10h4.5L15 5.5z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  <div className={styles.toolbarControlInputs}>
-                    <label className={styles.toolbarControlLabel}>
-                      Page
-                      <select
-                        value={activePage}
-                        onChange={(event) =>
-                          setActivePage(Number(event.target.value))
-                        }
-                        className={styles.pageSelect}
-                      >
-                        {Array.from({ length: pageCount }, (_, index) => (
-                          <option key={index} value={index}>
-                            {index + 1} / {pageCount}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                  </div>
+          <div className="sec">
+            <div className="h">Placed</div>
+            <div className="muted">{placements.length} total</div>
+            <div className="row" style={{ marginTop: 8 }}>
+              <Btn variant="danger" onClick={deleteSelected} disabled={!selectedId}>
+                <Icon>{Icons.Trash}</Icon> Delete
+              </Btn>
+              <Btn
+                onClick={() => setPlacements((p) => p.filter((x) => x.pageNumber !== page))}
+                disabled={!pdfDoc || current.length === 0}
+              >
+                Clear page
+              </Btn>
+            </div>
+          </div>
+
+          <div className="sec">
+            <div className="muted">
+              {mode === 'place'
+                ? 'Place mode: click page to add.'
+                : 'Drag to move. Corner to resize. Delete removes.'}
+            </div>
+          </div>
+        </aside>
+
+        <section className="mainViewer">
+          {!pdfDoc ? (
+            <div className="empty" onClick={pickFile} role="button" tabIndex={0}>
+              <div className="emptyCard">
+                <div className="big">Drop a PDF here</div>
+                <div className="muted">or click to choose one. Everything stays in your browser.</div>
+              </div>
+            </div>
+          ) : (
+            <div className="viewer">
+              <div
+                ref={stageRef}
+                className={`stage ${mode === 'place' ? 'place' : ''}`}
+                style={{ width: pagePx.w || undefined, height: pagePx.h || undefined }}
+                onClick={onStageClick}
+                onPointerMove={onStagePointerMove}
+                onPointerUp={onStagePointerUp}
+                onPointerCancel={onStagePointerUp}
+              >
+                <canvas ref={pdfCanvasRef} className="pdf" />
+
+                {sigPng
+                  ? current.map((p) => {
+                      const rect = placementRect(p);
+                      if (!rect) return null;
+                      const selected = selectedId === p.id;
+                      return (
+                        <div
+                          key={p.id}
+                          className={`sig ${selected ? 'sel' : ''}`}
+                          style={{
+                            left: rect.left,
+                            top: rect.top,
+                            width: rect.width,
+                            height: rect.height,
+                          }}
+                          onPointerDown={(event) => beginMove(event, p)}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setSelectedId(p.id);
+                          }}
+                          role="button"
+                          tabIndex={0}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={sigPng} alt="Signature" draggable={false} />
+                          <div
+                            className="handle"
+                            title="Resize"
+                            onPointerDown={(event) => beginResize(event, p)}
+                          />
+                        </div>
+                      );
+                    })
+                  : null}
+
+                {loading ? <div className="load">Loading...</div> : null}
+              </div>
+
+              {sigPng ? (
+                <div className="preview">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={sigPng} alt="Signature preview" />
                 </div>
+              ) : (
+                <div className="preview muted">No signature</div>
               )}
 
-              <div className={styles.toolbarControl}>
-                <svg
-                  className={styles.toolbarIconSmall}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M4 5h16v3h-6v11h-4V8H4V5z"
-                    fill="currentColor"
-                  />
-                </svg>
-                <div className={styles.toolbarControlInputs}>
-                  <label className={styles.toolbarControlLabel}>
-                    Text colour
-                    <input
-                      type="color"
-                      value={textColor}
-                      onChange={(event) => setTextColor(event.target.value)}
-                      className={styles.toolbarColorInput}
-                    />
-                  </label>
-                  <label className={styles.toolbarControlLabel}>
-                    Text size
-                    <input
-                      type="range"
-                      min={8}
-                      max={28}
-                      step={1}
-                      value={textSize}
-                      onChange={(event) =>
-                        setTextSize(Number(event.target.value))
-                      }
-                      className={styles.toolbarRangeInput}
-                    />
-                  </label>
+              {err ? (
+                <div className="err" role="alert">
+                  <div className="et">{err.title}</div>
+                  {err.detail ? <div className="ed">{err.detail}</div> : null}
                 </div>
-              </div>
-
-              <div className={styles.toolbarControl}>
-                <svg
-                  className={styles.toolbarIconSmall}
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M4 18l6.5-6.5 3 3L7 21H4v-3zm14.8-9.9l-3 3-3-3L16 2.8c.4-.4 1-.4 1.4 0l1.4 1.4c.4.4.4 1 0 1.4z"
-                    fill="currentColor"
-                  />
-                </svg>
-                <div className={styles.toolbarControlInputs}>
-                  <label className={styles.toolbarControlLabel}>
-                    Pencil colour
-                    <input
-                      type="color"
-                      value={strokeColor}
-                      onChange={(event) => setStrokeColor(event.target.value)}
-                      className={styles.toolbarColorInput}
-                    />
-                  </label>
-                  <label className={styles.toolbarControlLabel}>
-                    Pencil width
-                    <input
-                      type="range"
-                      min={0.001}
-                      max={0.01}
-                      step={0.0005}
-                      value={strokeWidth}
-                      onChange={(event) =>
-                        setStrokeWidth(Number(event.target.value))
-                      }
-                      className={styles.toolbarRangeInput}
-                    />
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.previewHeader}>
-            <div className={styles.sectionLabel}>Preview</div>
-            {pageCount > 0 && (
-              <div className={styles.previewMeta}>
-                Page {activePage + 1} of {pageCount}
-              </div>
-            )}
-          </div>
-
-          {!previewUrl && (
-            <div className={styles.previewPlaceholder}>
-              <div className={styles.previewPlaceholderInner}>
-                <div className={styles.previewIcon}>PDF</div>
-                <div className={styles.previewTitle}>Waiting for a PDF</div>
-                <div className={styles.previewText}>
-                  Click “Open PDF” above to choose a file, then add text and
-                  signatures directly on the page.
-                </div>
-              </div>
-            </div>
-          )}
-
-          {previewUrl && (
-            <div
-              className={styles.previewFrameWrapper}
-              style={
-                activePageSize
-                  ? { aspectRatio: activePageSize.width / activePageSize.height }
-                  : undefined
-              }
-            >
-              <div
-                ref={overlayRef}
-                className={styles.previewOverlay}
-                onMouseDown={handleOverlayMouseDown}
-                onMouseMove={handleOverlayMouseMove}
-                onMouseUp={handleOverlayMouseUp}
-                onMouseLeave={handleOverlayMouseLeave}
-              >
-                <svg
-                  className={styles.signatureSvg}
-                  viewBox="0 0 1 1"
-                  preserveAspectRatio="none"
-                  aria-hidden="true"
-                >
-                  {strokesForActivePage.map((stroke, strokeIndex) => (
-                    <polyline
-                      key={strokeIndex}
-                      points={stroke.points
-                        .map(
-                          (point) =>
-                            `${point.xPercent},${point.yPercent}`
-                        )
-                        .join(' ')}
-                      fill="none"
-                      stroke={stroke.color}
-                      strokeWidth={stroke.width}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  ))}
-                  {currentStroke &&
-                    currentStroke.pageIndex === activePage &&
-                    currentStroke.points.length > 1 && (
-                      <polyline
-                        points={currentStroke.points
-                          .map(
-                            (point) =>
-                              `${point.xPercent},${point.yPercent}`
-                          )
-                          .join(' ')}
-                        fill="none"
-                        stroke={currentStroke.color}
-                        strokeWidth={currentStroke.width}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    )}
-                </svg>
-                {marksForActivePage.map((mark) => (
-                  <div
-                    key={mark.id}
-                    className={`${styles.mark} ${
-                      mark.kind === 'signature' ? styles.markSignature : ''
-                    }`}
-                    style={{
-                      left: `${mark.xPercent * 100}%`,
-                      top: `${mark.yPercent * 100}%`,
-                    }}
-                  >
-                    <textarea
-                      className={styles.markInput}
-                      style={{
-                        color: textColor,
-                        fontSize: `${textSize}px`,
-                      }}
-                      value={mark.value}
-                      onChange={(event) =>
-                        handleMarkChange(mark.id, event.target.value)
-                      }
-                      rows={mark.kind === 'signature' ? 1 : 2}
-                      autoFocus={focusedId === mark.id}
-                    />
-                    <button
-                      type="button"
-                      className={styles.markRemove}
-                      onClick={() => handleRemoveMark(mark.id)}
-                      title="Remove"
-                    >
-                      x
-                    </button>
-                    <div className={styles.markLabel}>
-                      {mark.kind === 'signature' ? 'Signature' : 'Text'}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <iframe
-                src={pageSrc ?? undefined}
-                className={styles.pdfFrame}
-                title="PDF preview"
-              />
+              ) : null}
             </div>
           )}
         </section>
-      </div>
+      </main>
     </div>
   );
-};
-
-export default PdfSignerApp;
+}

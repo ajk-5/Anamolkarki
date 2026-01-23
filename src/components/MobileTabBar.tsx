@@ -51,7 +51,7 @@ export default function MobileTabBar() {
   const pathname = usePathname();
   return (
     <nav className="md:hidden fixed bottom-2 left-1/2 -translate-x-1/2 z-[60] w-[min(100%,460px)] px-2" aria-label="Primary">
-      <div className="rounded-2xl border border-teal-500/30 bg-white/10 backdrop-blur-xl shadow-2xl">
+      <div className="rounded-2xl border border-slate-700/60 bg-slate-950/70 backdrop-blur-xl shadow-2xl">
         <ul className="grid grid-cols-5">
           {tabs.map((t) => {
             const active = pathname === t.href || (t.startsWith !== "/" && pathname.startsWith(t.startsWith)) || (t.startsWith === "/" && pathname === "/");
@@ -63,7 +63,7 @@ export default function MobileTabBar() {
                   aria-current={active ? "page" : undefined}
                   className={[
                     "flex flex-col items-center justify-center gap-1 py-2 rounded-2xl m-1 text-[11px]",
-                    active ? "bg-white/15 text-teal-200" : "text-teal-100 hover:bg-white/10",
+                    active ? "bg-white/10 text-sky-200" : "text-slate-200 hover:bg-white/5 hover:text-white",
                   ].join(" ")}
                 >
                   <IconEl className="w-5 h-5" />
@@ -78,4 +78,3 @@ export default function MobileTabBar() {
     </nav>
   );
 }
-

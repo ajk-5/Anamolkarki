@@ -5,30 +5,25 @@ import { MotionDiv } from "@/components/MotionDiv";
 interface Education {
   title: string;
   institution: string;
+  institutionUrl?: string;
   period: string;
   description: string[];
 }
 
 interface EducationSectionProps {
   education: Education[];
-  hueRotation: number;
   educationRef: React.RefObject<HTMLDivElement>;
 }
 
-const EducationSection: React.FC<EducationSectionProps> = ({ education, hueRotation, educationRef }) => {
-  const gradientStyle = {
-    filter: `hue-rotate(${hueRotation}deg)`,
-    transition: "filter 0.5s ease-in-out",
-  };
-
+const EducationSection: React.FC<EducationSectionProps> = ({ education, educationRef }) => {
   return (
-    <section ref={educationRef} className="py-16 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
+    <section ref={educationRef} className="py-12 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10">
       <MotionDiv
-        className="text-xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-6xl font-bold text-center mb-8 text-indigo-300 uppercase tracking-widest drop-shadow-md transform perspective-1000 translate-z-10 font-[Futura, sans-serif]"
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.2, type: "spring", stiffness: 50 }}
-        style={gradientStyle}
+        className="text-2xl sm:text-4xl md:text-5xl font-semibold text-center mb-8 text-slate-100 uppercase tracking-[0.3em] font-display"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.4 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
       >
         ÉDUCATION
       </MotionDiv>
@@ -36,19 +31,32 @@ const EducationSection: React.FC<EducationSectionProps> = ({ education, hueRotat
         {education.map((edu, index) => (
           <MotionDiv
             key={index}
-            className="backdrop-blur-sm p-6 border border-violet-300 rounded-lg shadow-lg hover:shadow-xl transition-all duration-500"
-            initial={{ opacity: 0, x: index % 2 === 0 ? -200 : 200 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.5, delay: index * 0.4, ease: "easeOut" }}
-            whileHover={{ scale: 1.05, y: -5 }}
+            className="card-surface p-5 sm:p-6 transition-all duration-300"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            whileHover={{ scale: 1.02, y: -4 }}
           >
-            <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-[Futura, sans-serif] font-bold text-indigo-300 mb-3 uppercase tracking-wider text-center">
+            <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-slate-100 mb-3 uppercase tracking-wider text-center">
               {edu.title}
             </h3>
-            <p className="text-xs sm:text-sm md:text-base italic text-violet-300 text-center">
-              {edu.institution} | {edu.period}
+            <p className="text-xs sm:text-sm md:text-base italic text-slate-300 text-center">
+              {edu.institutionUrl ? (
+                <a
+                  href={edu.institutionUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-semibold text-sky-200 underline decoration-sky-300/70 underline-offset-4 transition hover:text-sky-100"
+                >
+                  {edu.institution}
+                </a>
+              ) : (
+                <span>{edu.institution}</span>
+              )}
+              <span className="text-slate-400"> | {edu.period}</span>
             </p>
-            <ul className="mt-3 text-sm sm:text-base text-violet-300 list-disc list-inside text-center">
+            <ul className="mt-3 text-sm sm:text-base text-slate-300 list-disc list-inside text-center">
               {edu.description.map((item, idx) => (
                 <li key={idx}>{item}</li>
               ))}
