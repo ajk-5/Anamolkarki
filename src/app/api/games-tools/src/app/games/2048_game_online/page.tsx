@@ -164,18 +164,24 @@ function useMediaQuery(query: string) {
   const subscribe = useCallback(
     (callback: () => void) => {
       if (typeof window === "undefined" || !window.matchMedia) return () => {};
-      const media = window.matchMedia(query);
+      type LegacyMediaQueryList = MediaQueryList & {
+        addListener?: (listener: (event: MediaQueryListEvent) => void) => void;
+        removeListener?: (listener: (event: MediaQueryListEvent) => void) => void;
+        addEventListener?: (type: "change", listener: (event: MediaQueryListEvent) => void) => void;
+        removeEventListener?: (type: "change", listener: (event: MediaQueryListEvent) => void) => void;
+      };
+      const media = window.matchMedia(query) as LegacyMediaQueryList;
       const onChange = () => callback();
-      if ("addEventListener" in media) {
+      if (media.addEventListener) {
         media.addEventListener("change", onChange);
       } else {
-        media.addListener(onChange);
+        media.addListener?.(onChange);
       }
       return () => {
-        if ("removeEventListener" in media) {
+        if (media.removeEventListener) {
           media.removeEventListener("change", onChange);
         } else {
-          media.removeListener(onChange);
+          media.removeListener?.(onChange);
         }
       };
     },

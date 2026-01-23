@@ -1,14 +1,21 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import type { PageViewport, PDFDocumentProxy, RenderTask } from 'pdfjs-dist';
-import * as pdfjs from 'pdfjs-dist/legacy/build/pdf';
-import workerSrc from 'pdfjs-dist/legacy/build/pdf.worker.min.js?url';
+import {
+  GlobalWorkerOptions,
+  getDocument,
+  type PageViewport,
+  type PDFDocumentProxy,
+  type RenderTask,
+} from 'pdfjs-dist';
 import { PDFDocument } from 'pdf-lib';
 
-const GWO = pdfjs.GlobalWorkerOptions;
-if (GWO && !GWO.workerSrc) {
-  GWO.workerSrc = workerSrc;
+const workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url
+).toString();
+if (GlobalWorkerOptions && !GlobalWorkerOptions.workerSrc) {
+  GlobalWorkerOptions.workerSrc = workerSrc;
 }
 
 type UiError = { title: string; detail?: string };
@@ -266,7 +273,7 @@ export default function PdfSignerApp() {
         // ignore
       }
 
-      const task = pdfjs.getDocument({ data: bytes });
+      const task = getDocument({ data: bytes });
       const doc = await task.promise;
 
       setPdfBytes(bytes);
