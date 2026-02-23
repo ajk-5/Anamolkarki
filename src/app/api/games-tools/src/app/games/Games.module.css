@@ -1,6 +1,14 @@
 .main {
   padding: 1rem;
-  color: #e5e7eb;
+  color: var(--foreground);
+}
+
+.main h1 {
+  margin: 0 0 1rem;
+  font-size: 2rem;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .list {
@@ -11,19 +19,19 @@
 
 .item {
   position: relative;
-  border: 1px solid rgba(45,212,191,0.35);
-  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--surface-border);
+  background: var(--surface);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   padding: 0.75rem;
   margin: 0.75rem 0;
-  border-radius: 12px;
+  border-radius: 18px;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .item:hover {
   transform: translateY(-2px);
-  border-color: rgba(45,212,191,0.55);
+  border-color: rgba(140, 201, 240, 0.55);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
 }
 
@@ -34,9 +42,9 @@
   left: 50%;
   transform: translateX(-50%);
   margin-bottom: 0.5rem;
-  border: 1px solid rgba(255,255,255,0.25);
-  background: rgba(0,0,0,0.7);
-  color: #e5e7eb;
+  border: 1px solid var(--surface-border);
+  background: rgba(0, 0, 0, 0.7);
+  color: var(--foreground);
   z-index: 10;
 }
 
@@ -57,6 +65,6 @@
   text-decoration: none;
 }
 .blockLink:focus-visible {
-  outline: 2px dashed rgba(45,212,191,0.6);
+  outline: 2px dashed rgba(140, 201, 240, 0.65);
   outline-offset: 2px;
 }

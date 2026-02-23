@@ -61,7 +61,7 @@ export default function NinetiesTimesCaseStudyPage() {
   return (
     <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-14 lg:px-8">
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-3xl border border-slate-800/70 bg-slate-950/70 p-6 shadow-2xl backdrop-blur sm:p-8">
+      <section className="card-surface relative overflow-hidden p-6 sm:p-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(56,189,248,0.16),transparent_45%),radial-gradient(circle_at_90%_20%,rgba(34,211,238,0.12),transparent_40%),radial-gradient(circle_at_0%_90%,rgba(245,158,11,0.10),transparent_55%)]" />
         <div className="relative z-10">
           <p className="text-xs uppercase tracking-[0.35em] text-slate-400">
@@ -103,7 +103,7 @@ export default function NinetiesTimesCaseStudyPage() {
             {featurePillars.map((pillar) => (
               <div
                 key={pillar.title}
-                className="rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4 shadow-2xl"
+                className="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-[0_22px_60px_rgba(0,0,0,0.35)] backdrop-blur"
               >
                 <h2 className="text-base font-semibold text-white">
                   {pillar.title}
@@ -150,21 +150,21 @@ export default function NinetiesTimesCaseStudyPage() {
           the site into modern “news” spam.
         </p>
         <div className="mt-5 grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4">
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-[0_22px_60px_rgba(0,0,0,0.35)] backdrop-blur">
             <h3 className="text-sm font-semibold text-white">AI writer</h3>
             <p className="mt-2 text-sm text-slate-300">
               Admins can request new 90s-focused articles and Q&amp;A content on
               demand.
             </p>
           </div>
-          <div className="rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4">
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-[0_22px_60px_rgba(0,0,0,0.35)] backdrop-blur">
             <h3 className="text-sm font-semibold text-white">Scheduled series</h3>
             <p className="mt-2 text-sm text-slate-300">
               Recurring drops like “On This Day in the 90s” and “Blast From the
               Past” keep the archive feeling alive.
             </p>
           </div>
-          <div className="rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4">
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-[0_22px_60px_rgba(0,0,0,0.35)] backdrop-blur">
             <h3 className="text-sm font-semibold text-white">AI quizzes</h3>
             <p className="mt-2 text-sm text-slate-300">
               Generate quizzes by topic and type, then publish instantly or save
@@ -193,7 +193,7 @@ export default function NinetiesTimesCaseStudyPage() {
 
           <section>
             <h3 className="text-base font-semibold text-white">Architecture</h3>
-            <pre className="mt-3 overflow-x-auto rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4 text-xs text-slate-200">
+            <pre className="mt-3 overflow-x-auto rounded-3xl border border-white/10 bg-white/5 p-4 text-xs text-slate-200 shadow-[0_22px_60px_rgba(0,0,0,0.35)] backdrop-blur">
 {`Browser
   |
   |  HTTPS
@@ -253,7 +253,7 @@ PostgreSQL`}
               External APIs &amp; services
             </h3>
             <div className="mt-2 grid gap-4 lg:grid-cols-2">
-              <div className="rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-[0_22px_60px_rgba(0,0,0,0.35)] backdrop-blur">
                 <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
                   Backend (.NET)
                 </p>
@@ -270,7 +270,7 @@ PostgreSQL`}
                   <li>Google OAuth (sign-in/sign-up)</li>
                 </ul>
               </div>
-              <div className="rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-[0_22px_60px_rgba(0,0,0,0.35)] backdrop-blur">
                 <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
                   Frontend (Next.js + browser)
                 </p>
@@ -388,4 +388,3 @@ PostgreSQL`}
     </main>
   );
 }
-

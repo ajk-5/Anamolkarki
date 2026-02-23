@@ -11,8 +11,8 @@
   min-height:auto;
   padding:12px;
   margin:0;
-  color:#050505;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  color: var(--foreground);
+  font-family: inherit;
   background:#00000000;
   overscroll-behavior:contain;
   -webkit-tap-highlight-color:transparent;

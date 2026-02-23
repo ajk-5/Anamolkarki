@@ -3,11 +3,18 @@
 @import "tailwindcss/utilities";
 
 :root {
+  --stellar-blue: #5cc8ff;
+  --stellar-pink: #ff8fc7;
+  --stellar-purple: #b79cff;
+  --stellar-amber: #ffd36a;
+  --stellar-green: #66f0c7;
+
   --background: radial-gradient(1200px 900px at 10% -10%, rgba(56, 189, 248, 0.18), transparent 60%),
                 radial-gradient(900px 700px at 90% 0%, rgba(20, 184, 166, 0.16), transparent 55%),
                 radial-gradient(1000px 700px at 0% 85%, rgba(245, 158, 11, 0.12), transparent 60%),
                 linear-gradient(180deg, #05070f 0%, #0b1224 45%, #06080f 100%);
   --foreground: #e2e8f0;
+  --muted: rgba(226, 232, 240, 0.78);
   --grid-color: rgba(148, 163, 184, 0.08);
   --surface: rgba(10, 16, 30, 0.72);
   --surface-strong: rgba(8, 12, 24, 0.92);
@@ -112,7 +119,7 @@ h3,
   inset: 0; 
   pointer-events: none; 
   z-index: 0;
-  opacity: 0.06;
+  opacity: 0.025;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E");
 }
 
@@ -141,19 +148,19 @@ h3,
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-sky-300/60 bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-300 px-5 py-2 text-sm font-semibold text-slate-950 shadow-lg transition-all hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40;
+    @apply relative isolate inline-flex items-center justify-center gap-2 overflow-hidden rounded-2xl border border-white/35 bg-gradient-to-r from-sky-400 via-fuchsia-400 to-amber-300 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-[0_0_0_1px_rgba(255,255,255,0.22)_inset,0_24px_60px_rgba(15,23,42,0.55),0_0_70px_rgba(56,189,248,0.16)] transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.26)_inset,0_32px_80px_rgba(15,23,42,0.62),0_0_110px_rgba(244,114,182,0.22)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 disabled:opacity-60 disabled:cursor-not-allowed;
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700/70 bg-slate-950/60 px-5 py-2 text-sm font-semibold text-slate-100 transition-all hover:-translate-y-0.5 hover:border-sky-300/60 hover:text-sky-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40;
+    @apply relative isolate inline-flex items-center justify-center gap-2 overflow-hidden rounded-2xl border border-white/35 bg-white/10 px-5 py-2.5 text-sm font-semibold text-slate-50 shadow-[0_18px_45px_rgba(15,23,42,0.32)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/20 hover:text-white hover:border-white/55 hover:shadow-[0_26px_65px_rgba(15,23,42,0.45)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/45 disabled:opacity-60 disabled:cursor-not-allowed;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-transparent bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 transition-all hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40;
+    @apply relative isolate inline-flex items-center justify-center gap-2 overflow-hidden rounded-2xl border border-transparent bg-transparent px-4 py-2.5 text-sm font-semibold text-slate-100 shadow-[0_12px_30px_rgba(15,23,42,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/15 hover:text-white hover:shadow-[0_18px_45px_rgba(15,23,42,0.28)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 disabled:opacity-60 disabled:cursor-not-allowed;
   }
 
   .btn-icon {
-    @apply inline-flex items-center justify-center rounded-full border border-slate-700/70 bg-slate-950/70 p-2 text-slate-200 shadow-md transition-all hover:-translate-y-0.5 hover:border-sky-300/60 hover:text-sky-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40;
+    @apply relative isolate inline-flex items-center justify-center overflow-hidden rounded-full border border-white/35 bg-white/10 p-2 text-slate-50 shadow-[0_16px_38px_rgba(15,23,42,0.32)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/20 hover:border-white/55 hover:text-white hover:shadow-[0_22px_55px_rgba(15,23,42,0.46)] active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/45 disabled:opacity-60 disabled:cursor-not-allowed;
   }
 
   .btn-dot {
@@ -165,11 +172,82 @@ h3,
   }
 
   .input-field {
-    @apply w-full rounded-xl border border-slate-700/70 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-sky-300/70 focus:outline-none focus:ring-2 focus:ring-sky-500/20;
+    @apply w-full rounded-2xl border border-white/35 bg-white/15 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-200/75 shadow-[0_16px_36px_rgba(15,23,42,0.24)] focus:border-sky-200/65 focus:outline-none focus:ring-2 focus:ring-sky-200/40;
   }
 
   .card-surface {
-    @apply rounded-2xl border border-slate-800/70 bg-slate-950/70 shadow-2xl backdrop-blur;
+    @apply rounded-3xl border border-white/30 bg-white/15 shadow-[0_30px_80px_rgba(2,6,23,0.55),0_0_120px_rgba(56,189,248,0.1)] backdrop-blur backdrop-saturate-150;
+    background-image:
+      radial-gradient(circle at 10% 0%, rgba(56, 189, 248, 0.22), transparent 55%),
+      radial-gradient(circle at 100% 10%, rgba(244, 114, 182, 0.18), transparent 55%),
+      radial-gradient(circle at 100% 100%, rgba(251, 191, 36, 0.16), transparent 60%),
+      radial-gradient(circle at 0% 100%, rgba(34, 197, 94, 0.14), transparent 62%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.08));
+  }
+
+  .footer-link {
+    @apply inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-slate-200/90 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35;
+  }
+
+  .btn-chip {
+    @apply relative isolate inline-flex items-center justify-center overflow-hidden rounded-full border border-white/25 bg-white/5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-100 shadow-[0_12px_30px_rgba(15,23,42,0.18)] transition-all duration-200 no-tap-highlight hover:-translate-y-0.5 hover:bg-white/15 hover:border-white/45 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35;
+  }
+
+  .btn-chip-active {
+    @apply border-white/35 bg-gradient-to-r from-sky-400/25 via-white/10 to-fuchsia-400/25 text-white shadow-[0_18px_45px_rgba(15,23,42,0.28)];
+  }
+}
+
+/* Button micro-interactions (plain CSS keeps Tailwind @apply simple) */
+.btn-primary {
+  background-size: 220% 220%;
+  background-position: 0% 50%;
+}
+.btn-primary:hover {
+  background-position: 100% 50%;
+}
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.62) 45%, transparent 60%);
+  transform: translateX(-120%);
+  transition: transform 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  pointer-events: none;
+}
+.btn-primary:hover::before {
+  transform: translateX(120%);
+}
+
+.btn-outline::before,
+.btn-icon::before,
+.btn-chip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    rgba(56, 189, 248, 0.22),
+    rgba(244, 114, 182, 0.16),
+    rgba(34, 197, 94, 0.16)
+  );
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+.btn-outline:hover::before,
+.btn-icon:hover::before,
+.btn-chip:hover::before {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary {
+    background-position: 50% 50%;
+  }
+  .btn-primary::before {
+    display: none;
   }
 }
 

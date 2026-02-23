@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 // Dropdown items
 const dropdownItems = [
   { href: "/developer", label: "Développeur" },
-  { href: "/Bar", label: "Barman" },
+  { href: "/Bar", label: "Auto-entrepreneur" },
 ];
 
 // NavBar component
@@ -22,7 +22,7 @@ const NavBar: React.FC = () => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const selectedRole = pathname === "/Bar" ? "Barman" : "Développeur";
+  const selectedRole = pathname === "/Bar" ? "Auto-entrepreneur" : "Développeur";
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 p-2">

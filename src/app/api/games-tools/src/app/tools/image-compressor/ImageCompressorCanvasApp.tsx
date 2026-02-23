@@ -511,10 +511,10 @@ async function computePSNRAgainstOriginalFor(bm: ImageBitmap, out: Blob, bgColor
       <style>{`
         .app {
           color-scheme: dark;
-          min-height: 100vh;
-          background: #0a0a0b;
-          color: #f4f4f5;
-          font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+          min-height: auto;
+          background: transparent;
+          color: var(--foreground);
+          font-family: inherit;
         }
         .app *, .app *::before, .app *::after { box-sizing: border-box; }
         .app .container {

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import TealParticles from "@/components/TealParticle";
 import { MotionDiv } from "@/components/MotionDiv";
 import { Category, methods, materials, glasses, getVisualClass, categoryMeta } from "../barData";
 
@@ -12,27 +11,21 @@ export default function BarGallery() {
   const activeMeta = categoryMeta[activeTab];
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden text-slate-100">
-      <div className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(circle_at_15%_20%,rgba(56,189,248,0.12),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(20,184,166,0.12),transparent_35%),radial-gradient(circle_at_0%_90%,rgba(245,158,11,0.08),transparent_45%)]" />
-      <div className="pointer-events-none fixed inset-0 -z-10 opacity-25 bg-[linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(180deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:70px_70px]" />
-      <div className="pointer-events-none fixed inset-0 -z-30 mix-blend-soft-light">
-        <TealParticles particleCount={90} />
-      </div>
-
-      <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-16 pt-14 lg:px-8">
-        <section className="relative overflow-hidden rounded-3xl border border-slate-800/70 bg-slate-950/70 p-6 shadow-2xl">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(56,189,248,0.16),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(34,211,238,0.12),transparent_40%)]" />
+    <main className="text-slate-100">
+      <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-16 pt-10 lg:px-8">
+        <section className="card-surface relative overflow-hidden p-6 sm:p-8">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(140,201,240,0.16),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(239,168,176,0.12),transparent_40%)]" />
           <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 rounded-full border border-slate-700/70 bg-slate-950/70 px-3 py-1 text-xs uppercase tracking-[0.2em] text-slate-300">
-                Galerie barman
-                <span className="h-2 w-2 rounded-full bg-sky-300 shadow-[0_0_10px_rgba(56,189,248,0.8)]" />
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.2em] text-slate-200/80">
+                Galerie auto-entrepreneur
+                <span className="h-2 w-2 rounded-full bg-sky-200 shadow-[0_0_16px_rgba(140,201,240,0.7)]" />
               </div>
               <h1 className="text-3xl font-black leading-tight tracking-tight sm:text-4xl">Gestes, outils et verrerie</h1>
-              <p className="max-w-2xl text-slate-300">Micro-animations pour visualiser les techniques, le matériel et les verres. Passez la souris pour voir le cue.</p>
+              <p className="max-w-2xl text-slate-200/80">Micro-animations pour visualiser les techniques, le matériel et les verres. Passez la souris pour voir le cue.</p>
               <div className="flex flex-wrap gap-3">
                 <Link href="/Bar" className="btn-outline">
-                  Retour au portfolio barman
+                  Retour au portfolio auto-entrepreneur
                 </Link>
                 <Link href="/contact" className="btn-primary">
                   Réserver / Me contacter
@@ -43,18 +36,18 @@ export default function BarGallery() {
                   rel="noopener noreferrer"
                   className="btn-ghost"
                 >
-                  Télécharger le CV barman
+                  Télécharger le CV auto-entrepreneur
                 </Link>
               </div>
             </div>
-            <div className="flex gap-2 rounded-full border border-slate-700/70 bg-slate-950/70 p-1 text-xs shadow-lg">
+            <div className="flex gap-2 rounded-full border border-white/20 bg-white/5 p-1 text-xs shadow-lg">
               {(["methods", "materials", "glasses"] as Category[]).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`rounded-full px-3 py-1.5 uppercase tracking-[0.18em] transition ${
                     activeTab === tab
-                      ? "border border-sky-300/40 bg-sky-400/10 text-sky-100"
+                      ? "border border-sky-200/35 bg-white/10 text-white"
                       : "text-slate-400 hover:text-slate-200"
                   }`}
                 >
@@ -65,8 +58,8 @@ export default function BarGallery() {
           </div>
         </section>
 
-        <section className="rounded-3xl border border-slate-800/70 bg-slate-950/70 p-4 shadow-2xl backdrop-blur">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/60 pb-4">
+        <section className="card-surface p-4 sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
             <div>
               <div className="text-xs uppercase tracking-[0.16em] text-slate-400">Section active</div>
               <div className="text-lg font-semibold" style={{ color: activeMeta.accent }}>
@@ -75,8 +68,8 @@ export default function BarGallery() {
               <p className="text-sm text-slate-400">{activeMeta.subtitle}</p>
             </div>
             <div className="flex items-center gap-3 text-sm">
-              <div className="flex items-center gap-2 rounded-full border border-slate-800/70 bg-slate-950/60 px-3 py-1">
-                <span className="h-2 w-2 rounded-full bg-sky-300 shadow-[0_0_10px_rgba(56,189,248,0.8)]" />
+              <div className="flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1">
+                <span className="h-2 w-2 rounded-full bg-sky-200 shadow-[0_0_16px_rgba(140,201,240,0.6)]" />
                 {items.length} entrées
               </div>
             </div>
@@ -341,6 +334,6 @@ export default function BarGallery() {
         @keyframes generic-pulse { 0% { opacity: 0.8; transform: scale(0.96); } 100% { opacity: 1; transform: scale(1); }
         }
       `}</style>
-    </div>
+    </main>
   );
 }

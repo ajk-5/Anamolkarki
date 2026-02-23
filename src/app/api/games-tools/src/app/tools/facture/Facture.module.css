@@ -1,12 +1,12 @@
 .page {
-  color: #e5e7eb;
+  color: var(--foreground);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
 .loading {
-  color: #e5e7eb;
+  color: var(--foreground);
   padding: 2rem;
 }
 

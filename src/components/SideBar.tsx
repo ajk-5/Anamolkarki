@@ -69,7 +69,7 @@ export default function SideBar() {
         {/* Bar */}
         <nav
           className={[
-            "h-full rounded-2xl border border-slate-700/60 bg-slate-950/60 backdrop-blur-xl shadow-2xl",
+            "h-full rounded-2xl border border-white/20 bg-white/10 backdrop-blur-xl shadow-[0_22px_70px_rgba(2,6,23,0.55),0_0_90px_rgba(244,114,182,0.1)]",
             "transition-all duration-300 flex flex-col items-stretch overflow-hidden",
             widthClass,
           ].join(" ")}

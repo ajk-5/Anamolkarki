@@ -4,33 +4,43 @@ import { MotionDiv } from "@/components/MotionDiv";
 
 interface CVSectionProps {
   cvRef: React.RefObject<HTMLDivElement>;
+  variant?: "default" | "carousel";
 }
 
-const CVSection: React.FC<CVSectionProps> = ({ cvRef }) => {
+const CVSection: React.FC<CVSectionProps> = ({ cvRef, variant = "default" }) => {
+  const isCarousel = variant === "carousel";
   // Assuming the PDF is located at /public/cv/cv_ANAMOL_KARKI.pdf
   const cvUrl = "../cv/cv_ANAMOL_KARKI.pdf";
+  const secondaryButtonClass = isCarousel
+    ? "inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-300/80 bg-white/70 px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-[0_18px_45px_rgba(15,23,42,0.12)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-white hover:border-slate-400 hover:text-slate-950 hover:shadow-[0_22px_55px_rgba(15,23,42,0.16)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/40 disabled:opacity-60 disabled:cursor-not-allowed"
+    : "btn-outline";
 
   return (
     <section
       ref={cvRef}
-      className="py-12 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10 flex flex-col items-center justify-center"
+      className={variant === "carousel" ? "py-0 z-10" : "py-6 z-10"}
     >
-      <MotionDiv
-        className="text-2xl sm:text-4xl md:text-5xl font-semibold text-center mb-8 text-slate-100 uppercase tracking-[0.3em] font-display"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.4 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-      >
-        MON CV
-      </MotionDiv>
+      <div className="mx-auto max-w-6xl px-4">
+        {variant === "carousel" ? (
+          <h2 className="sr-only">Mon CV</h2>
+        ) : (
+          <MotionDiv
+            className="text-xl sm:text-2xl md:text-3xl font-semibold text-center mb-4 text-slate-100 uppercase tracking-[0.3em] font-display"
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            MON CV
+          </MotionDiv>
+        )}
 
       <MotionDiv
-        className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6"
-        initial={{ opacity: 0, y: 30 }}
+        className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
+        initial={{ opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.4 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
       >
         {/* Preview Button */}
         <a
@@ -41,8 +51,8 @@ const CVSection: React.FC<CVSectionProps> = ({ cvRef }) => {
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
+            width="18"
+            height="18"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -61,12 +71,12 @@ const CVSection: React.FC<CVSectionProps> = ({ cvRef }) => {
         <a
           href={cvUrl}
           download="Anamol_Jang_Karki_CV.pdf"
-          className="btn-outline"
+          className={secondaryButtonClass}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
+            width="18"
+            height="18"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -79,9 +89,10 @@ const CVSection: React.FC<CVSectionProps> = ({ cvRef }) => {
             <polyline points="7 10 12 15 17 10" />
             <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
-          Télécharger mon CV
+          Télécharger
         </a>
       </MotionDiv>
+      </div>
     </section>
   );
 };

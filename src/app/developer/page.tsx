@@ -1,17 +1,12 @@
 "use client";
 
-import { useState, useRef } from "react";
-import Link from "next/link";
-import TealParticles from "@/components/TealParticle";
-import PageShell from "@/components/PageShell";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import IntroSection from "@/components/IntroSection";
 import ProjectsSection from "@/components/ProjectsSection";
 import ExperiencesSection from "@/components/ExperienceSection";
 import EducationSection from "@/components/EducationSection";
 import SkillsSection from "@/components/SkillSection"; // keep for SOFT skills
 import ContactSection from "@/components/ContactSection";
-import CVSection from "@/components/CVSection";
-import MagneticButton from "@/components/MagneticButton";
 
 // Interfaces
 interface Intro {
@@ -47,8 +42,41 @@ interface Skill {
 }
 interface Skills {
   soft: Skill[];
-  tools: { name: string; icon: string }[];
 }
+
+const pageSections = [
+  { id: "intro", label: "Intro" },
+  { id: "projects", label: "Projects" },
+  { id: "experiences", label: "Experience" },
+  { id: "education", label: "Education" },
+  { id: "skills", label: "Skills" },
+  { id: "stack", label: "Stack" },
+  { id: "contact", label: "Contact" },
+] as const;
+
+type SectionId = (typeof pageSections)[number]["id"];
+
+const SECTION_ACCENTS = [
+  "from-sky-400/25 via-fuchsia-400/20 to-emerald-400/20",
+  "from-violet-400/25 via-sky-300/15 to-emerald-300/20",
+  "from-amber-300/25 via-rose-300/20 to-sky-300/20",
+  "from-emerald-300/25 via-cyan-300/15 to-sky-300/20",
+  "from-lime-300/25 via-emerald-300/15 to-teal-300/20",
+  "from-fuchsia-400/25 via-rose-300/20 to-amber-300/20",
+  "from-sky-400/25 via-emerald-300/20 to-amber-300/20",
+  "from-cyan-300/25 via-sky-300/20 to-fuchsia-400/20",
+] as const;
+
+const SECTION_CAROUSEL_GRADIENTS = [
+  "from-sky-300 via-fuchsia-300 to-violet-300",
+  "from-fuchsia-300 via-rose-300 to-amber-200",
+  "from-emerald-300 via-teal-300 to-sky-300",
+  "from-amber-300 via-orange-300 to-rose-300",
+  "from-violet-300 via-sky-300 to-emerald-200",
+  "from-rose-300 via-fuchsia-300 to-sky-300",
+  "from-lime-300 via-emerald-300 to-teal-200",
+  "from-sky-300 via-cyan-300 to-emerald-300",
+] as const;
 
 /* ------------------ DATA ------------------ */
 
@@ -174,7 +202,7 @@ const experiences: Experience[] = [
     ],
   },
   {
-    title: "BARMAN",
+    title: "AUTO-ENTREPRENEUR",
     location: "",
     period: "(2021 - 2025)",
     description: [
@@ -251,7 +279,6 @@ const skills: Skills = {
         "Je sais bien gérer mon temps et équilibrer ma vie scolaire et professionnelle...",
     },
   ],
-  tools: [], // not needed here; we’ll render a new technical section below
 };
 
 /* ---------- UNIFORM SVG BADGE GENERATOR ---------- */
@@ -331,17 +358,45 @@ const TECH = {
 
 /* ------------- PRESENTATIONAL COMPONENTS ------------- */
 
-function TechCard({ item }: { item: TechItem }) {
+function TechPill({
+  item,
+  tone = "dark",
+}: {
+  item: TechItem;
+  tone?: "dark" | "light";
+}) {
+  const isLight = tone === "light";
   return (
-    <div className="card-surface flex flex-col items-center justify-center gap-2 p-4 transition hover:-translate-y-1 hover:border-sky-300/60">
+    <div
+      className={[
+        "group flex items-center gap-3 rounded-full border px-3 py-2 transition hover:-translate-y-0.5",
+        isLight
+          ? "border-slate-200/80 bg-white/70 shadow-[0_12px_28px_rgba(15,23,42,0.08)] hover:bg-white hover:border-slate-300"
+          : "border-white/15 bg-white/5 backdrop-blur hover:border-white/25 hover:bg-white/10",
+      ].join(" ")}
+    >
       <div
-        className="svg-box w-14 h-14"
+        className="svg-box h-10 w-10 shrink-0"
         dangerouslySetInnerHTML={{ __html: item.icon }}
         aria-hidden
       />
-      <div className="text-center">
-        <div className="text-sm font-semibold text-slate-100">{item.name}</div>
-        <div className="text-[11px] text-slate-400">{item.subtitle}</div>
+      <div className="min-w-0">
+        <div
+          className={[
+            "truncate text-sm font-semibold",
+            isLight ? "text-slate-900" : "text-slate-100",
+          ].join(" ")}
+        >
+          {item.name}
+        </div>
+        <div
+          className={[
+            "hidden sm:block truncate text-[11px]",
+            isLight ? "text-slate-600" : "text-slate-200/60",
+          ].join(" ")}
+        >
+          {item.subtitle}
+        </div>
       </div>
     </div>
   );
@@ -350,8 +405,9 @@ function TechCard({ item }: { item: TechItem }) {
 type TabKey = "Langages" | "Frameworks" | "Bases de données" | "OS" | "Outils";
 const TAB_KEYS: TabKey[] = ["Langages", "Frameworks", "Bases de données", "OS", "Outils"];
 
-function TechStackSection() {
+function TechStackSection({ variant = "default" }: { variant?: "default" | "carousel" }) {
   const [active, setActive] = useState<TabKey>("Langages");
+  const isCarousel = variant === "carousel";
 
   const dataByTab: Record<TabKey, TechItem[]> = {
     "Langages": TECH.languages,
@@ -362,32 +418,46 @@ function TechStackSection() {
   };
 
   return (
-    <section className="relative py-12">
+    <section className={variant === "carousel" ? "relative py-0" : "relative py-6"}>
       <div className="mx-auto max-w-6xl px-4">
-        <h2 className="mb-6 text-2xl md:text-3xl font-semibold tracking-tight text-slate-100 font-display">
-          Stack technique
-        </h2>
+        {variant === "carousel" ? (
+          <h2 className="sr-only">Stack technique</h2>
+        ) : (
+          <h2 className="mb-4 text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight text-slate-100 font-display">
+            Stack technique
+          </h2>
+        )}
 
         {/* Tabs */}
-        <div className="mb-6 flex flex-wrap gap-2">
+        <div className="mb-4 flex flex-wrap gap-2">
           {TAB_KEYS.map((k) => (
             <button
               key={k}
               onClick={() => setActive(k)}
-              className={[
-                "text-xs uppercase tracking-[0.2em]",
-                active === k ? "btn-primary" : "btn-outline",
-              ].join(" ")}
+              className={
+                isCarousel
+                  ? [
+                      "inline-flex items-center justify-center rounded-full border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/40",
+                      active === k
+                        ? "border-slate-300 bg-white text-slate-950 shadow-[0_12px_28px_rgba(15,23,42,0.12)]"
+                        : "border-slate-200/80 bg-white/70 text-slate-700 shadow-[0_10px_24px_rgba(15,23,42,0.08)] hover:-translate-y-0.5 hover:bg-white hover:border-slate-300 hover:text-slate-900",
+                    ].join(" ")
+                  : ["btn-chip shrink-0", active === k ? "btn-chip-active" : ""].join(" ")
+              }
             >
               {k}
             </button>
           ))}
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        {/* Pills */}
+        <div className="flex flex-wrap gap-2">
           {dataByTab[active].map((item) => (
-            <TechCard key={`${active}-${item.name}`} item={item} />
+            <TechPill
+              key={`${active}-${item.name}`}
+              item={item}
+              tone={isCarousel ? "light" : "dark"}
+            />
           ))}
         </div>
       </div>
@@ -404,87 +474,443 @@ export default function Home() {
   const educationRef = useRef<HTMLDivElement>(null!);
   const skillsRef = useRef<HTMLDivElement>(null!);
   const contactRef = useRef<HTMLDivElement>(null!);
-  const cvRef = useRef<HTMLDivElement>(null!);
+
+  const carouselWrapperRef = useRef<HTMLDivElement>(null);
+  const carouselTrackRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
+  const wheelLockRef = useRef<number>(0);
+  const [activeSectionIndex, setActiveSectionIndex] = useState(0);
+  const activeSectionIndexRef = useRef(0);
+  activeSectionIndexRef.current = activeSectionIndex;
+  const [headerOffset, setHeaderOffset] = useState(0);
+  const [trackOffset, setTrackOffset] = useState(0);
+  const [dragX, setDragX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const swipeRef = useRef<{
+    pointerId: number | null;
+    startX: number;
+    startY: number;
+    active: boolean;
+  }>({
+    pointerId: null,
+    startX: 0,
+    startY: 0,
+    active: false,
+  });
+
+  const clampIndex = (index: number) =>
+    Math.max(0, Math.min(index, pageSections.length - 1));
+
+  const scrollToSectionIndex = (index: number) => {
+    setActiveSectionIndex(clampIndex(index));
+  };
+
+  const scrollToSection = (id: SectionId) => {
+    const index = pageSections.findIndex((s) => s.id === id);
+    if (index < 0) return;
+    scrollToSectionIndex(index);
+  };
+
+  const goPrev = () => setActiveSectionIndex((prev) => clampIndex(prev - 1));
+  const goNext = () => setActiveSectionIndex((prev) => clampIndex(prev + 1));
+
+  const handleCarouselKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "ArrowRight" || e.key === "PageDown") {
+      e.preventDefault();
+      goNext();
+    }
+    if (e.key === "ArrowLeft" || e.key === "PageUp") {
+      e.preventDefault();
+      goPrev();
+    }
+    if (e.key === "Home") {
+      e.preventDefault();
+      setActiveSectionIndex(0);
+    }
+    if (e.key === "End") {
+      e.preventDefault();
+      setActiveSectionIndex(pageSections.length - 1);
+    }
+  };
+
+  const updateCarousel = () => {
+    const wrapper = carouselWrapperRef.current;
+    const track = carouselTrackRef.current;
+    if (!wrapper || !track) return;
+
+    const cards = track.querySelectorAll<HTMLElement>("[data-carousel-card]");
+    const activeCard = cards[activeSectionIndexRef.current];
+    if (!activeCard) return;
+
+    const cardWidth = activeCard.offsetWidth;
+    const offset = activeCard.offsetLeft - (wrapper.clientWidth / 2 - cardWidth / 2);
+    setTrackOffset(offset);
+  };
+
+  const scheduleCarouselUpdate = () => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(updateCarousel);
+  };
+
+  useLayoutEffect(() => {
+    updateCarousel();
+  }, [activeSectionIndex, headerOffset]);
+
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "") as SectionId | "";
+    if (hash) {
+      const index = pageSections.findIndex((s) => s.id === hash);
+      if (index >= 0) setActiveSectionIndex(index);
+    }
+  }, []);
+
+  useEffect(() => {
+    scheduleCarouselUpdate();
+
+    const handleResize = () => scheduleCarouselUpdate();
+    window.addEventListener("resize", handleResize);
+    const wrapper = carouselWrapperRef.current;
+    const ro =
+      wrapper && "ResizeObserver" in window ? new ResizeObserver(handleResize) : null;
+    if (wrapper && ro) ro.observe(wrapper);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      ro?.disconnect();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    const id = pageSections[activeSectionIndex]?.id;
+    if (!id) return;
+    window.history.replaceState(null, "", `#${id}`);
+  }, [activeSectionIndex]);
+
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, []);
+
+  useEffect(() => {
+    const measure = () => {
+      const header = document.querySelector("header");
+      const height = header?.getBoundingClientRect().height ?? 0;
+      setHeaderOffset(height);
+    };
+
+    measure();
+    window.addEventListener("resize", measure);
+
+    const header = document.querySelector("header");
+    const ro = header && "ResizeObserver" in window ? new ResizeObserver(measure) : null;
+    if (header && ro) ro.observe(header);
+
+    return () => {
+      window.removeEventListener("resize", measure);
+      ro?.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    const onWheel = (event: WheelEvent) => {
+      if (event.ctrlKey) return; // allow zoom
+
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("[data-ignore-page-wheel]")) return;
+      const scrollArea = target?.closest<HTMLElement>("[data-card-scroll]");
+      if (scrollArea) {
+        const canScrollY = scrollArea.scrollHeight > scrollArea.clientHeight + 1;
+        if (canScrollY) {
+          const atTop = scrollArea.scrollTop <= 0;
+          const atBottom =
+            Math.ceil(scrollArea.scrollTop + scrollArea.clientHeight) >=
+            scrollArea.scrollHeight;
+          const scrollingUp = event.deltaY < 0;
+          const scrollingDown = event.deltaY > 0;
+
+          if ((scrollingUp && !atTop) || (scrollingDown && !atBottom)) {
+            return;
+          }
+        }
+      }
+
+      const delta =
+        Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+      if (Math.abs(delta) < 12) return;
+
+      const now = performance.now();
+      if (now - wheelLockRef.current < 520) {
+        event.preventDefault();
+        return;
+      }
+      wheelLockRef.current = now;
+
+      event.preventDefault();
+      if (delta > 0) goNext();
+      else goPrev();
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", onWheel as unknown as EventListener);
+    };
+  }, []);
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden text-slate-100">
-      <div className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(circle_at_15%_20%,rgba(56,189,248,0.12),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(20,184,166,0.12),transparent_35%),radial-gradient(circle_at_0%_90%,rgba(245,158,11,0.08),transparent_45%)]" />
-      <div className="pointer-events-none fixed inset-0 -z-10 opacity-25 bg-[linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(180deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:70px_70px]" />
-      <div className="pointer-events-none fixed inset-0 -z-30 mix-blend-soft-light">
-        <TealParticles particleCount={90} />
-      </div>
-      <div className="relative z-10">
-        {/* Hero banner */}
-        <section className="mx-auto mb-8 max-w-6xl px-4">
-          <div className="relative overflow-hidden rounded-3xl border border-slate-800/70 bg-slate-950/70 p-6 shadow-2xl">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(56,189,248,0.16),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(34,211,238,0.12),transparent_40%)]" />
-            <div className="relative z-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-              <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-slate-700/70 bg-slate-950/70 px-3 py-1 text-xs uppercase tracking-[0.2em] text-slate-300">
-                  <span className="inline-block h-2 w-2 rounded-full bg-sky-300 animate-float" />
-                  Full-Stack Developer | Web & Mobile
-                </div>
-                <h1 className="mt-3 text-3xl md:text-4xl font-semibold tracking-tight font-display">
-                  Crafting fast, elegant
-                  <span className="block text-sky-200">user experiences</span>
-                </h1>
-                <p className="mt-2 max-w-2xl text-slate-300">
-                  Next.js, ASP.NET, React Native, PostgreSQL, and more. Explore my work, stack, and experiences below.
-                </p>
-              </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <a
-                  href="/cv/cv_ANAMOL_KARKI.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-outline"
-                >
-                  View CV
-                </a>
-                <Link href="/contact">
-                  <MagneticButton>Contact Me</MagneticButton>
-                </Link>
-              </div>
+    <main
+      style={{ "--header-offset": `${headerOffset}px` } as React.CSSProperties}
+      className="developer-deck text-slate-950 flex h-[calc(100vh-var(--header-offset))] flex-col overflow-hidden"
+    >
+      <div className="relative flex-1 min-h-0">
+        <div className="h-full flex items-center justify-center px-4">
+          <div
+            ref={carouselWrapperRef}
+            onKeyDown={handleCarouselKeyDown}
+            onPointerDown={(event) => {
+              if (event.pointerType === "mouse" && event.button !== 0) return;
+              const target = event.target as HTMLElement | null;
+              if (!target) return;
+              if (target.closest("[data-card-scroll]")) return;
+              if (target.closest("a,button,input,textarea,select,label")) return;
+
+              swipeRef.current = {
+                pointerId: event.pointerId,
+                startX: event.clientX,
+                startY: event.clientY,
+                active: false,
+              };
+              setIsDragging(false);
+              setDragX(0);
+              event.currentTarget.setPointerCapture(event.pointerId);
+            }}
+            onPointerMove={(event) => {
+              const state = swipeRef.current;
+              if (state.pointerId !== event.pointerId) return;
+
+              const dx = event.clientX - state.startX;
+              const dy = event.clientY - state.startY;
+
+              if (!state.active) {
+                const absX = Math.abs(dx);
+                const absY = Math.abs(dy);
+                if (absX < 10 || absX < absY) return;
+                state.active = true;
+                setIsDragging(true);
+              }
+
+              event.preventDefault();
+              setDragX(Math.max(-380, Math.min(380, dx)));
+            }}
+            onPointerUp={(event) => {
+              const state = swipeRef.current;
+              if (state.pointerId !== event.pointerId) return;
+
+              const dx = event.clientX - state.startX;
+              if (state.active) {
+                if (dx < -70) goNext();
+                if (dx > 70) goPrev();
+              }
+
+              swipeRef.current = { pointerId: null, startX: 0, startY: 0, active: false };
+              setDragX(0);
+              setIsDragging(false);
+            }}
+            onPointerCancel={(event) => {
+              const state = swipeRef.current;
+              if (state.pointerId !== event.pointerId) return;
+              swipeRef.current = { pointerId: null, startX: 0, startY: 0, active: false };
+              setDragX(0);
+              setIsDragging(false);
+            }}
+            tabIndex={0}
+            role="region"
+            aria-label="Developer section carousel"
+            style={
+              {
+                "--carousel-card-w": "clamp(280px, 64vw, 760px)",
+                "--carousel-card-h": "min(600px, calc(100% - 20px))",
+                "--carousel-gap": "clamp(16px, 3vw, 30px)",
+                touchAction: "pan-y",
+              } as React.CSSProperties
+            }
+            className="relative h-full w-full max-w-[1100px] overflow-hidden flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+          >
+            <button
+              type="button"
+              onClick={goPrev}
+              disabled={activeSectionIndex <= 0}
+              aria-label="Previous section"
+              className="btn-icon absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-30 h-12 w-12 p-0"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+
+            <div
+              ref={carouselTrackRef}
+              className={[
+                "flex items-center gap-[var(--carousel-gap)] will-change-transform",
+                isDragging
+                  ? ""
+                  : "transition-transform duration-500 [transition-timing-function:cubic-bezier(.4,0,.2,1)]",
+              ].join(" ")}
+              style={{ transform: `translateX(${-(trackOffset) + dragX}px)` }}
+            >
+              {pageSections.map((s, index) => {
+                const active = index === activeSectionIndex;
+                const gradient =
+                  SECTION_CAROUSEL_GRADIENTS[index % SECTION_CAROUSEL_GRADIENTS.length];
+
+                return (
+                  <div
+                    key={s.id}
+                    data-carousel-card
+                    onClick={() => scrollToSectionIndex(index)}
+                    className={[
+                      "group relative flex-none w-[var(--carousel-card-w)] h-[var(--carousel-card-h)] overflow-hidden rounded-[28px] select-none transform-gpu",
+                      "transition-[transform,opacity,filter] duration-500 [transition-timing-function:cubic-bezier(.4,0,.2,1)]",
+                      active
+                        ? "cursor-default opacity-100 scale-[1.08] saturate-[1.05]"
+                        : "cursor-pointer opacity-45 scale-[0.78] blur-[0.2px] saturate-[0.85] hover:opacity-65 hover:scale-[0.86]",
+                      active
+                        ? "shadow-[0_26px_80px_rgba(2,6,23,0.55)]"
+                        : "shadow-[0_18px_55px_rgba(2,6,23,0.35)]",
+                    ].join(" ")}
+                  >
+                    <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`} />
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/0 to-transparent" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(255,255,255,0.28),transparent_55%),radial-gradient(circle_at_85%_75%,rgba(56,189,248,0.14),transparent_60%)]" />
+                    <div className="absolute inset-0 opacity-10 [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)] bg-[linear-gradient(90deg,rgba(255,255,255,0.28)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.22)_1px,transparent_1px)] bg-[size:28px_28px]" />
+                    <div className="absolute inset-0 ring-1 ring-white/25" />
+                    <div className="pointer-events-none absolute -inset-10 opacity-0 transition-opacity duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_30%_0%,rgba(255,255,255,0.22),transparent_55%)]" />
+                    <div className="pointer-events-none absolute -bottom-10 -right-6 rotate-[-8deg] font-display text-[clamp(72px,10vw,148px)] font-semibold tracking-tight text-slate-950/10 mix-blend-multiply">
+                      {s.label}
+                    </div>
+
+                    <div className="relative z-10 flex h-full flex-col p-4 sm:p-5">
+                      <div className="shrink-0 pb-3">
+                        <div className="inline-flex items-center gap-2 rounded-full border border-slate-950/15 bg-white/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-slate-950 shadow-[0_14px_40px_rgba(2,6,23,0.16)] backdrop-blur">
+                          <span>{s.label}</span>
+                          <span className="h-4 w-px bg-slate-950/15" aria-hidden />
+                          <span className="tabular-nums text-slate-700">
+                            {String(index + 1).padStart(2, "0")}/
+                            {String(pageSections.length).padStart(2, "0")}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="relative min-h-0 flex-1">
+                        <div className="pointer-events-none absolute inset-0 rounded-[22px] bg-white/90 backdrop-blur-xl ring-1 ring-slate-950/10 shadow-[0_22px_60px_rgba(2,6,23,0.18)]" />
+                        <div
+                          data-card-scroll
+                          className={[
+                            "relative h-full overflow-y-auto no-scrollbar pb-12",
+                            active ? "pointer-events-auto" : "pointer-events-none",
+                          ].join(" ")}
+                        >
+                        {s.id === "intro" && (
+                          <IntroSection intro={intro} introRef={introRef} variant="carousel" />
+                        )}
+                        {s.id === "projects" && (
+                          <ProjectsSection
+                            projects={projects}
+                            projectsRef={projectsRef}
+                            variant="compact"
+                          />
+                        )}
+                        {s.id === "experiences" && (
+                          <ExperiencesSection
+                            experiences={experiences}
+                            experiencesRef={experiencesRef}
+                            variant="carousel"
+                          />
+                        )}
+                        {s.id === "education" && (
+                          <EducationSection
+                            education={education}
+                            educationRef={educationRef}
+                            variant="carousel"
+                          />
+                        )}
+                        {s.id === "skills" && (
+                          <SkillsSection skills={skills} skillsRef={skillsRef} variant="carousel" />
+                        )}
+                        {s.id === "stack" && <TechStackSection variant="carousel" />}
+                        {s.id === "contact" && (
+                          <ContactSection contactRef={contactRef} variant="compact" />
+                        )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              onClick={goNext}
+              disabled={activeSectionIndex >= pageSections.length - 1}
+              aria-label="Next section"
+              className="btn-icon absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-30 h-12 w-12 p-0"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
+              {pageSections.map((s, index) => {
+                const active = index === activeSectionIndex;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => scrollToSectionIndex(index)}
+                    aria-label={`Go to ${s.label}`}
+                    aria-current={active ? "true" : undefined}
+                    className={active ? "btn-dot btn-dot-active" : "btn-dot"}
+                  />
+                );
+              })}
             </div>
           </div>
-        </section>
+        </div>
 
-
-        <div id="intro" className="scroll-mt-24" />
-        <PageShell className="mb-8">
-          <IntroSection intro={intro} introRef={introRef} />
-        </PageShell>
-        <div id="cv" className="scroll-mt-24" />
-        <PageShell className="mb-8"><CVSection cvRef={cvRef} /></PageShell>
-        <div id="projects" className="scroll-mt-24" />
-        <PageShell className="mb-8"><ProjectsSection projects={projects} projectsRef={projectsRef} /></PageShell>
-        <div id="experiences" className="scroll-mt-24" />
-        <PageShell className="mb-8">
-          <ExperiencesSection
-            experiences={experiences}
-            experiencesRef={experiencesRef}
-          />
-        </PageShell>
-        <div id="education" className="scroll-mt-24" />
-        <PageShell className="mb-8"><EducationSection education={education} educationRef={educationRef} /></PageShell>
-
-        <div id="skills" className="scroll-mt-24" />
-        <PageShell className="mb-8" >
-          <div ref={skillsRef} className="scroll-mt-24">
-            <SkillsSection skills={skills} skillsRef={skillsRef} />
-            <TechStackSection />
-          </div>
-        </PageShell>
-
-        <div id="contact" className="scroll-mt-24" />
-        <PageShell className="mb-8"><ContactSection contactRef={contactRef} /></PageShell>
       </div>
 
       <style jsx global>{`
         /* Make ANY injected svg uniform size */
         .svg-box svg {
-          width: 56px;
-          height: 56px;
+          width: 100%;
+          height: 100%;
           display: block;
         }
 
@@ -512,7 +938,7 @@ export default function Home() {
         .perspective-1000 { perspective: 1000px; }
         .translate-z-10 { transform: translateZ(10px); }
       `}</style>
-    </div>
+    </main>
   );
 }
 

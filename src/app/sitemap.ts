@@ -10,8 +10,6 @@ const routes = [
   { path: "/games", priority: 0.8 },
   { path: "/tools", priority: 0.8 },
   { path: "/contact", priority: 0.7 },
-  { path: "/Bar", priority: 0.6 },
-  { path: "/Bar/gallery", priority: 0.5 },
   { path: "/privacy", priority: 0.4 },
   { path: "/terms", priority: 0.4 },
   { path: "/cookies", priority: 0.4 },

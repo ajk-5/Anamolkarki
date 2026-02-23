@@ -1,6 +1,14 @@
 .main {
   padding: 1rem;
-  color: #e5e7eb;
+  color: var(--foreground);
+}
+
+.main h1 {
+  margin: 0 0 1rem;
+  font-size: 2rem;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .list {
@@ -19,12 +27,12 @@
 }
 
 .item {
-  border: 1px solid rgba(148, 163, 184, 0.18);
-  background: rgba(2, 6, 23, 0.6);
+  border: 1px solid var(--surface-border);
+  background: var(--surface);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   padding: 0.9rem;
-  border-radius: 14px;
+  border-radius: 18px;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   display: flex;
   align-items: stretch;
@@ -32,7 +40,7 @@
 
 .item:hover {
   transform: translateY(-2px);
-  border-color: rgba(56, 189, 248, 0.55);
+  border-color: rgba(140, 201, 240, 0.55);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
 }
 
@@ -46,18 +54,18 @@
   width: 100%;
 }
 .blockLink:focus-visible {
-  outline: 2px dashed rgba(56, 189, 248, 0.6);
+  outline: 2px dashed rgba(140, 201, 240, 0.65);
   outline-offset: 2px;
 }
 
 .iconWrap {
   width: 56px;
   height: 56px;
-  border-radius: 14px;
+  border-radius: 16px;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(34, 211, 238, 0.2));
-  color: #38bdf8;
+  background: linear-gradient(135deg, rgba(140, 201, 240, 0.22), rgba(239, 168, 176, 0.18));
+  color: rgba(140, 201, 240, 1);
   flex-shrink: 0;
 }
 
@@ -71,11 +79,11 @@
 .title {
   font-weight: 700;
   font-size: 1rem;
-  color: #e2e8f0;
+  color: var(--foreground);
 }
 
 .desc {
-  color: #94a3b8;
+  color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.35;
 }

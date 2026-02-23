@@ -74,20 +74,17 @@ export default function MagneticButton({
   const variantClasses = useMemo(() => {
     switch (variant) {
       case "outline":
-        return "bg-slate-950/30 border border-slate-700/70 text-slate-100 hover:border-sky-300/60 hover:text-sky-100 hover:bg-slate-900/60";
+        return "btn-outline";
       case "primary":
       default:
-        return "bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-300 text-slate-950 hover:brightness-105";
+        return "btn-primary";
     }
   }, [variant]);
 
   const baseClasses = [
-    "relative isolate rounded-xl font-semibold no-tap-highlight",
+    "relative isolate rounded-2xl font-semibold no-tap-highlight select-none",
     sizeClasses,
     variantClasses,
-    "transition-all duration-200 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40",
-    // tone down heavy shadows on mobile
-    "shadow-xl md:shadow-2xl",
     // mobile ergonomics
     "w-full md:w-auto min-h-[44px]",
     disabled ? "opacity-60 cursor-not-allowed" : "",
@@ -110,9 +107,9 @@ export default function MagneticButton({
     >
       <span className="relative z-10">{children}</span>
       {/* Reduce oversized glow on small screens */}
-      <span className="pointer-events-none absolute -inset-2 md:-inset-6 -z-10 rounded-2xl bg-gradient-to-r from-sky-500/25 via-cyan-400/20 to-emerald-400/25 blur-lg md:blur-2xl" />
+      <span className="pointer-events-none absolute -inset-2 md:-inset-6 -z-10 rounded-3xl bg-gradient-to-r from-sky-400/25 via-fuchsia-400/18 to-amber-300/20 blur-lg md:blur-2xl" />
       {/* Ripple container */}
-      <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
+      <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
         {ripples.map((rp) => (
           <span
             key={rp.id}

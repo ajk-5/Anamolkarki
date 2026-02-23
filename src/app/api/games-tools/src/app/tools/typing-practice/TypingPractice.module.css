@@ -1,10 +1,10 @@
 .main {
   --bg: #00000000;
-  --panel: rgba(255,255,255,0.06);
-  --panel-border: rgba(255,255,255,0.2);
-  --text: #e5e7eb;
-  --muted: #9ca3af;
-  --accent: #14b8a6;
+  --panel: var(--surface);
+  --panel-border: var(--surface-border);
+  --text: var(--foreground);
+  --muted: var(--muted);
+  --accent: var(--stellar-blue);
   --ok: #22c55e;
   --bad: #ef4444;
   --warn: #cd8f25;
@@ -65,10 +65,10 @@
 .controls input[type='text'],
 .controls textarea {
   width: 100%;
-  border: 1px solid #374151;
-  background: #0b1220;
+  border: 1px solid var(--panel-border);
+  background: rgba(0, 0, 0, 0.22);
   color: var(--text);
-  border-radius: 10px;
+  border-radius: 18px;
   padding: 10px 12px;
   outline: none;
 }
@@ -87,7 +87,7 @@
   flex: 1;
 }
 
-.button { border: 1px solid rgba(45,212,191,0.35); background: rgba(255,255,255,0.08); color: var(--text); padding: 10px 14px; border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.2); transition: transform .05s ease, filter .2s ease; }
+.button { border: 1px solid var(--panel-border); background: var(--panel); color: var(--text); padding: 10px 14px; border-radius: 18px; font-weight: 600; cursor: pointer; box-shadow: 0 10px 24px rgba(0,0,0,0.25); transition: transform .05s ease, filter .2s ease; }
 
 .button:hover {
   filter: brightness(1.1);
@@ -112,9 +112,9 @@
 }
 
 .stat {
-  background: #0b1220;
-  border: 1px solid #1f2937;
-  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--panel-border);
+  border-radius: 18px;
   padding: 12px;
   text-align: center;
 }

@@ -1,67 +1,34 @@
 "use client";
 
 import Link from "next/link";
-import TealParticles from "@/components/TealParticle";
 import { MotionDiv } from "@/components/MotionDiv";
 
-import { stats, qualifications, skills, languages, experiences } from "./resumeData";
+import { qualifications, skills, languages, experiences } from "./resumeData";
+
+const mapBarRoleToAutoEntrepreneur = (value: string) => {
+  const lower = value.trim().toLowerCase();
+  if (lower === "barman") return "Auto-entrepreneur";
+  if (lower === "barman mixologue") return "Auto-entrepreneur (mixologie)";
+  if (lower === "barman cocktail") return "Auto-entrepreneur (cocktails)";
+  return value;
+};
 
 export default function BarPortfolio() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden text-slate-100">
-      <div className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(circle_at_15%_20%,rgba(56,189,248,0.12),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(20,184,166,0.12),transparent_35%),radial-gradient(circle_at_0%_90%,rgba(245,158,11,0.08),transparent_45%)]" />
-      <div className="pointer-events-none fixed inset-0 -z-10 opacity-25 bg-[linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(180deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:70px_70px]" />
-      <div className="pointer-events-none fixed inset-0 -z-30 mix-blend-soft-light">
-        <TealParticles particleCount={90} />
-      </div>
-
-      <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-16 pt-14 lg:px-8">
+    <main className="text-slate-100">
+      <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-16 pt-10 lg:px-8">
         {/* Hero */}
-        <section id="intro" className="relative overflow-hidden rounded-3xl border border-slate-800/70 bg-slate-950/70 p-6 shadow-2xl">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(56,189,248,0.16),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(34,211,238,0.12),transparent_40%)]" />
+        <section id="intro" className="card-surface relative overflow-hidden p-6 sm:p-8">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(140,201,240,0.16),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(239,168,176,0.12),transparent_40%)]" />
           <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 rounded-full border border-slate-700/70 bg-slate-950/70 px-3 py-1 text-xs uppercase tracking-[0.2em] text-slate-300">
-                Barman Portfolio
-                <span className="h-2 w-2 rounded-full bg-sky-300 shadow-[0_0_10px_rgba(56,189,248,0.8)]" />
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.2em] text-slate-200/80">
+                Auto-entrepreneur
+                <span className="h-2 w-2 rounded-full bg-sky-200 shadow-[0_0_16px_rgba(140,201,240,0.7)]" />
               </div>
               <h1 className="text-3xl font-black leading-tight tracking-tight sm:text-4xl lg:text-5xl">
-                Service, mixologie, et expérience client
+                Auto-entrepreneur
               </h1>
-              <p className="max-w-2xl text-slate-300">
-                Barman et mixologue mobile à Paris et Île-de-France. Spécialisé en cocktails classiques et créations, habitué aux rushs, aux événements et aux shifts tardifs.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  href="/Bar/gallery"
-                  className="btn-outline"
-                >
-                  Voir la galerie
-                </Link>
-                <Link
-                  href="/contact"
-                  className="btn-primary"
-                >
-                  Réserver / Me contacter
-                </Link>
-                <Link
-                  href="/cv/cv_bar_ANAMOL_KARKI.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-ghost"
-                >
-                  Télécharger le CV barman (PDF)
-                </Link>
-              </div>
-            </div>
-            <div className="grid w-full max-w-sm grid-cols-2 gap-3 lg:max-w-md">
-              {stats.map((s) => (
-                <div key={s.label} className="rounded-2xl border border-slate-800/70 bg-slate-950/70 px-4 py-3 text-sm shadow-2xl backdrop-blur">
-                  <div className="text-[11px] uppercase tracking-[0.12em] text-slate-400">{s.label}</div>
-                  <div className="mt-1 text-2xl font-bold text-white">{s.value}</div>
-                  <div className="text-[12px] text-slate-400">{s.detail}</div>
-                </div>
-              ))}
             </div>
           </div>
         </section>
@@ -84,7 +51,7 @@ export default function BarPortfolio() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
               >
-                {q}
+                {mapBarRoleToAutoEntrepreneur(q)}
               </MotionDiv>
             ))}
           </div>
@@ -103,7 +70,7 @@ export default function BarPortfolio() {
             {skills.map((s) => (
               <MotionDiv
                 key={s}
-                className="rounded-2xl border border-slate-800/60 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 text-sm text-slate-100 shadow-[0_10px_40px_rgba(0,0,0,0.35)]"
+                className="card-surface p-4 text-sm text-slate-100"
                 initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
@@ -140,7 +107,7 @@ export default function BarPortfolio() {
               <h2 className="text-2xl font-extrabold sm:text-3xl">Établissements servis</h2>
               <p className="text-sm text-slate-300">Événementiel, brasseries, restaurants gastronomiques, bars et clubs.</p>
             </div>
-            <div className="rounded-full border border-slate-800 bg-slate-900/60 px-3 py-2 text-xs text-slate-300">
+            <div className="rounded-full border border-white/20 bg-white/5 px-3 py-2 text-xs text-slate-200/80">
               {experiences.length} missions répertoriées
             </div>
           </div>
@@ -148,13 +115,13 @@ export default function BarPortfolio() {
             {experiences.map((exp, index) => (
               <MotionDiv
                 key={`${exp.establishment}-${index}`}
-                className="rounded-2xl border border-slate-800/60 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 shadow-[0_12px_48px_rgba(0,0,0,0.35)]"
+                className="card-surface p-4"
                 initial={{ opacity: 0, y: 18 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
               >
                 <h3 className="text-lg font-semibold text-white">
-                  {exp.role} · {exp.establishment}
+                  {mapBarRoleToAutoEntrepreneur(exp.role)} · {exp.establishment}
                 </h3>
                 <p className="text-sm text-slate-300">{exp.type}</p>
                 <p className="text-sm text-slate-400">{exp.location}</p>
@@ -168,7 +135,7 @@ export default function BarPortfolio() {
         </section>
 
         {/* Gallery CTA */}
-        <section className="rounded-3xl border border-slate-800/70 bg-slate-950/70 p-6 shadow-2xl backdrop-blur flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <section className="card-surface p-6 sm:p-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="text-xs uppercase tracking-[0.2em] text-slate-400">Galerie dédiée</div>
             <h4 className="text-xl font-bold text-white">Techniques, outils et verrerie</h4>
@@ -182,6 +149,6 @@ export default function BarPortfolio() {
           </Link>
         </section>
       </div>
-    </div>
+    </main>
   );
 }
