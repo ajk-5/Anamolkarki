@@ -25,6 +25,7 @@ interface Project {
   role: string;
   period: string;
   description: string[];
+  caseStudyHref?: string;
 }
 interface Experience {
   title: string;
@@ -73,6 +74,7 @@ const intro: Intro = {
 const projects: Project[] = [
   {
     title: "90STIMES.COM : THE NINETIES TIMES",
+    caseStudyHref: "/90stimes.com",
     role: "Chef de projet/Développeur",
     period: "FÉVRIER 2025 - JUILLET 2025",
     description: [

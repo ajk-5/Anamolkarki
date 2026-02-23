@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Link from "next/link";
 import { MotionDiv } from "@/components/MotionDiv";
 
 interface Project {
@@ -8,6 +9,8 @@ interface Project {
   role: string;
   period: string;
   description: string[];
+  caseStudyHref?: string;
+  liveUrl?: string;
 }
 
 interface ProjectsSectionProps {
@@ -26,7 +29,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, projectsRef
     if (upperTitle.includes("ECONOMITIENS")) return "https://github.com/ajk-5/E-CONOMITIENS";
     if (upperTitle.includes("ESIEACCASION")) return "https://github.com/ajk-5/Accassion";
     if (upperTitle.includes("ASTAVOID")) return "https://astavoid.anamolkarki.com";
-    if (upperTitle.includes("90STIMES") || upperTitle.includes("NINETIES")) return "https://90stimes.com";
+    if (upperTitle.includes("90STIMES") || upperTitle.includes("NINETIES")) return "https://www.90stimes.com";
     return "";
   };
 
@@ -97,7 +100,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, projectsRef
           }}
         >
           {projects.map((project, index) => {
-            const projectLink = getProjectLink(project.title);
+            const projectLink = project.liveUrl ?? getProjectLink(project.title);
             return (
               <MotionDiv
                 key={index}
@@ -110,7 +113,16 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, projectsRef
                 <h3
                   className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-slate-100 mb-1 uppercase tracking-tight"
                 >
-                  {project.title}
+                  {project.caseStudyHref ? (
+                    <Link
+                      href={project.caseStudyHref}
+                      className="hover:text-sky-100 transition-colors"
+                    >
+                      {project.title}
+                    </Link>
+                  ) : (
+                    project.title
+                  )}
                 </h3>
                 {projectLink && (
                   <a
@@ -119,7 +131,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, projectsRef
                     rel="noopener noreferrer"
                     className="block text-xs sm:text-sm text-sky-200 hover:text-sky-100 underline mb-3"
                   >
-                    {projectLink}
+                    Live site: {projectLink}
                   </a>
                 )}
                 <p className="text-[10px] sm:text-xs md:text-sm lg:text-base italic text-slate-300">
