@@ -419,7 +419,7 @@ function TechStackSection({ variant = "default" }: { variant?: "default" | "caro
 
   return (
     <section className={variant === "carousel" ? "relative py-0" : "relative py-6"}>
-      <div className="mx-auto max-w-6xl px-4">
+      <div className="mx-auto max-w-6xl px-3 sm:px-4">
         {variant === "carousel" ? (
           <h2 className="sr-only">Stack technique</h2>
         ) : (
@@ -621,6 +621,7 @@ export default function Home() {
 
       const target = event.target as HTMLElement | null;
       if (target?.closest("[data-ignore-page-wheel]")) return;
+      if (target?.closest("[data-nested-carousel]")) return;
       const scrollArea = target?.closest<HTMLElement>("[data-card-scroll]");
       if (scrollArea) {
         const canScrollY = scrollArea.scrollHeight > scrollArea.clientHeight + 1;
@@ -666,7 +667,7 @@ export default function Home() {
       className="developer-deck text-slate-950 flex h-[calc(100vh-var(--header-offset))] flex-col overflow-hidden"
     >
       <div className="relative flex-1 min-h-0">
-        <div className="h-full flex items-center justify-center px-4">
+        <div className="h-full flex items-center justify-center px-2 sm:px-4">
           <div
             ref={carouselWrapperRef}
             onKeyDown={handleCarouselKeyDown}
@@ -731,9 +732,9 @@ export default function Home() {
             aria-label="Developer section carousel"
             style={
               {
-                "--carousel-card-w": "clamp(280px, 64vw, 760px)",
-                "--carousel-card-h": "min(600px, calc(100% - 20px))",
-                "--carousel-gap": "clamp(16px, 3vw, 30px)",
+                "--carousel-card-w": "clamp(260px, 90vw, 760px)",
+                "--carousel-card-h": "clamp(360px, calc(100% - 16px), 600px)",
+                "--carousel-gap": "clamp(12px, 3.4vw, 30px)",
                 touchAction: "pan-y",
               } as React.CSSProperties
             }
@@ -744,7 +745,7 @@ export default function Home() {
               onClick={goPrev}
               disabled={activeSectionIndex <= 0}
               aria-label="Previous section"
-              className="btn-icon absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-30 h-12 w-12 p-0"
+              className="btn-icon absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 h-10 w-10 sm:h-12 sm:w-12 p-0"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -786,8 +787,8 @@ export default function Home() {
                       "group relative flex-none w-[var(--carousel-card-w)] h-[var(--carousel-card-h)] overflow-hidden rounded-[28px] select-none transform-gpu",
                       "transition-[transform,opacity,filter] duration-500 [transition-timing-function:cubic-bezier(.4,0,.2,1)]",
                       active
-                        ? "cursor-default opacity-100 scale-[1.08] saturate-[1.05]"
-                        : "cursor-pointer opacity-45 scale-[0.78] blur-[0.2px] saturate-[0.85] hover:opacity-65 hover:scale-[0.86]",
+                        ? "cursor-default opacity-100 scale-[1.02] sm:scale-[1.08] saturate-[1.05]"
+                        : "cursor-pointer opacity-70 sm:opacity-45 scale-[0.9] sm:scale-[0.78] sm:blur-[0.2px] saturate-[0.9] hover:opacity-80 hover:scale-[0.94] sm:hover:opacity-65 sm:hover:scale-[0.86]",
                       active
                         ? "shadow-[0_26px_80px_rgba(2,6,23,0.55)]"
                         : "shadow-[0_18px_55px_rgba(2,6,23,0.35)]",
@@ -799,11 +800,11 @@ export default function Home() {
                     <div className="absolute inset-0 opacity-10 [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)] bg-[linear-gradient(90deg,rgba(255,255,255,0.28)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.22)_1px,transparent_1px)] bg-[size:28px_28px]" />
                     <div className="absolute inset-0 ring-1 ring-white/25" />
                     <div className="pointer-events-none absolute -inset-10 opacity-0 transition-opacity duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_30%_0%,rgba(255,255,255,0.22),transparent_55%)]" />
-                    <div className="pointer-events-none absolute -bottom-10 -right-6 rotate-[-8deg] font-display text-[clamp(72px,10vw,148px)] font-semibold tracking-tight text-slate-950/10 mix-blend-multiply">
+                    <div className="pointer-events-none absolute -bottom-10 -right-6 rotate-[-8deg] font-display text-[clamp(72px,10vw,148px)] font-semibold tracking-tight text-slate-950/15 mix-blend-multiply">
                       {s.label}
                     </div>
 
-                    <div className="relative z-10 flex h-full flex-col p-4 sm:p-5">
+                    <div className="relative z-10 flex h-full flex-col p-3 sm:p-5">
                       <div className="shrink-0 pb-3">
                         <div className="inline-flex items-center gap-2 rounded-full border border-slate-950/15 bg-white/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-slate-950 shadow-[0_14px_40px_rgba(2,6,23,0.16)] backdrop-blur">
                           <span>{s.label}</span>
@@ -816,11 +817,11 @@ export default function Home() {
                       </div>
 
                       <div className="relative min-h-0 flex-1">
-                        <div className="pointer-events-none absolute inset-0 rounded-[22px] bg-white/90 backdrop-blur-xl ring-1 ring-slate-950/10 shadow-[0_22px_60px_rgba(2,6,23,0.18)]" />
+                        <div className="pointer-events-none absolute inset-0 rounded-[22px] bg-white/70 backdrop-blur-2xl ring-1 ring-slate-950/10 shadow-[0_22px_60px_rgba(2,6,23,0.18)]" />
                         <div
                           data-card-scroll
                           className={[
-                            "relative h-full overflow-y-auto no-scrollbar pb-12",
+                            "relative h-full overflow-y-auto overflow-x-hidden no-scrollbar pb-12",
                             active ? "pointer-events-auto" : "pointer-events-none",
                           ].join(" ")}
                         >
@@ -868,7 +869,7 @@ export default function Home() {
               onClick={goNext}
               disabled={activeSectionIndex >= pageSections.length - 1}
               aria-label="Next section"
-              className="btn-icon absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-30 h-12 w-12 p-0"
+              className="btn-icon absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 h-10 w-10 sm:h-12 sm:w-12 p-0"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

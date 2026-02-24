@@ -60,7 +60,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({
 
     return (
       <section ref={contactRef} className="py-0 z-10">
-        <div className="mx-auto max-w-6xl px-4">
+        <div className="mx-auto max-w-6xl px-3 sm:px-4">
           <h2 className="sr-only">Contact</h2>
 
           <MotionDiv

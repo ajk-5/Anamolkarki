@@ -24,11 +24,11 @@ const IntroSection: React.FC<IntroSectionProps> = ({
   const isCarousel = variant === "carousel";
 
   return (
-    <section ref={introRef} className="py-6">
-      <div className="mx-auto max-w-6xl px-4">
-        <div className="grid items-center gap-6 md:grid-cols-[1.25fr_0.75fr]">
+    <section ref={introRef} className={isCarousel ? "py-4 sm:py-6" : "py-6"}>
+      <div className={isCarousel ? "mx-auto max-w-6xl px-3 sm:px-4" : "mx-auto max-w-6xl px-4"}>
+        <div className="grid items-center gap-4 sm:gap-6 md:grid-cols-[1.25fr_0.75fr]">
         <MotionDiv
-          className="space-y-3 text-center md:text-left"
+          className="space-y-2 sm:space-y-3 text-center md:text-left"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}

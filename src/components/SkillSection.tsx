@@ -31,7 +31,7 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
 
   return (
     <section ref={skillsRef} className={variant === "carousel" ? "py-0 z-10" : "py-6 z-10"}>
-      <div className="mx-auto max-w-6xl px-4">
+      <div className="mx-auto max-w-6xl px-3 sm:px-4">
         {variant === "carousel" ? (
           <h2 className="sr-only">Compétences</h2>
         ) : (
@@ -51,7 +51,7 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
             className={[
               "rounded-3xl border p-3 backdrop-blur",
               isCarousel
-                ? "border-slate-200/70 bg-white/70 shadow-[0_18px_50px_rgba(2,6,23,0.12)]"
+                ? "border-slate-200/70 bg-white/55 shadow-[0_18px_50px_rgba(2,6,23,0.12)]"
                 : "border-white/15 bg-white/5",
             ].join(" ")}
           >
@@ -78,7 +78,7 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
                             "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/40",
                             active
                               ? "border-slate-300 bg-white text-slate-950 shadow-[0_12px_28px_rgba(15,23,42,0.12)]"
-                              : "border-slate-200/80 bg-white/70 text-slate-700 shadow-[0_10px_24px_rgba(15,23,42,0.08)] hover:-translate-y-0.5 hover:bg-white hover:border-slate-300 hover:text-slate-900",
+                              : "border-slate-200/80 bg-white/55 text-slate-700 shadow-[0_10px_24px_rgba(15,23,42,0.08)] hover:-translate-y-0.5 hover:bg-white hover:border-slate-300 hover:text-slate-900",
                             "[&_svg]:h-4 [&_svg]:w-4 [&_svg]:stroke-current",
                           ].join(" ")
                         : [
@@ -102,9 +102,9 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
 
           <div
             className={[
-              "relative overflow-hidden rounded-3xl border p-4 backdrop-blur",
+              "relative overflow-hidden rounded-3xl border p-3 sm:p-4 backdrop-blur",
               isCarousel
-                ? "border-slate-200/70 bg-white/80 shadow-[0_18px_50px_rgba(2,6,23,0.12)]"
+                ? "border-slate-200/70 bg-white/65 shadow-[0_18px_50px_rgba(2,6,23,0.12)]"
                 : "border-white/15 bg-white/5",
             ].join(" ")}
           >

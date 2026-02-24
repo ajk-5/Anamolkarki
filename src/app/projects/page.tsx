@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef } from "react";
-import PageShell from "@/components/PageShell";
 import ProjectsSection from "@/components/ProjectsSection";
 
 type Project = {
@@ -72,6 +71,31 @@ const projects: Project[] = [
     description: [
       "Application desktop",
       "Technologies : C#, WPF (MVVM), XAML, MySQL, Arduino, UML",
+      "Surveillance de la consommation d'Ã©nergie",
+      "Gestion agile via la mÃ©thode Scrum",
+      "Livraison rapide et adaptÃ©e aux besoins",
+    ],
+  },
+  {
+    title: "ESIEACCASION : SECOND-HAND MARKETPLACE",
+    role: "Chef de projet/DÃ©veloppeur",
+    period: "SEPTEMBRE 2023 - FÃ‰VRIER 2024",
+    description: [
+      "Plateforme en ligne pour articles d'occasion",
+      "Technologies : PHP, MySQL, HTML/CSS, modÃ¨le MVC",
+      "SystÃ¨me de messagerie pour les Ã©changes",
+      "FonctionnalitÃ© d'Ã©valuation pour la confiance",
+    ],
+  },
+  {
+    title: "ASTAVOID : JEU DES MINES",
+    role: "Chef de projet/DÃ©veloppeur",
+    period: "MARS 2023 - JUILLET 2023",
+    description: [
+      "Jeu interactif sur le web",
+      "Technologies : JavaScript, Node.js, HTML, CSS, Nunjucks",
+      "ThÃ¨me spatial avec astÃ©roÃ¯des",
+      "ExpÃ©rience immersive",
     ],
   },
 ];
@@ -81,9 +105,7 @@ export default function ProjectsPage() {
 
   return (
     <main>
-      <PageShell>
-        <ProjectsSection projects={projects} projectsRef={projectsRef} />
-      </PageShell>
+      <ProjectsSection projects={projects} projectsRef={projectsRef} />
     </main>
   );
 }

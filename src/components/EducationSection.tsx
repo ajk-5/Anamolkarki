@@ -25,7 +25,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
 
   return (
     <section ref={educationRef} className={variant === "carousel" ? "py-0 z-10" : "py-6 z-10"}>
-      <div className="mx-auto max-w-6xl px-4">
+      <div className="mx-auto max-w-6xl px-3 sm:px-4">
         {variant === "carousel" ? (
           <h2 className="sr-only">Éducation</h2>
         ) : (
