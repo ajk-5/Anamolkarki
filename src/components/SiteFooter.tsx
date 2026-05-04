@@ -5,7 +5,9 @@ import { usePathname } from "next/navigation";
 
 export default function SiteFooter() {
   const pathname = usePathname();
-  if (pathname.startsWith("/developer")) return null;
+  const immersive =
+    pathname === "/" || pathname.startsWith("/developer") || pathname.startsWith("/projects");
+  if (immersive) return null;
 
   return (
     <footer className="relative z-10 px-4 pb-[calc(28px+var(--safe-bottom))]">

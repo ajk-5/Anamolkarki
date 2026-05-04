@@ -28,6 +28,22 @@ const palette = [
   "from-rose-300 via-orange-300 to-amber-200",
 ];
 
+function getActiveCardOffset(
+  wrapper: HTMLDivElement | null,
+  track: HTMLDivElement | null,
+  selector: string,
+  activeIndex: number
+) {
+  if (!wrapper || !track) return null;
+
+  const cards = track.querySelectorAll<HTMLElement>(selector);
+  const activeCard = cards[activeIndex];
+  if (!activeCard) return null;
+
+  const cardWidth = activeCard.offsetWidth;
+  return activeCard.offsetLeft - (wrapper.clientWidth / 2 - cardWidth / 2);
+}
+
 function getProjectLink(title: string): string {
   const upperTitle = title.toUpperCase();
   if (upperTitle.includes("NAVXPERT")) return "https://navxpert.anamolkarki.com";
@@ -49,10 +65,8 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   const carouselWrapperRef = useRef<HTMLDivElement>(null);
   const carouselTrackRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
+  const wheelLockRef = useRef<number>(0);
   const [activeProjectIndex, setActiveProjectIndex] = useState(0);
-  const activeProjectIndexRef = useRef(0);
-  activeProjectIndexRef.current = activeProjectIndex;
-
   const [trackOffset, setTrackOffset] = useState(0);
   const [dragX, setDragX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -69,6 +83,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   });
 
   const clampIndex = (index: number) => Math.max(0, Math.min(index, projects.length - 1));
+  const clampedActiveProjectIndex = clampIndex(activeProjectIndex);
 
   const scrollToProjectIndex = (index: number) => {
     setActiveProjectIndex(clampIndex(index));
@@ -97,34 +112,30 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
     }
   };
 
-  const updateCarousel = () => {
-    const wrapper = carouselWrapperRef.current;
-    const track = carouselTrackRef.current;
-    if (!wrapper || !track) return;
-
-    const cards = track.querySelectorAll<HTMLElement>("[data-project-card]");
-    const activeCard = cards[activeProjectIndexRef.current];
-    if (!activeCard) return;
-
-    const cardWidth = activeCard.offsetWidth;
-    const offset = activeCard.offsetLeft - (wrapper.clientWidth / 2 - cardWidth / 2);
-    setTrackOffset(offset);
-  };
-
-  const scheduleCarouselUpdate = () => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(updateCarousel);
-  };
-
   useLayoutEffect(() => {
-    updateCarousel();
-  }, [activeProjectIndex, projects.length]);
+    const offset = getActiveCardOffset(
+      carouselWrapperRef.current,
+      carouselTrackRef.current,
+      "[data-project-card]",
+      clampedActiveProjectIndex
+    );
+    if (offset !== null) setTrackOffset(offset);
+  }, [clampedActiveProjectIndex, projects.length]);
 
   useEffect(() => {
-    setActiveProjectIndex((prev) => clampIndex(prev));
-  }, [projects.length]);
+    const scheduleCarouselUpdate = () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        const offset = getActiveCardOffset(
+          carouselWrapperRef.current,
+          carouselTrackRef.current,
+          "[data-project-card]",
+          clampedActiveProjectIndex
+        );
+        if (offset !== null) setTrackOffset(offset);
+      });
+    };
 
-  useEffect(() => {
     scheduleCarouselUpdate();
 
     const handleResize = () => scheduleCarouselUpdate();
@@ -139,15 +150,15 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
       ro?.disconnect();
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, []);
+  }, [clampedActiveProjectIndex]);
 
   const cardWidth = isCompact
-    ? "clamp(240px, 76vw, 420px)"
-    : "clamp(260px, 62vw, 540px)";
+    ? "clamp(260px, 86vw, 380px)"
+    : "clamp(260px, 58vw, 520px)";
   const cardHeight = isCompact
-    ? "clamp(320px, 70vw, 460px)"
-    : "clamp(340px, 58vw, 560px)";
-  const cardGap = isCompact ? "clamp(12px, 3.2vw, 26px)" : "clamp(14px, 3.4vw, 30px)";
+    ? "clamp(420px, 82vh, 540px)"
+    : "clamp(320px, 50vw, 560px)";
+  const cardGap = isCompact ? "clamp(12px, 3.4vw, 22px)" : "clamp(12px, 3vw, 26px)";
 
   const navBtnClassName = [
     "absolute top-1/2 -translate-y-1/2 z-20 inline-flex items-center justify-center rounded-full border border-white/60 bg-white/80 text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.2)] transition-all duration-200",
@@ -161,7 +172,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
       ref={projectsRef}
       className={
         isCompact
-          ? "py-0 z-10"
+          ? "py-2 px-2 sm:px-3 z-10"
           : "py-12 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10"
       }
     >
@@ -182,8 +193,63 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
       <div className={isCompact ? "relative mx-auto w-full max-w-5xl" : "relative mx-auto w-full max-w-6xl"}>
         <div
           data-nested-carousel
+          data-edge={
+            clampedActiveProjectIndex <= 0
+              ? "start"
+              : clampedActiveProjectIndex >= projects.length - 1
+                ? "end"
+                : "middle"
+          }
           ref={carouselWrapperRef}
           onKeyDown={handleCarouselKeyDown}
+          onWheel={(event) => {
+            if (event.ctrlKey) return; // allow zoom
+            if (projects.length <= 1) return;
+
+            const target = event.target as HTMLElement | null;
+            const scrollArea = target?.closest<HTMLElement>("[data-project-scroll]");
+            if (scrollArea) {
+              const canScrollY = scrollArea.scrollHeight > scrollArea.clientHeight + 1;
+              if (canScrollY) {
+                const atTop = scrollArea.scrollTop <= 0;
+                const atBottom =
+                  Math.ceil(scrollArea.scrollTop + scrollArea.clientHeight) >=
+                  scrollArea.scrollHeight;
+                const scrollingUp = event.deltaY < 0;
+                const scrollingDown = event.deltaY > 0;
+
+                if ((scrollingUp && !atTop) || (scrollingDown && !atBottom)) {
+                  event.stopPropagation();
+                  return;
+                }
+              }
+            }
+
+            const verticalDominant = Math.abs(event.deltaY) >= Math.abs(event.deltaX);
+            const delta = verticalDominant ? event.deltaY : event.deltaX;
+            if (Math.abs(delta) < 12) return;
+
+            const now = performance.now();
+            if (now - wheelLockRef.current < 520) {
+              event.preventDefault();
+              event.stopPropagation();
+              return;
+            }
+            wheelLockRef.current = now;
+
+            const atStart = clampedActiveProjectIndex <= 0;
+            const atEnd = clampedActiveProjectIndex >= projects.length - 1;
+            if (verticalDominant && ((delta < 0 && atStart) || (delta > 0 && atEnd))) {
+              // let the parent (/developer) wheel handler move sections at the edges
+              return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+            setActiveProjectIndex((prev) =>
+              delta > 0 ? clampIndex(prev + 1) : clampIndex(prev - 1)
+            );
+          }}
           onPointerDown={(event) => {
             if (projects.length <= 1) return;
             if (event.pointerType === "mouse" && event.button !== 0) return;
@@ -254,14 +320,14 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
               touchAction: "pan-y",
             } as React.CSSProperties
           }
-          className="relative w-full overflow-hidden flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/40"
+          className="relative w-full overflow-x-hidden overflow-y-visible flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/40"
         >
           <button
             type="button"
             onClick={goPrev}
-            disabled={activeProjectIndex <= 0}
+            disabled={clampedActiveProjectIndex <= 0}
             aria-label="Previous project"
-            className={[navBtnClassName, "left-2 sm:left-4", activeProjectIndex <= 0 ? "opacity-50 cursor-not-allowed" : ""].join(" ")}
+            className={[navBtnClassName, "left-2 sm:left-4", clampedActiveProjectIndex <= 0 ? "opacity-50 cursor-not-allowed" : ""].join(" ")}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -290,7 +356,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
             style={{ transform: `translateX(${-(trackOffset) + dragX}px)` }}
           >
             {projects.map((project, index) => {
-              const active = index === activeProjectIndex;
+              const active = index === clampedActiveProjectIndex;
               const accent = palette[index % palette.length];
               const projectLink = project.liveUrl ?? getProjectLink(project.title);
               const displayTitle = project.title.split(":")[0].trim();
@@ -304,8 +370,8 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                     "group relative flex-none w-[var(--project-card-w)] h-[var(--project-card-h)] overflow-hidden rounded-[28px] select-none transform-gpu",
                     "transition-[transform,opacity,filter] duration-500 [transition-timing-function:cubic-bezier(.4,0,.2,1)]",
                     active
-                      ? "cursor-default opacity-100 scale-[1.02] sm:scale-[1.08] saturate-[1.05]"
-                      : "cursor-pointer opacity-75 sm:opacity-50 scale-[0.9] sm:scale-[0.8] saturate-[0.95] hover:opacity-85 hover:scale-[0.94] sm:hover:opacity-65 sm:hover:scale-[0.88]",
+                      ? "cursor-default opacity-100 scale-100 sm:scale-[1.06] saturate-[1.05]"
+                      : "cursor-pointer opacity-55 sm:opacity-50 scale-[0.86] sm:scale-[0.82] saturate-[0.95] hover:opacity-75 hover:scale-[0.92] sm:hover:opacity-65 sm:hover:scale-[0.9]",
                     active
                       ? "shadow-[0_26px_80px_rgba(2,6,23,0.35)]"
                       : "shadow-[0_18px_55px_rgba(2,6,23,0.22)]",
@@ -318,48 +384,65 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                   <div className="absolute inset-0 ring-1 ring-white/25" />
                   <div className="pointer-events-none absolute -inset-10 opacity-0 transition-opacity duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_30%_0%,rgba(255,255,255,0.22),transparent_55%)]" />
 
-                  <div className="pointer-events-none absolute -bottom-10 -right-6 rotate-[-8deg] font-display text-[clamp(64px,9vw,132px)] font-semibold tracking-tight text-slate-950/15 mix-blend-multiply">
+                  <div className="pointer-events-none absolute -bottom-8 -right-4 rotate-[-8deg] font-display text-[clamp(54px,11vw,132px)] font-semibold tracking-tight text-slate-950/15 mix-blend-multiply max-w-[140%]">
                     {displayTitle}
                   </div>
 
-                  <div className="relative z-10 flex h-full flex-col justify-between p-4 sm:p-6 text-slate-950">
-                    <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-slate-950/80">
-                      <span className="rounded-full border border-slate-950/15 bg-white/55 px-3 py-1 backdrop-blur">
-                        {project.role}
-                      </span>
-                      <span className="rounded-full border border-slate-950/15 bg-white/55 px-3 py-1 backdrop-blur">
+                  <div
+                    className={[
+                      "relative z-10 flex h-full flex-col text-slate-950",
+                      isCompact ? "gap-2 p-3 sm:p-4" : "gap-3 p-4 sm:p-5",
+                    ].join(" ")}
+                  >
+                    <div className="flex flex-wrap items-center gap-1.5 text-[10px] uppercase tracking-[0.22em] text-slate-950/80">
+                      <span className="rounded-full border border-slate-950/15 bg-white/55 px-2.5 py-1 backdrop-blur">
                         {project.period}
                       </span>
                       {project.caseStudyHref && (
-                        <span className="rounded-full border border-slate-950/15 bg-white/55 px-3 py-1 backdrop-blur">
+                        <span className="rounded-full border border-slate-950/15 bg-white/55 px-2.5 py-1 backdrop-blur">
                           Website info
                         </span>
                       )}
                     </div>
 
-                    <div className="flex flex-1 items-center justify-center px-2">
-                      <h3 className="text-center text-[clamp(22px,4vw,44px)] font-semibold font-display tracking-tight text-slate-950">
+                    <div className="px-1">
+                      <h3
+                        className={[
+                          "text-center font-semibold font-display tracking-tight text-slate-950",
+                          isCompact
+                            ? "text-[clamp(18px,4.8vw,26px)] leading-tight"
+                            : "text-[clamp(22px,3.6vw,44px)]",
+                        ].join(" ")}
+                      >
                         {displayTitle}
                       </h3>
                     </div>
 
-                    <div className="rounded-2xl bg-white/60 p-3 text-slate-800 shadow-[0_12px_26px_rgba(15,23,42,0.2)] backdrop-blur">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-700">
+                    <div
+                      className={[
+                        "flex min-h-0 flex-1 flex-col rounded-2xl bg-white/65 text-slate-800 shadow-[0_12px_26px_rgba(15,23,42,0.2)] backdrop-blur",
+                        isCompact ? "p-2.5 sm:p-3" : "p-3",
+                      ].join(" ")}
+                    >
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-700 break-words">
                         {project.title}
                       </p>
                       <ul
                         data-project-scroll
-                        className="mt-2 max-h-20 sm:max-h-24 no-scrollbar overflow-y-auto break-words pr-1 text-[11px] text-slate-700 list-disc list-inside space-y-1"
+                        className={[
+                          "mt-1.5 min-h-0 flex-1 no-scrollbar overflow-y-auto break-words pr-1 list-disc list-inside space-y-1",
+                          isCompact ? "text-[13px] sm:text-[13px] leading-snug" : "text-[12px]",
+                        ].join(" ")}
                       >
                         {project.description.map((item, idx) => (
                           <li key={idx}>{item}</li>
                         ))}
                       </ul>
-                      <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
                         {project.caseStudyHref && (
                           <Link
                             href={project.caseStudyHref}
-                            className="inline-flex items-center rounded-full border border-slate-300/80 bg-white/85 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-700 shadow-[0_10px_22px_rgba(15,23,42,0.12)] transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-white hover:text-slate-900 hover:shadow-[0_14px_30px_rgba(15,23,42,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/40 active:scale-[0.99]"
+                            className="inline-flex min-h-[34px] items-center rounded-full border border-slate-300/80 bg-white/85 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-700 shadow-[0_10px_22px_rgba(15,23,42,0.12)] transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-white hover:text-slate-900 hover:shadow-[0_14px_30px_rgba(15,23,42,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/40 active:scale-[0.99]"
                           >
                             Website info
                           </Link>
@@ -369,7 +452,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                             href={projectLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center rounded-full border border-slate-300/80 bg-white/85 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-700 shadow-[0_10px_22px_rgba(15,23,42,0.12)] transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-white hover:text-slate-900 hover:shadow-[0_14px_30px_rgba(15,23,42,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/40 active:scale-[0.99]"
+                            className="inline-flex min-h-[34px] items-center rounded-full border border-slate-300/80 bg-white/85 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-700 shadow-[0_10px_22px_rgba(15,23,42,0.12)] transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-white hover:text-slate-900 hover:shadow-[0_14px_30px_rgba(15,23,42,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/40 active:scale-[0.99]"
                           >
                             Live site
                           </a>
@@ -385,12 +468,12 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
           <button
             type="button"
             onClick={goNext}
-            disabled={activeProjectIndex >= projects.length - 1}
+            disabled={clampedActiveProjectIndex >= projects.length - 1}
             aria-label="Next project"
             className={[
               navBtnClassName,
               "right-2 sm:right-4",
-              activeProjectIndex >= projects.length - 1 ? "opacity-50 cursor-not-allowed" : "",
+              clampedActiveProjectIndex >= projects.length - 1 ? "opacity-50 cursor-not-allowed" : "",
             ].join(" ")}
           >
             <svg
@@ -410,7 +493,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
           </button>
         </div>
 
-        <div className={isCompact ? "mt-3 flex items-center justify-center gap-2" : "mt-6 flex items-center justify-center gap-2"}>
+        <div className={isCompact ? "mt-2 flex items-center justify-center gap-2" : "mt-6 flex items-center justify-center gap-2"}>
           {projects.map((_, index) => {
             const active = index === activeProjectIndex;
             return (

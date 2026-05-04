@@ -92,6 +92,7 @@ function createTestCanvas(): HTMLCanvasElement {
 }
 
 function supportsMime(mime: string): boolean {
+  if (typeof document === "undefined") return true;
   try {
     const c = createTestCanvas();
     const url = c.toDataURL(mime);
@@ -99,6 +100,14 @@ function supportsMime(mime: string): boolean {
   } catch {
     return false;
   }
+}
+
+function detectSupportedMimeSet(): Set<string> {
+  const detected = new Set<string>();
+  ALL_FORMATS.forEach((format) => {
+    if (supportsMime(format.mime)) detected.add(format.mime);
+  });
+  return detected.size ? detected : new Set(ALL_FORMATS.map((format) => format.mime));
 }
 
 async function toBlobAsync(canvas: HTMLCanvasElement, mime: string, quality?: number): Promise<Blob> {
@@ -193,9 +202,10 @@ export default function ImageCompressorCanvasApp() {
   const [origW, setOrigW] = useState<number>(0);
   const [origH, setOrigH] = useState<number>(0);
 
-  // Start with all formats for SSR stability, then check client support.
-  const [supportedMimeSet, setSupportedMimeSet] = useState<Set<string>>(new Set(ALL_FORMATS.map((f) => f.mime)));
-  const [formatMime, setFormatMime] = useState<string>(ALL_FORMATS[0].mime);
+  const supportedMimeSet = useMemo(() => detectSupportedMimeSet(), []);
+  const [formatMime, setFormatMime] = useState<string>(
+    () => ALL_FORMATS.find((format) => supportedMimeSet.has(format.mime))?.mime ?? ALL_FORMATS[0].mime
+  );
 
   const [maxSide, setMaxSide] = useState<number>(2048);
   const [bgColor, setBgColor] = useState<string>("#ffffff");
@@ -217,27 +227,11 @@ export default function ImageCompressorCanvasApp() {
   );
 
   useEffect(() => {
-    const detected = new Set<string>();
-    ALL_FORMATS.forEach((f) => {
-      if (supportsMime(f.mime)) detected.add(f.mime);
-    });
-    setSupportedMimeSet(detected);
-  }, []);
-
-  useEffect(() => {
     return () => {
       if (outUrl) URL.revokeObjectURL(outUrl);
       if (bitmap) bitmap.close();
     };
   }, [outUrl, bitmap]);
-
-  useEffect(() => {
-    if (!supportedMimeSet.size) return;
-    // Only coerce if somehow current value is unknown.
-    if (!ALL_FORMATS.some((f) => f.mime === formatMime)) {
-      setFormatMime(ALL_FORMATS[0].mime);
-    }
-  }, [supportedMimeSet, formatMime]);
 
   useEffect(() => {
     if (!bitmap || !previewCanvasRef.current) return;

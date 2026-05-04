@@ -13,7 +13,6 @@ type NavItem = {
 
 const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "Home", match: "exact" },
-  { href: "/developer", label: "Developer", match: "startsWith" },
   { href: "/projects", label: "Projects", match: "startsWith" },
   { href: "/tools", label: "Tools", match: "startsWith" },
   { href: "/games", label: "Games", match: "startsWith" },

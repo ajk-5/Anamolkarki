@@ -211,7 +211,7 @@ export default function PdfSignerApp() {
   const [page, setPage] = useState(1);
   const [zoom, setZoom] = useState(1.15);
 
-  const viewportRef = useRef<PageViewport | null>(null);
+  const [viewport, setViewport] = useState<PageViewport | null>(null);
   const renderTaskRef = useRef<RenderTask | null>(null);
 
   const [pagePx, setPagePx] = useState({ w: 0, h: 0 });
@@ -331,7 +331,7 @@ export default function PdfSignerApp() {
           scale: zoom,
           rotation: p.rotate || 0,
         });
-        viewportRef.current = viewport;
+        setViewport(viewport);
         setPagePx({ w: Math.round(viewport.width), h: Math.round(viewport.height) });
 
         const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
@@ -374,25 +374,9 @@ export default function PdfSignerApp() {
   }, [pdfDoc, page, zoom]);
 
   function stageToPdf(vx: number, vy: number) {
-    const vp = viewportRef.current;
-    if (!vp) return null;
-    const [x, y] = vp.convertToPdfPoint(vx, vy);
+    if (!viewport) return null;
+    const [x, y] = viewport.convertToPdfPoint(vx, vy);
     return { x, y };
-  }
-
-  function pdfToStage(xPdf: number, yPdf: number) {
-    const vp = viewportRef.current;
-    if (!vp) return null;
-    const [x, y] = vp.convertToViewportPoint(xPdf, yPdf);
-    return { x, y };
-  }
-
-  function placementRect(p: Placement) {
-    const tl = pdfToStage(p.xPdf, p.yPdf);
-    const tr = pdfToStage(p.xPdf + p.wPdf, p.yPdf);
-    const bl = pdfToStage(p.xPdf, p.yPdf - p.hPdf);
-    if (!tl || !tr || !bl) return null;
-    return { left: tl.x, top: tl.y, width: tr.x - tl.x, height: bl.y - tl.y };
   }
 
   const onStageClick = (event: React.MouseEvent) => {
@@ -401,15 +385,14 @@ export default function PdfSignerApp() {
       setErr({ title: 'No signature', detail: 'Create a signature first.' });
       return;
     }
-    const vp = viewportRef.current;
     const stage = stageRef.current;
-    if (!vp || !stage) return;
+    if (!viewport || !stage) return;
 
     const rect = stage.getBoundingClientRect();
     const vx = event.clientX - rect.left;
     const vy = event.clientY - rect.top;
 
-    const wPx = clamp(vp.width * 0.28, 120, 320);
+    const wPx = clamp(viewport.width * 0.28, 120, 320);
     const hPx = wPx / Math.max(0.8, sigAspect);
 
     const pdfTL = stageToPdf(vx, vy);
@@ -454,6 +437,38 @@ export default function PdfSignerApp() {
     }
     setSelectedId(p.id);
   };
+
+  const currentPlacementRects = useMemo(
+    () => {
+      if (!viewport) return [];
+
+      return current
+        .map((placement) => {
+          const [left, top] = viewport.convertToViewportPoint(placement.xPdf, placement.yPdf);
+          const [right] = viewport.convertToViewportPoint(
+            placement.xPdf + placement.wPdf,
+            placement.yPdf
+          );
+          const [, bottom] = viewport.convertToViewportPoint(
+            placement.xPdf,
+            placement.yPdf - placement.hPdf
+          );
+
+          return {
+            placement,
+            rect: {
+              left,
+              top,
+              width: right - left,
+              height: bottom - top,
+            },
+            selected: selectedId === placement.id,
+          };
+        })
+        .filter((item) => item.rect.width > 0 && item.rect.height > 0);
+    },
+    [current, selectedId, viewport]
+  );
 
   const beginResize = (event: React.PointerEvent, p: Placement) => {
     event.preventDefault();
@@ -749,13 +764,10 @@ export default function PdfSignerApp() {
                 <canvas ref={pdfCanvasRef} className="pdf" />
 
                 {sigPng
-                  ? current.map((p) => {
-                      const rect = placementRect(p);
-                      if (!rect) return null;
-                      const selected = selectedId === p.id;
+                  ? currentPlacementRects.map(({ placement, rect, selected }) => {
                       return (
                         <div
-                          key={p.id}
+                          key={placement.id}
                           className={`sig ${selected ? 'sel' : ''}`}
                           style={{
                             left: rect.left,
@@ -763,10 +775,10 @@ export default function PdfSignerApp() {
                             width: rect.width,
                             height: rect.height,
                           }}
-                          onPointerDown={(event) => beginMove(event, p)}
+                          onPointerDown={(event) => beginMove(event, placement)}
                           onClick={(event) => {
                             event.stopPropagation();
-                            setSelectedId(p.id);
+                            setSelectedId(placement.id);
                           }}
                           role="button"
                           tabIndex={0}
@@ -776,7 +788,7 @@ export default function PdfSignerApp() {
                           <div
                             className="handle"
                             title="Resize"
-                            onPointerDown={(event) => beginResize(event, p)}
+                            onPointerDown={(event) => beginResize(event, placement)}
                           />
                         </div>
                       );

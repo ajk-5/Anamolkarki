@@ -4,7 +4,6 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 const routes = [
   { path: "", priority: 1 },
-  { path: "/developer", priority: 0.9 },
   { path: "/90stimes.com", priority: 0.85 },
   { path: "/projects", priority: 0.8 },
   { path: "/games", priority: 0.8 },
