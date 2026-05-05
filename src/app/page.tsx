@@ -67,6 +67,59 @@ const SECTION_CAROUSEL_GRADIENTS = [
   "from-sky-300 via-cyan-300 to-emerald-300",
 ] as const;
 
+const SECTION_AMBIENT_ELEMENTS: Record<SectionId, string[]> = {
+  intro: [
+    "ambient-orbit ambient-orbit-one",
+    "ambient-orbit ambient-orbit-two",
+    "ambient-pulse ambient-pulse-one",
+  ],
+  projects: [
+    "ambient-panel ambient-panel-one",
+    "ambient-panel ambient-panel-two",
+    "ambient-panel ambient-panel-three",
+  ],
+  experiences: [
+    "ambient-timeline ambient-timeline-main",
+    "ambient-node ambient-node-one",
+    "ambient-node ambient-node-two",
+    "ambient-node ambient-node-three",
+  ],
+  education: [
+    "ambient-book ambient-book-one",
+    "ambient-book ambient-book-two",
+    "ambient-pencil ambient-pencil-one",
+  ],
+  skills: [
+    "ambient-chip ambient-chip-one",
+    "ambient-chip ambient-chip-two",
+    "ambient-chip ambient-chip-three",
+    "ambient-chip ambient-chip-four",
+  ],
+  stack: [
+    "ambient-circuit ambient-circuit-one",
+    "ambient-circuit ambient-circuit-two",
+    "ambient-circuit ambient-circuit-three",
+  ],
+  contact: [
+    "ambient-wave ambient-wave-one",
+    "ambient-wave ambient-wave-two",
+    "ambient-message ambient-message-one",
+  ],
+};
+
+function SectionAmbient({ id, active }: { id: SectionId; active: boolean }) {
+  return (
+    <div
+      className={["section-ambient", active ? "is-active" : ""].join(" ")}
+      aria-hidden="true"
+    >
+      {SECTION_AMBIENT_ELEMENTS[id].map((className, index) => (
+        <span key={`${id}-${index}`} className={className} />
+      ))}
+    </div>
+  );
+}
+
 function getActiveCardOffset(
   wrapper: HTMLDivElement | null,
   track: HTMLDivElement | null,
@@ -484,12 +537,8 @@ export default function Home() {
   const carouselTrackRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
   const wheelLockRef = useRef<number>(0);
-  const [activeSectionIndex, setActiveSectionIndex] = useState(() => {
-    if (typeof window === "undefined") return 0;
-    const hash = window.location.hash.replace("#", "") as SectionId | "";
-    const index = pageSections.findIndex((s) => s.id === hash);
-    return index >= 0 ? index : 0;
-  });
+  const hashSyncedRef = useRef(false);
+  const [activeSectionIndex, setActiveSectionIndex] = useState(0);
   const [headerOffset, setHeaderOffset] = useState(0);
   const [trackOffset, setTrackOffset] = useState(0);
   const [dragX, setDragX] = useState(0);
@@ -576,9 +625,31 @@ export default function Home() {
   }, [activeSectionIndex]);
 
   useEffect(() => {
+    const syncSectionFromHash = () => {
+      const hash = window.location.hash.replace("#", "") as SectionId | "";
+      const index = pageSections.findIndex((s) => s.id === hash);
+      if (index >= 0) setActiveSectionIndex(index);
+      hashSyncedRef.current = true;
+    };
+
+    const frame = requestAnimationFrame(syncSectionFromHash);
+    window.addEventListener("hashchange", syncSectionFromHash);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("hashchange", syncSectionFromHash);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hashSyncedRef.current) return;
     const id = pageSections[activeSectionIndex]?.id;
     if (!id) return;
-    window.history.replaceState(null, "", `#${id}`);
+
+    const nextHash = `#${id}`;
+    if (window.location.hash !== nextHash) {
+      window.history.replaceState(null, "", nextHash);
+    }
   }, [activeSectionIndex]);
 
   useEffect(() => {
@@ -672,6 +743,34 @@ export default function Home() {
     };
   }, []);
 
+  const updatePointerPosition = (event: React.PointerEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+    event.currentTarget.style.setProperty("--pointer-x", `${x.toFixed(2)}%`);
+    event.currentTarget.style.setProperty("--pointer-y", `${y.toFixed(2)}%`);
+  };
+
+  const titleCarouselItems = ([
+    ["previous", activeSectionIndex - 1],
+    ["current", activeSectionIndex],
+    ["next", activeSectionIndex + 1],
+  ] as const)
+    .map(([position, index]) => ({
+      index,
+      position,
+      section: pageSections[index],
+    }))
+    .filter(
+      (
+        item
+      ): item is {
+        index: number;
+        position: "previous" | "current" | "next";
+        section: (typeof pageSections)[number];
+      } => Boolean(item.section)
+    );
+
   return (
     <main
       style={{ "--header-offset": `${headerOffset}px` } as React.CSSProperties}
@@ -686,7 +785,7 @@ export default function Home() {
               if (event.pointerType === "mouse" && event.button !== 0) return;
               const target = event.target as HTMLElement | null;
               if (!target) return;
-              if (target.closest("[data-card-scroll]")) return;
+              if (target.closest("[data-nested-carousel]")) return;
               if (target.closest("a,button,input,textarea,select,label")) return;
 
               swipeRef.current = {
@@ -700,6 +799,7 @@ export default function Home() {
               event.currentTarget.setPointerCapture(event.pointerId);
             }}
             onPointerMove={(event) => {
+              updatePointerPosition(event);
               const state = swipeRef.current;
               if (state.pointerId !== event.pointerId) return;
 
@@ -743,9 +843,11 @@ export default function Home() {
             aria-label="Developer section carousel"
             style={
               {
-                "--carousel-card-w": "clamp(280px, 92vw, 760px)",
-                "--carousel-card-h": "clamp(420px, calc(100% - 16px), 640px)",
-                "--carousel-gap": "clamp(8px, 3vw, 30px)",
+                "--carousel-card-w": "clamp(270px, 84vw, 760px)",
+                "--carousel-card-h": "clamp(360px, calc(100% - 28px), 640px)",
+                "--carousel-gap": "clamp(10px, 3.5vw, 34px)",
+                "--pointer-x": "50%",
+                "--pointer-y": "45%",
                 touchAction: "pan-y",
               } as React.CSSProperties
             }
@@ -793,13 +895,14 @@ export default function Home() {
                   <div
                     key={s.id}
                     data-carousel-card
+                    data-active={active ? "true" : undefined}
                     onClick={() => scrollToSectionIndex(index)}
                     className={[
                       "group relative flex-none w-[var(--carousel-card-w)] h-[var(--carousel-card-h)] overflow-hidden rounded-[28px] select-none transform-gpu",
                       "transition-[transform,opacity,filter] duration-500 [transition-timing-function:cubic-bezier(.4,0,.2,1)]",
                       active
-                        ? "cursor-default opacity-100 scale-[1.02] sm:scale-[1.08] saturate-[1.05]"
-                        : "cursor-pointer opacity-70 sm:opacity-45 scale-[0.9] sm:scale-[0.78] sm:blur-[0.2px] saturate-[0.9] hover:opacity-80 hover:scale-[0.94] sm:hover:opacity-65 sm:hover:scale-[0.86]",
+                        ? "z-20 cursor-default opacity-100 scale-100 sm:scale-[1.08] saturate-[1.05]"
+                        : "z-10 cursor-pointer opacity-60 sm:opacity-45 scale-[0.86] sm:scale-[0.78] blur-[1.5px] saturate-[0.88] hover:opacity-75 hover:scale-[0.92] sm:hover:opacity-65 sm:hover:scale-[0.86]",
                       active
                         ? "shadow-[0_26px_80px_rgba(2,6,23,0.55)]"
                         : "shadow-[0_18px_55px_rgba(2,6,23,0.35)]",
@@ -809,12 +912,13 @@ export default function Home() {
                     <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/0 to-transparent" />
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(255,255,255,0.28),transparent_55%),radial-gradient(circle_at_85%_75%,rgba(56,189,248,0.14),transparent_60%)]" />
                     <div className="absolute inset-0 opacity-10 [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)] bg-[linear-gradient(90deg,rgba(255,255,255,0.28)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.22)_1px,transparent_1px)] bg-[size:28px_28px]" />
+                    <SectionAmbient id={s.id} active={active} />
+                    <div className="carousel-reactive-glow" />
                     <div className="absolute inset-0 ring-1 ring-white/25" />
                     <div className="pointer-events-none absolute -inset-10 opacity-0 transition-opacity duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_30%_0%,rgba(255,255,255,0.22),transparent_55%)]" />
                     <div className="pointer-events-none absolute -bottom-10 -right-6 rotate-[-8deg] font-display text-[clamp(72px,10vw,148px)] font-semibold tracking-tight text-slate-950/15 mix-blend-multiply">
                       {s.label}
                     </div>
-
                     <div className="relative z-10 flex h-full flex-col p-3 sm:p-5">
                       <div className="shrink-0 pb-3">
                         <div className="inline-flex items-center gap-2 rounded-full border border-slate-950/15 bg-white/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-slate-950 shadow-[0_14px_40px_rgba(2,6,23,0.16)] backdrop-blur">
@@ -832,7 +936,7 @@ export default function Home() {
                         <div
                           data-card-scroll
                           className={[
-                            "relative h-full overflow-y-auto overflow-x-hidden no-scrollbar pb-12",
+                            "relative h-full overflow-y-auto overflow-x-hidden no-scrollbar pb-20 sm:pb-16",
                             active ? "pointer-events-auto" : "pointer-events-none",
                           ].join(" ")}
                         >
@@ -898,20 +1002,25 @@ export default function Home() {
               </svg>
             </button>
 
-            <div className="absolute bottom-[calc(env(safe-area-inset-bottom)+12px)] left-1/2 z-30 -translate-x-1/2 flex items-center gap-2 rounded-full border border-white/15 bg-black/30 px-3 py-2 backdrop-blur sm:bottom-6 sm:bg-transparent sm:border-transparent sm:px-0 sm:py-0 sm:backdrop-blur-0">
-              {pageSections.map((s, index) => {
-                const active = index === activeSectionIndex;
-                return (
-                  <button
-                    key={s.id}
-                    type="button"
-                    onClick={() => scrollToSectionIndex(index)}
-                    aria-label={`Go to ${s.label}`}
-                    aria-current={active ? "true" : undefined}
-                    className={active ? "btn-dot btn-dot-active" : "btn-dot"}
-                  />
-                );
-              })}
+            <div
+              className="section-title-carousel"
+              aria-label="Section carousel navigation"
+            >
+              {titleCarouselItems.map(({ index, position, section }) => (
+                <button
+                  key={section.id}
+                  type="button"
+                  onClick={() => scrollToSectionIndex(index)}
+                  aria-label={`Go to ${section.label}`}
+                  aria-current={position === "current" ? "page" : undefined}
+                  className={[
+                    "section-title-item",
+                    `section-title-item-${position}`,
+                  ].join(" ")}
+                >
+                  {section.label}
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -949,6 +1058,487 @@ export default function Home() {
         .animate-pulse { animation: pulse 2s infinite; }
         .perspective-1000 { perspective: 1000px; }
         .translate-z-10 { transform: translateZ(10px); }
+
+        .section-title-carousel {
+          position: absolute;
+          bottom: calc(env(safe-area-inset-bottom) + 0.7rem);
+          left: 50%;
+          z-index: 30;
+          display: grid;
+          width: min(94vw, 46rem);
+          grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+          align-items: center;
+          gap: clamp(0.6rem, 3vw, 2.4rem);
+          perspective: 900px;
+          transform: translateX(-50%);
+          pointer-events: none;
+        }
+        .section-title-item {
+          border: 0;
+          background: transparent;
+          padding: 0;
+          color: rgba(226, 232, 240, 0.8);
+          font-family: var(--font-display), serif;
+          font-weight: 800;
+          line-height: 0.9;
+          text-transform: uppercase;
+          text-shadow: 0 18px 42px rgba(2, 6, 23, 0.5);
+          transition:
+            opacity 280ms ease,
+            filter 280ms ease,
+            transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1),
+            color 280ms ease;
+          pointer-events: auto;
+        }
+        .section-title-item-current {
+          grid-column: 2;
+          color: rgba(248, 250, 252, 0.98);
+          font-size: clamp(1.8rem, 6.8vw, 4.6rem);
+          letter-spacing: -0.06em;
+          opacity: 1;
+          transform: translate3d(0, -0.25rem, 90px) scale(1.05);
+          text-align: center;
+          text-shadow:
+            0 28px 72px rgba(2, 6, 23, 0.65),
+            0 0 42px rgba(255, 255, 255, 0.22);
+        }
+        .section-title-item-previous,
+        .section-title-item-next {
+          font-size: clamp(0.9rem, 2.6vw, 1.85rem);
+          letter-spacing: 0.08em;
+          opacity: 0.52;
+          filter: blur(0.35px);
+        }
+        .section-title-item-previous {
+          grid-column: 1;
+          justify-self: end;
+          text-align: right;
+          transform: translate3d(0.4rem, 0.35rem, -90px) rotateY(18deg) scale(0.86);
+        }
+        .section-title-item-next {
+          grid-column: 3;
+          justify-self: start;
+          text-align: left;
+          transform: translate3d(-0.4rem, 0.35rem, -90px) rotateY(-18deg) scale(0.86);
+        }
+        .section-title-item:hover,
+        .section-title-item:focus-visible {
+          color: white;
+          opacity: 0.92;
+          filter: blur(0);
+          outline: none;
+        }
+        .section-title-item-current:hover,
+        .section-title-item-current:focus-visible {
+          transform: translate3d(0, -0.38rem, 115px) scale(1.08);
+        }
+
+        .carousel-reactive-glow {
+          pointer-events: none;
+          position: absolute;
+          inset: -18%;
+          z-index: 3;
+          background:
+            radial-gradient(
+              circle at var(--pointer-x, 50%) var(--pointer-y, 45%),
+              rgba(255, 255, 255, 0.26),
+              rgba(255, 255, 255, 0.08) 16%,
+              transparent 34%
+            );
+          mix-blend-mode: screen;
+          opacity: 0;
+          transition: opacity 320ms ease;
+        }
+        [data-carousel-card][data-active="true"] .carousel-reactive-glow,
+        .group:hover .carousel-reactive-glow {
+          opacity: 0.65;
+        }
+
+        .section-ambient {
+          pointer-events: none;
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          overflow: hidden;
+          opacity: 0.36;
+          transform: scale(0.98);
+          transition:
+            opacity 500ms ease,
+            filter 500ms ease,
+            transform 500ms ease;
+        }
+        .section-ambient.is-active {
+          opacity: 0.82;
+          transform: scale(1);
+        }
+        .section-ambient span {
+          position: absolute;
+          display: block;
+        }
+
+        .ambient-orbit {
+          border: 1px solid rgba(15, 23, 42, 0.17);
+          border-radius: 9999px;
+          box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+          animation: ambient-spin 18s linear infinite;
+        }
+        .ambient-orbit::before,
+        .ambient-orbit::after {
+          content: "";
+          position: absolute;
+          border-radius: 9999px;
+          background: rgba(255, 255, 255, 0.56);
+          box-shadow: 0 0 24px rgba(255, 255, 255, 0.3);
+        }
+        .ambient-orbit::before {
+          width: 0.5rem;
+          height: 0.5rem;
+          left: 18%;
+          top: 8%;
+        }
+        .ambient-orbit::after {
+          width: 0.35rem;
+          height: 0.35rem;
+          bottom: 14%;
+          right: 16%;
+        }
+        .ambient-orbit-one {
+          width: clamp(9rem, 24vw, 14rem);
+          height: clamp(9rem, 24vw, 14rem);
+          right: 7%;
+          top: 13%;
+        }
+        .ambient-orbit-two {
+          width: clamp(5rem, 16vw, 9rem);
+          height: clamp(5rem, 16vw, 9rem);
+          left: 8%;
+          bottom: 12%;
+          animation-direction: reverse;
+          animation-duration: 15s;
+        }
+        .ambient-pulse {
+          width: 0.8rem;
+          height: 0.8rem;
+          border-radius: 9999px;
+          background: rgba(15, 23, 42, 0.32);
+          box-shadow:
+            0 0 0 0 rgba(15, 23, 42, 0.16),
+            0 0 34px rgba(255, 255, 255, 0.34);
+          animation: ambient-pulse 2.8s ease-in-out infinite;
+        }
+        .ambient-pulse-one {
+          left: 28%;
+          top: 20%;
+        }
+
+        .ambient-panel {
+          --rotate: 0deg;
+          width: clamp(5rem, 15vw, 8.2rem);
+          height: clamp(3.4rem, 9vw, 5rem);
+          border: 1px solid rgba(15, 23, 42, 0.13);
+          border-radius: 1.15rem;
+          background:
+            linear-gradient(135deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.12)),
+            repeating-linear-gradient(
+              90deg,
+              rgba(15, 23, 42, 0.12) 0 1px,
+              transparent 1px 1.1rem
+            );
+          box-shadow: 0 20px 46px rgba(15, 23, 42, 0.16);
+          animation: ambient-float 6.5s ease-in-out infinite;
+        }
+        .ambient-panel-one {
+          --rotate: -8deg;
+          right: 10%;
+          top: 16%;
+        }
+        .ambient-panel-two {
+          --rotate: 9deg;
+          left: 8%;
+          bottom: 16%;
+          animation-delay: -2s;
+        }
+        .ambient-panel-three {
+          --rotate: 4deg;
+          right: 24%;
+          bottom: 10%;
+          animation-delay: -3.5s;
+        }
+
+        .ambient-timeline-main {
+          left: 14%;
+          top: 12%;
+          width: 0.18rem;
+          height: 72%;
+          border-radius: 9999px;
+          background: linear-gradient(
+            to bottom,
+            transparent,
+            rgba(15, 23, 42, 0.36),
+            transparent
+          );
+          animation: ambient-scan 4.8s ease-in-out infinite;
+        }
+        .ambient-node {
+          width: 0.8rem;
+          height: 0.8rem;
+          border-radius: 9999px;
+          border: 2px solid rgba(255, 255, 255, 0.62);
+          background: rgba(15, 23, 42, 0.28);
+          box-shadow: 0 0 28px rgba(255, 255, 255, 0.32);
+          animation: ambient-pulse 3.2s ease-in-out infinite;
+        }
+        .ambient-node-one {
+          left: calc(14% - 0.32rem);
+          top: 22%;
+        }
+        .ambient-node-two {
+          left: calc(14% - 0.32rem);
+          top: 48%;
+          animation-delay: -1.1s;
+        }
+        .ambient-node-three {
+          left: calc(14% - 0.32rem);
+          top: 72%;
+          animation-delay: -2.2s;
+        }
+
+        .ambient-book {
+          --rotate: 0deg;
+          width: clamp(4.8rem, 14vw, 7.5rem);
+          height: clamp(3.8rem, 10vw, 5.6rem);
+          border-radius: 0.5rem 1rem 1rem 0.5rem;
+          border: 1px solid rgba(15, 23, 42, 0.14);
+          background:
+            linear-gradient(90deg, rgba(15, 23, 42, 0.16) 0 6%, transparent 6%),
+            linear-gradient(135deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.12));
+          box-shadow: 0 22px 48px rgba(15, 23, 42, 0.16);
+          animation: ambient-float 7.2s ease-in-out infinite;
+        }
+        .ambient-book-one {
+          --rotate: -10deg;
+          left: 10%;
+          top: 18%;
+        }
+        .ambient-book-two {
+          --rotate: 8deg;
+          right: 11%;
+          bottom: 16%;
+          animation-delay: -2.4s;
+        }
+        .ambient-pencil-one {
+          --rotate: 24deg;
+          right: 24%;
+          top: 18%;
+          width: clamp(0.55rem, 1.4vw, 0.8rem);
+          height: clamp(5.4rem, 16vw, 8rem);
+          border-radius: 9999px;
+          background: linear-gradient(
+            to bottom,
+            rgba(15, 23, 42, 0.26),
+            rgba(255, 255, 255, 0.48),
+            rgba(15, 23, 42, 0.22)
+          );
+          animation: ambient-float 5.8s ease-in-out infinite;
+        }
+
+        .ambient-chip {
+          --rotate: 0deg;
+          min-width: clamp(4.4rem, 13vw, 7rem);
+          height: 2rem;
+          border-radius: 9999px;
+          border: 1px solid rgba(15, 23, 42, 0.13);
+          background: rgba(255, 255, 255, 0.24);
+          box-shadow: 0 18px 42px rgba(15, 23, 42, 0.14);
+          animation: ambient-float 6s ease-in-out infinite;
+        }
+        .ambient-chip::before {
+          content: "";
+          position: absolute;
+          inset: 0.55rem 0.85rem;
+          border-radius: 9999px;
+          background: rgba(15, 23, 42, 0.18);
+        }
+        .ambient-chip-one {
+          --rotate: -6deg;
+          left: 8%;
+          top: 18%;
+        }
+        .ambient-chip-two {
+          --rotate: 8deg;
+          right: 9%;
+          top: 26%;
+          animation-delay: -1.6s;
+        }
+        .ambient-chip-three {
+          --rotate: -4deg;
+          left: 16%;
+          bottom: 16%;
+          animation-delay: -3s;
+        }
+        .ambient-chip-four {
+          --rotate: 10deg;
+          right: 19%;
+          bottom: 12%;
+          animation-delay: -4.2s;
+        }
+
+        .ambient-circuit {
+          border-radius: 9999px;
+          background: rgba(15, 23, 42, 0.24);
+          box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.18) inset,
+            0 0 34px rgba(255, 255, 255, 0.2);
+          animation: ambient-pulse 3.4s ease-in-out infinite;
+        }
+        .ambient-circuit::before,
+        .ambient-circuit::after {
+          content: "";
+          position: absolute;
+          top: 50%;
+          height: 1px;
+          background: rgba(15, 23, 42, 0.22);
+          transform: translateY(-50%);
+        }
+        .ambient-circuit::before {
+          right: 100%;
+          width: clamp(2.4rem, 8vw, 5rem);
+        }
+        .ambient-circuit::after {
+          left: 100%;
+          width: clamp(2rem, 7vw, 4.5rem);
+        }
+        .ambient-circuit-one {
+          width: 1.1rem;
+          height: 1.1rem;
+          left: 21%;
+          top: 28%;
+        }
+        .ambient-circuit-two {
+          width: 0.9rem;
+          height: 0.9rem;
+          right: 22%;
+          top: 48%;
+          animation-delay: -1.2s;
+        }
+        .ambient-circuit-three {
+          width: 1.3rem;
+          height: 1.3rem;
+          left: 33%;
+          bottom: 18%;
+          animation-delay: -2.5s;
+        }
+
+        .ambient-wave {
+          left: -12%;
+          width: 124%;
+          height: 5rem;
+          border-radius: 50%;
+          border-top: 1px solid rgba(15, 23, 42, 0.2);
+          animation: ambient-wave 7s ease-in-out infinite;
+        }
+        .ambient-wave-one {
+          bottom: 18%;
+        }
+        .ambient-wave-two {
+          bottom: 26%;
+          animation-delay: -2.2s;
+          opacity: 0.7;
+        }
+        .ambient-message-one {
+          --rotate: -7deg;
+          right: 12%;
+          top: 18%;
+          width: clamp(4.8rem, 14vw, 7rem);
+          height: clamp(3.2rem, 9vw, 4.5rem);
+          border-radius: 1.2rem 1.2rem 0.35rem 1.2rem;
+          border: 1px solid rgba(15, 23, 42, 0.13);
+          background: rgba(255, 255, 255, 0.28);
+          box-shadow: 0 20px 46px rgba(15, 23, 42, 0.14);
+          animation: ambient-float 6.4s ease-in-out infinite;
+        }
+
+        @keyframes ambient-spin {
+          to { transform: rotate(360deg); }
+        }
+        @keyframes ambient-pulse {
+          0%, 100% {
+            transform: scale(0.92);
+            opacity: 0.58;
+          }
+          50% {
+            transform: scale(1.08);
+            opacity: 1;
+          }
+        }
+        @keyframes ambient-float {
+          0%, 100% {
+            transform: translate3d(0, 0, 0) rotate(var(--rotate));
+          }
+          50% {
+            transform: translate3d(0, -0.75rem, 0) rotate(var(--rotate));
+          }
+        }
+        @keyframes ambient-scan {
+          0%, 100% { opacity: 0.32; filter: blur(0); }
+          50% { opacity: 0.95; filter: blur(0.5px); }
+        }
+        @keyframes ambient-wave {
+          0%, 100% { transform: translate3d(0, 0, 0) scaleX(1); }
+          50% { transform: translate3d(1.5%, -0.5rem, 0) scaleX(1.03); }
+        }
+
+        @media (max-width: 640px) {
+          .section-title-carousel {
+            bottom: calc(env(safe-area-inset-bottom) + 0.55rem);
+            width: 96vw;
+            gap: 0.55rem;
+          }
+          .section-title-item-current {
+            font-size: clamp(1.45rem, 9.2vw, 2.65rem);
+            letter-spacing: -0.05em;
+          }
+          .section-title-item-previous,
+          .section-title-item-next {
+            font-size: clamp(0.72rem, 3.6vw, 1rem);
+            letter-spacing: 0.05em;
+            opacity: 0.5;
+          }
+          .section-ambient {
+            opacity: 0.32;
+          }
+          .section-ambient.is-active {
+            opacity: 0.64;
+          }
+        }
+
+        @media (hover: none) {
+          [data-carousel-card][data-active="true"] .carousel-reactive-glow {
+            opacity: 0.48;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .section-title-item,
+          .carousel-reactive-glow,
+          .section-ambient {
+            transition: none;
+          }
+          .section-ambient span,
+          .ambient-orbit,
+          .ambient-pulse,
+          .ambient-panel,
+          .ambient-timeline-main,
+          .ambient-node,
+          .ambient-book,
+          .ambient-pencil-one,
+          .ambient-chip,
+          .ambient-circuit,
+          .ambient-wave,
+          .ambient-message-one {
+            animation: none;
+          }
+        }
       `}</style>
     </main>
   );

@@ -153,10 +153,10 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   }, [clampedActiveProjectIndex]);
 
   const cardWidth = isCompact
-    ? "clamp(260px, 86vw, 380px)"
+    ? "min(100%, clamp(248px, 78vw, 360px))"
     : "clamp(260px, 58vw, 520px)";
   const cardHeight = isCompact
-    ? "clamp(420px, 82vh, 540px)"
+    ? "100%"
     : "clamp(320px, 50vw, 560px)";
   const cardGap = isCompact ? "clamp(12px, 3.4vw, 22px)" : "clamp(12px, 3vw, 26px)";
 
@@ -172,7 +172,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
       ref={projectsRef}
       className={
         isCompact
-          ? "py-2 px-2 sm:px-3 z-10"
+          ? "flex h-full min-h-0 flex-col overflow-hidden py-1.5 px-1.5 sm:px-3 z-10"
           : "py-12 px-3 sm:px-4 md:px-8 lg:px-16 2xl:max-w-[1600px] 2xl:mx-auto z-10"
       }
     >
@@ -190,7 +190,13 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
         </MotionDiv>
       )}
 
-      <div className={isCompact ? "relative mx-auto w-full max-w-5xl" : "relative mx-auto w-full max-w-6xl"}>
+      <div
+        className={
+          isCompact
+            ? "relative mx-auto flex w-full max-w-5xl min-h-0 flex-1 flex-col"
+            : "relative mx-auto w-full max-w-6xl"
+        }
+      >
         <div
           data-nested-carousel
           data-edge={
@@ -256,7 +262,6 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
 
             const target = event.target as HTMLElement | null;
             if (!target) return;
-            if (target.closest("[data-project-scroll]")) return;
             if (target.closest("a,button,input,textarea,select,label")) return;
 
             swipeRef.current = {
@@ -320,7 +325,10 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
               touchAction: "pan-y",
             } as React.CSSProperties
           }
-          className="relative w-full overflow-x-hidden overflow-y-visible flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/40"
+          className={[
+            "relative w-full overflow-x-hidden overflow-y-visible flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/40",
+            isCompact ? "min-h-0 flex-1" : "",
+          ].join(" ")}
         >
           <button
             type="button"
@@ -349,6 +357,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
             ref={carouselTrackRef}
             className={[
               "flex items-center gap-[var(--project-gap)] will-change-transform",
+              isCompact ? "h-full" : "",
               isDragging
                 ? ""
                 : "transition-transform duration-500 [transition-timing-function:cubic-bezier(.4,0,.2,1)]",
@@ -421,7 +430,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                     <div
                       className={[
                         "flex min-h-0 flex-1 flex-col rounded-2xl bg-white/65 text-slate-800 shadow-[0_12px_26px_rgba(15,23,42,0.2)] backdrop-blur",
-                        isCompact ? "p-2.5 sm:p-3" : "p-3",
+                        isCompact ? "overflow-hidden p-2.5 sm:p-3" : "p-3",
                       ].join(" ")}
                     >
                       <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-700 break-words">
