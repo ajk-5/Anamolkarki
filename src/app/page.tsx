@@ -525,6 +525,15 @@ function TechStackSection({ variant = "default" }: { variant?: "default" | "caro
 
 /* ------------------ PAGE ------------------ */
 
+const hapticTap = () => {
+  if (typeof navigator === "undefined") return;
+  const nav = navigator as Navigator & { vibrate?: (pattern: number | number[]) => boolean };
+  if (typeof nav.vibrate !== "function") return;
+  try {
+    nav.vibrate(8);
+  } catch {}
+};
+
 export default function Home() {
   const introRef = useRef<HTMLDivElement>(null!);
   const projectsRef = useRef<HTMLDivElement>(null!);
@@ -547,11 +556,17 @@ export default function Home() {
     pointerId: number | null;
     startX: number;
     startY: number;
+    startTime: number;
+    lastX: number;
+    lastT: number;
     active: boolean;
   }>({
     pointerId: null,
     startX: 0,
     startY: 0,
+    startTime: 0,
+    lastX: 0,
+    lastT: 0,
     active: false,
   });
 
@@ -559,11 +574,25 @@ export default function Home() {
     Math.max(0, Math.min(index, pageSections.length - 1));
 
   const scrollToSectionIndex = (index: number) => {
-    setActiveSectionIndex(clampIndex(index));
+    setActiveSectionIndex((prev) => {
+      const next = clampIndex(index);
+      if (next !== prev) hapticTap();
+      return next;
+    });
   };
 
-  const goPrev = () => setActiveSectionIndex((prev) => clampIndex(prev - 1));
-  const goNext = () => setActiveSectionIndex((prev) => clampIndex(prev + 1));
+  const goPrev = () =>
+    setActiveSectionIndex((prev) => {
+      const next = clampIndex(prev - 1);
+      if (next !== prev) hapticTap();
+      return next;
+    });
+  const goNext = () =>
+    setActiveSectionIndex((prev) => {
+      const next = clampIndex(prev + 1);
+      if (next !== prev) hapticTap();
+      return next;
+    });
 
   const handleCarouselKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "ArrowRight" || e.key === "PageDown") {
@@ -786,12 +815,15 @@ export default function Home() {
               const target = event.target as HTMLElement | null;
               if (!target) return;
               if (target.closest("[data-nested-carousel]")) return;
-              if (target.closest("a,button,input,textarea,select,label")) return;
 
+              const now = performance.now();
               swipeRef.current = {
                 pointerId: event.pointerId,
                 startX: event.clientX,
                 startY: event.clientY,
+                startTime: now,
+                lastX: event.clientX,
+                lastT: now,
                 active: false,
               };
               setIsDragging(false);
@@ -809,32 +841,75 @@ export default function Home() {
               if (!state.active) {
                 const absX = Math.abs(dx);
                 const absY = Math.abs(dy);
-                if (absX < 10 || absX < absY) return;
+                if (absX < 8) return;
+                if (absX < absY * 1.1) return;
                 state.active = true;
                 setIsDragging(true);
               }
 
+              state.lastX = event.clientX;
+              state.lastT = performance.now();
+
+              let drag = dx;
+              const atStart = activeSectionIndex === 0;
+              const atEnd = activeSectionIndex === pageSections.length - 1;
+              if ((atStart && drag > 0) || (atEnd && drag < 0)) drag *= 0.35;
+
               event.preventDefault();
-              setDragX(Math.max(-380, Math.min(380, dx)));
+              setDragX(Math.max(-380, Math.min(380, drag)));
             }}
             onPointerUp={(event) => {
               const state = swipeRef.current;
               if (state.pointerId !== event.pointerId) return;
 
               const dx = event.clientX - state.startX;
+              const dt = Math.max(1, performance.now() - state.startTime);
+              const velocity = dx / dt; // px/ms
+              const absDx = Math.abs(dx);
+              const absV = Math.abs(velocity);
+
               if (state.active) {
-                if (dx < -70) goNext();
-                if (dx > 70) goPrev();
+                const committed = absDx > 60 || (absDx > 24 && absV > 0.4);
+                if (committed) {
+                  if (dx < 0) goNext();
+                  else goPrev();
+                }
+
+                const suppressClick = (clickEvent: Event) => {
+                  clickEvent.preventDefault();
+                  clickEvent.stopPropagation();
+                  window.removeEventListener("click", suppressClick, true);
+                };
+                window.addEventListener("click", suppressClick, true);
+                window.setTimeout(() => {
+                  window.removeEventListener("click", suppressClick, true);
+                }, 350);
               }
 
-              swipeRef.current = { pointerId: null, startX: 0, startY: 0, active: false };
+              swipeRef.current = {
+                pointerId: null,
+                startX: 0,
+                startY: 0,
+                startTime: 0,
+                lastX: 0,
+                lastT: 0,
+                active: false,
+              };
               setDragX(0);
               setIsDragging(false);
             }}
             onPointerCancel={(event) => {
               const state = swipeRef.current;
               if (state.pointerId !== event.pointerId) return;
-              swipeRef.current = { pointerId: null, startX: 0, startY: 0, active: false };
+              swipeRef.current = {
+                pointerId: null,
+                startX: 0,
+                startY: 0,
+                startTime: 0,
+                lastX: 0,
+                lastT: 0,
+                active: false,
+              };
               setDragX(0);
               setIsDragging(false);
             }}
@@ -882,7 +957,7 @@ export default function Home() {
                 "flex items-center gap-[var(--carousel-gap)] will-change-transform",
                 isDragging
                   ? ""
-                  : "transition-transform duration-500 [transition-timing-function:cubic-bezier(.4,0,.2,1)]",
+                  : "transition-transform duration-[360ms] [transition-timing-function:cubic-bezier(0.32,0.72,0,1)]",
               ].join(" ")}
               style={{ transform: `translateX(${-(trackOffset) + dragX}px)` }}
             >
@@ -935,6 +1010,7 @@ export default function Home() {
                         <div className="pointer-events-none absolute inset-0 rounded-[22px] bg-white/70 backdrop-blur-2xl ring-1 ring-slate-950/10 shadow-[0_22px_60px_rgba(2,6,23,0.18)]" />
                         <div
                           data-card-scroll
+                          style={{ touchAction: "pan-y" }}
                           className={[
                             "relative h-full overflow-y-auto overflow-x-hidden no-scrollbar pb-20 sm:pb-16",
                             active ? "pointer-events-auto" : "pointer-events-none",
@@ -1515,6 +1591,14 @@ export default function Home() {
         @media (hover: none) {
           [data-carousel-card][data-active="true"] .carousel-reactive-glow {
             opacity: 0.48;
+          }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+          [data-carousel-card]:not([data-active="true"]):hover {
+            opacity: 0.6;
+            transform: scale(0.86);
+            filter: blur(1.5px) saturate(0.88);
           }
         }
 

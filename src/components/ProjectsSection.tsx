@@ -44,6 +44,15 @@ function getActiveCardOffset(
   return activeCard.offsetLeft - (wrapper.clientWidth / 2 - cardWidth / 2);
 }
 
+const hapticTap = () => {
+  if (typeof navigator === "undefined") return;
+  const nav = navigator as Navigator & { vibrate?: (pattern: number | number[]) => boolean };
+  if (typeof nav.vibrate !== "function") return;
+  try {
+    nav.vibrate(8);
+  } catch {}
+};
+
 function getProjectLink(title: string): string {
   const upperTitle = title.toUpperCase();
   if (upperTitle.includes("NAVXPERT")) return "https://navxpert.anamolkarki.com";
@@ -74,11 +83,17 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
     pointerId: number | null;
     startX: number;
     startY: number;
+    startTime: number;
+    lastX: number;
+    lastT: number;
     active: boolean;
   }>({
     pointerId: null,
     startX: 0,
     startY: 0,
+    startTime: 0,
+    lastX: 0,
+    lastT: 0,
     active: false,
   });
 
@@ -86,11 +101,25 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   const clampedActiveProjectIndex = clampIndex(activeProjectIndex);
 
   const scrollToProjectIndex = (index: number) => {
-    setActiveProjectIndex(clampIndex(index));
+    setActiveProjectIndex((prev) => {
+      const next = clampIndex(index);
+      if (next !== prev) hapticTap();
+      return next;
+    });
   };
 
-  const goPrev = () => setActiveProjectIndex((prev) => clampIndex(prev - 1));
-  const goNext = () => setActiveProjectIndex((prev) => clampIndex(prev + 1));
+  const goPrev = () =>
+    setActiveProjectIndex((prev) => {
+      const next = clampIndex(prev - 1);
+      if (next !== prev) hapticTap();
+      return next;
+    });
+  const goNext = () =>
+    setActiveProjectIndex((prev) => {
+      const next = clampIndex(prev + 1);
+      if (next !== prev) hapticTap();
+      return next;
+    });
 
   const handleCarouselKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (projects.length <= 1) return;
@@ -262,12 +291,15 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
 
             const target = event.target as HTMLElement | null;
             if (!target) return;
-            if (target.closest("a,button,input,textarea,select,label")) return;
 
+            const now = performance.now();
             swipeRef.current = {
               pointerId: event.pointerId,
               startX: event.clientX,
               startY: event.clientY,
+              startTime: now,
+              lastX: event.clientX,
+              lastT: now,
               active: false,
             };
             setIsDragging(false);
@@ -284,32 +316,75 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
             if (!state.active) {
               const absX = Math.abs(dx);
               const absY = Math.abs(dy);
-              if (absX < 10 || absX < absY) return;
+              if (absX < 8) return;
+              if (absX < absY * 1.1) return;
               state.active = true;
               setIsDragging(true);
             }
 
+            state.lastX = event.clientX;
+            state.lastT = performance.now();
+
+            let drag = dx;
+            const atStart = clampedActiveProjectIndex <= 0;
+            const atEnd = clampedActiveProjectIndex >= projects.length - 1;
+            if ((atStart && drag > 0) || (atEnd && drag < 0)) drag *= 0.35;
+
             event.preventDefault();
-            setDragX(Math.max(-360, Math.min(360, dx)));
+            setDragX(Math.max(-360, Math.min(360, drag)));
           }}
           onPointerUp={(event) => {
             const state = swipeRef.current;
             if (state.pointerId !== event.pointerId) return;
 
             const dx = event.clientX - state.startX;
+            const dt = Math.max(1, performance.now() - state.startTime);
+            const velocity = dx / dt;
+            const absDx = Math.abs(dx);
+            const absV = Math.abs(velocity);
+
             if (state.active) {
-              if (dx < -70) goNext();
-              if (dx > 70) goPrev();
+              const committed = absDx > 60 || (absDx > 24 && absV > 0.4);
+              if (committed) {
+                if (dx < 0) goNext();
+                else goPrev();
+              }
+
+              const suppressClick = (clickEvent: Event) => {
+                clickEvent.preventDefault();
+                clickEvent.stopPropagation();
+                window.removeEventListener("click", suppressClick, true);
+              };
+              window.addEventListener("click", suppressClick, true);
+              window.setTimeout(() => {
+                window.removeEventListener("click", suppressClick, true);
+              }, 350);
             }
 
-            swipeRef.current = { pointerId: null, startX: 0, startY: 0, active: false };
+            swipeRef.current = {
+              pointerId: null,
+              startX: 0,
+              startY: 0,
+              startTime: 0,
+              lastX: 0,
+              lastT: 0,
+              active: false,
+            };
             setDragX(0);
             setIsDragging(false);
           }}
           onPointerCancel={(event) => {
             const state = swipeRef.current;
             if (state.pointerId !== event.pointerId) return;
-            swipeRef.current = { pointerId: null, startX: 0, startY: 0, active: false };
+            swipeRef.current = {
+              pointerId: null,
+              startX: 0,
+              startY: 0,
+              startTime: 0,
+              lastX: 0,
+              lastT: 0,
+              active: false,
+            };
             setDragX(0);
             setIsDragging(false);
           }}
@@ -360,7 +435,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
               isCompact ? "h-full" : "",
               isDragging
                 ? ""
-                : "transition-transform duration-500 [transition-timing-function:cubic-bezier(.4,0,.2,1)]",
+                : "transition-transform duration-[360ms] [transition-timing-function:cubic-bezier(0.32,0.72,0,1)]",
             ].join(" ")}
             style={{ transform: `translateX(${-(trackOffset) + dragX}px)` }}
           >
