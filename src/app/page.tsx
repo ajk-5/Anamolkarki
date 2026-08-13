@@ -142,7 +142,7 @@ const intro: Intro = {
   name: "ANAMOL JANG KARKI",
   title: "Développeur Fullstack Web / Mobile",
   objective:
-    "À LA RECHERCHE D'ALTERNANCE BAC+3 (4 JOURS EN ENTREPRISE | 1 JOUR À L'ÉCOLE)",
+    "À LA RECHERCHE D'ALTERNANCE BAC+3 (2 SEMAINES EN ENTREPRISE | 1 SEMAINE À L'ÉCOLE)",
   description: [
     "Passionné par le développement logiciel",
     "Compétent en C#, PHP, JavaScript, Node.js, Python, React.js, React Native, Next.js, ASP.NET, TypeScript, HTML, CSS, BASH, WPF et Mermaid",
